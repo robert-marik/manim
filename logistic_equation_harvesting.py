@@ -58,26 +58,15 @@ class Intro(Scene):
         #self.clear()
 
 
-
-
-
-
-
-
-
-
-
-
-
 class Odvozeni(Scene):
 
     def construct(self):
         definice = VGroup(
-            Tex(r"Velikost populace označíme ",r"$y$","."),
-            Tex(r"\begin{minipage}{8.5cm}Populace se množí rychlostí úměrnou velikosti populace a volné kapacitě prostředí.\end{minipage}"),
-            Tex(r"Nosná kapacita prostředí je ",r"$K$."),
-            Tex(r"Volná kapacita je ","rozdíl ","100\%"," a ","obsazeného procenta","."),
-            Tex(r"Populace je vystavena lovu konstantní intenzity ",r"$h$","."),
+            Tex(r"$\bullet$ Velikost populace označíme ",r"$y$","."),
+            Tex(r"\begin{flushleft}$\bullet$ Populace se množí rychlostí úměrnou velikosti populace\\\phantom{$\bullet$ } a volné kapacitě prostředí.\end{flushleft}"),
+            Tex(r"$\bullet$ Nosná kapacita prostředí je ",r"$K$."),
+            Tex(r"$\bullet$ Volná kapacita je ","rozdíl ","100\%"," a ","obsazeného procenta","."),
+            Tex(r"$\bullet$ Populace je vystavena lovu konstantní intenzity ",r"$h$","."),
             Tex(r"Rychlost růstu"," je úměrná"," velikosti populace"," a volnému místu.")
             )
 
@@ -91,7 +80,7 @@ class Odvozeni(Scene):
         rovnice.set_color(YELLOW)
         a1 = Tex(r"$\frac yK$").move_to(definice[3][4])
         a2 = Tex(r"$1$").move_to(definice[3][2])
-        a3 = Tex(r"Volná kapacita je ", r"$1-\frac yK$",".").move_to(definice[3][0],aligned_edge=LEFT)
+        a3 = Tex(r"$\bullet$ Volná kapacita je ", r"$1-\frac yK$",".").move_to(definice[3][0],aligned_edge=LEFT)
         a4 = Tex(r"$1-\frac yK$").move_to(definice[3][3])
         a5 = Tex(r"$\displaystyle\frac{\mathrm dy}{\mathrm dt}=ry\left(1-\frac yK\right)$","${}-h$").next_to(definice[4],DOWN)
         a6 = Tex(r"$\displaystyle\frac{\mathrm dy}{\mathrm dt}$").move_to(rovnice[0]).set_color(YELLOW)
