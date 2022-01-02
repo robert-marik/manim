@@ -60,8 +60,17 @@ def gradient_delka_D(x,y,z=0,d11=d11,d12=d12,d22=d22):
 class Flow(MovingCameraScene):
 
     def construct(self):
+
+        title = Title(r"Gradient a tok v ortotropním materiálu")
+        autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
+        self.play(GrowFromCenter(title))
+        self.play(GrowFromCenter(autor[0]))
+        self.play(GrowFromCenter(autor[1]))
+        self.wait(10)
+
+
         number_plane = NumberPlane()
-        self.add(number_plane)
+        self.play(ReplacementTransform(VGroup(title,autor),number_plane))
 
         wood_obj = ImageMobject(wood_img)
 
@@ -75,7 +84,6 @@ class Flow(MovingCameraScene):
         gradient_min = np.min(gradienty)
 
 
-        
         countours = VGroup(*[
             ImplicitFunction(lambda x,y:function(x,y)-i)
             .set_color(value2hex((i-dolni_mez)/(horni_mez-dolni_mez))) for i in [i/10*(.8*horni_mez-dolni_mez)+dolni_mez for i in range (20)]
@@ -116,16 +124,19 @@ class Flow(MovingCameraScene):
             ).set_z_index(-1)
            
 
-        funkce = VGroup(MathTex(r"f=20-y^2-x"),MathTex(r"-\nabla f = \begin{bmatrix} 1\\2y\end{bmatrix}")).arrange(DOWN,aligned_edge=LEFT).to_corner(UL).add_background_rectangle(opacity=0.9, buff=0.5).set_z_index(10)
-
-        self.add(countours)
-        self.wait()
+        funkce = VGroup(MathTex(r"f=20-y^2-x"),MathTex(r"-\nabla f = \begin{bmatrix} 1\\2y\end{bmatrix}"))
+        funkce.arrange(DOWN,aligned_edge=LEFT).to_corner(UL).add_background_rectangle(opacity=0.9, buff=0.5).set_z_index(10)
 
         self.add(funkce)
         self.wait()
-        # self.play(AnimationGroup(*[GrowArrow(vec) for vec in vectors_unscaled_opposite],lag_ratio=.01),runtime=5  )
-        self.add(vectors_unscaled_opposite)
+
+        self.play(AnimationGroup(*[Create(_) for _ in countours], lag_ratio=0.1))
         self.wait()
+
+
+        # self.play(AnimationGroup(*[GrowArrow(vec) for vec in vectors_unscaled_opposite],lag_ratio=.01),runtime=5  )
+        self.play(AnimationGroup(*[GrowArrow(_) for _ in vectors_unscaled_opposite], lag_ratio=0.05, run_time=2))
+        self.wait(8)
         self.play(ReplacementTransform(vectors_unscaled_opposite,vectors_unscaled))
 
 
