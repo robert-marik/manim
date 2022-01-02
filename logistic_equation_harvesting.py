@@ -54,44 +54,49 @@ class Intro(Scene):
 class Odvozeni(Scene):
 
     def construct(self):
+
+        title = Title(r"Odvození logistické rovnice").to_edge(UP)
+
         definice = VGroup(
             Tex(r"$\bullet$ Velikost populace označíme ",r"$y$","."),
-            Tex(r"\begin{flushleft}$\bullet$ Populace se množí rychlostí úměrnou velikosti populace\\\phantom{$\bullet$ } a volné kapacitě prostředí.\end{flushleft}"),
-            Tex(r"$\bullet$ Nosná kapacita prostředí je ",r"$K$."),
+            Tex(r"\begin{flushleft}$\bullet$ Populace se množí rychlostí úměrnou velikosti populace\\\phantom{$\bullet$ } a volné kapacitě prostředí, označené $K$.\end{flushleft}"),
             Tex(r"$\bullet$ Volná kapacita je ","rozdíl ","100\%"," a ","obsazeného procenta","."),
             Tex(r"$\bullet$ Populace je vystavena lovu konstantní intenzity ",r"$h$","."),
             Tex(r"Rychlost růstu"," je úměrná"," velikosti populace"," a volnému místu.")
             )
 
-        definice.arrange(DOWN, aligned_edge = LEFT, buff=0.3).to_corner(UL,buff=0.3)
+        definice.arrange(DOWN, aligned_edge = LEFT, buff=0.3).next_to(title,DOWN).to_edge(LEFT,buff=0.3)
         rovnice = definice[-1].shift(DOWN)
+
+
+        self.play(FadeIn(title))
 
         for i in definice:
             self.play(FadeIn(i))
             self.wait(duration=2)
 
         rovnice.set_color(YELLOW)
-        a1 = Tex(r"$\frac yK$").move_to(definice[3][4])
-        a2 = Tex(r"$1$").move_to(definice[3][2])
-        a3 = Tex(r"$\bullet$ Volná kapacita je ", r"$1-\frac yK$",".").move_to(definice[3][0],aligned_edge=LEFT)
-        a4 = Tex(r"$1-\frac yK$").move_to(definice[3][3])
-        a5 = Tex(r"$\displaystyle\frac{\mathrm dy}{\mathrm dt}=ry\left(1-\frac yK\right)$","${}-h$").next_to(definice[4],DOWN)
+        a1 = Tex(r"$\frac yK$").move_to(definice[2][4])
+        a2 = Tex(r"$1$").move_to(definice[2][2])
+        a3 = Tex(r"$\bullet$ Volná kapacita je ", r"$1-\frac yK$",".").move_to(definice[2][0],aligned_edge=LEFT)
+        a4 = Tex(r"$1-\frac yK$").move_to(definice[2][3])
+        a5 = Tex(r"$\displaystyle\frac{\mathrm dy}{\mathrm dt}=ry\left(1-\frac yK\right)$","${}-h$").next_to(definice[3],DOWN)
         a6 = Tex(r"$\displaystyle\frac{\mathrm dy}{\mathrm dt}$").move_to(rovnice[0]).set_color(YELLOW)
         a7 = Tex(r"$\displaystyle\left(1-\frac{y}{K}\right)$").move_to(rovnice[3]).set_color(YELLOW)
         a8 = Tex(r"$=r$").move_to(rovnice[1]).set_color(YELLOW)
         a9 = Tex(r"$y$").move_to(rovnice[2]).set_color(YELLOW)
         
         for i in [
-            ReplacementTransform(definice[3][4],a1),
-            ReplacementTransform(definice[3][2],a2),
-            ReplacementTransform(VGroup(a1,a2,definice[3][1],definice[3][2],definice[3][3],definice[3][4]),a4),
-            ReplacementTransform(VGroup(a1,a2,definice[3],a4),a3),
+            ReplacementTransform(definice[2][4],a1),
+            ReplacementTransform(definice[2][2],a2),
+            ReplacementTransform(VGroup(a1,a2,definice[2][1],definice[2][2],definice[2][3],definice[2][4]),a4),
+            ReplacementTransform(VGroup(a1,a2,definice[2],a4),a3),
             ReplacementTransform(VGroup(rovnice[2],definice[0].copy()),a9),
             ReplacementTransform(rovnice[0],a6),
             ReplacementTransform(VGroup(rovnice[3],a3[1].copy()),a7),
             ReplacementTransform(rovnice[1],a8),
             ReplacementTransform(VGroup(rovnice,a6,a7,a8,a9),a5[0]),
-            ReplacementTransform(definice[4][1].copy(),a5[1])
+            ReplacementTransform(definice[3][1].copy(),a5[1])
         ]:
             self.play(i, run_time = 3) 
             self.wait(2)
