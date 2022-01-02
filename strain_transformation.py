@@ -4,15 +4,21 @@ import numpy as np
 AnimationRuntime = 1
 WaitTime = 2
 
-class Deformation(Scene):
+class Deformation(ThreeDScene):
     def construct(self):
+
+        title = Title(r"Tenzor deformace a jeho transformace")
+        autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
+        self.play(AnimationGroup(GrowFromCenter(title),GrowFromCenter(autor[0]),GrowFromCenter(autor[1]),lag_ratio=0.2))
+        self.wait(45)
+
+        self.play(FadeOut(title),FadeOut(autor))
+
         rct = Rectangle(color=GREEN, width=6, height=2, fill_opacity=0.5 ) 
         square = Square(color=BLUE, side_length=1, fill_opacity=1)
-        square1 = square.copy()
-        square2 = square.copy()
-        squareL = Square(color=WHITE, side_length=1, fill_opacity=1).shift(LEFT*2)
-        squareR = Square(color=WHITE, side_length=1, fill_opacity=1).shift(RIGHT*2)
-        squareC = Square(color=RED, side_length=1, fill_opacity=1).rotate(45 * DEGREES)
+        squareL = square.copy().set_color(WHITE).shift(LEFT*2)
+        squareR = square.copy().set_color(WHITE).shift(RIGHT*2)
+        squareC = square.copy().set_color(RED).rotate(45 * DEGREES)
         tenzor1={}
         tenzor1['O'] = Matrix([[r'\varepsilon_{xx}', r'\varepsilon_{xy}'], [r'\varepsilon_{xy}',r'\varepsilon_{yy}']]).to_corner(UL)
         tenzor1['D'] = Matrix([[0.5, 0], [0,"-0.1"]]).to_corner(UL)
@@ -44,125 +50,81 @@ class Deformation(Scene):
         vg2.stretch(1.5,0)
         vg2.stretch(0.9,1) 
 
-        intro = Text("""
-        Ve videu si ukážeme, proč jsou
-        v rotovaných souřadnicích
-        jiné komponenty tenzoru deformace.
-        """).to_edge(UL)
-        self.play(Create(intro),run_time=AnimationRuntime)
-        self.wait(duration=4)
-        self.remove(intro)
-
         tvg = vg.copy()
         tvg1 = vg1.copy()
         tvg2 = vg2.copy()
 
-        popis = Text("""
-        Budeme uvažovat elastický pás,
-        který natáhneme o polovinu podélně.
-        Pás se přitom zúží o deset procent.
-        """).to_edge(UL)
-        self.play(FadeIn(tvg),Create(popis))
+        title = Title(r"Deformace elastického pásu").to_edge(UP)
+        self.play(FadeIn(title))
+
+        popis = VGroup(
+            Tex(r"$\bullet $ Pás natažením prodloužíme o polovinu délky"),
+            Tex(r"$\bullet $ Pás se natažením zúží o desetinu")
+        ).arrange(DOWN,aligned_edge=LEFT).next_to(title,DOWN)
+        self.play(FadeIn(tvg),FadeIn(popis))
         self.play(ReplacementTransform(tvg, tvg1), run_time=3*AnimationRuntime)
         self.wait(WaitTime)
         self.play(ReplacementTransform(tvg1, tvg2), run_time=3*AnimationRuntime)
         self.wait(WaitTime)
-        self.remove(popis)
+        self.play(FadeOut(popis), FadeOut(title))
 
         temp = VGroup(osy)
-        popis_os = Text("""
-        Bílá souřadná soustava respektuje geometrii pásu
-        a namáhání. Očekáváme prodloužení ve vodorovné
-        ose, zkrácení ve svislé ose a zachování úhlu
-        mezi vektory mířícími před deformací ve směru os.
-        """).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
-        self.play(FadeIn(temp), Create(popis_os),run_time=AnimationRuntime)
-        self.wait(duration=10*WaitTime)
-        self.remove(popis_os)
 
-        popis_osr = Text("""
-        Červená souřadná soustava má osy skloněné stejně
-        vzhledem ke geometrii úlohy. Očekáváme proto 
-        ve směru obou os stejnou reakci.
-        Úhel mezi vektory ve směru os se deformuje.
-        """).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
-        self.play(FadeIn(osyr), Create(popis_osr),run_time=AnimationRuntime)
+        self.play(FadeIn(temp))
         self.wait(duration=10*WaitTime)
-        self.remove(popis_osr)
+
+
+        self.play(FadeIn(osyr))
+        self.wait(duration=10*WaitTime)
 
 
         self.play(ReplacementTransform(tvg2,rct))
-        popis_tenzor =Text("""
-        Tenzor vlevo je v souřadné soustavě respektující 
-        geometrii a namáhání materiálu.
-        """).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
-        self.play(FadeIn(tenzor1["O"]),Create(popis_tenzor),run_time=AnimationRuntime)
-        self.wait(duration=5*WaitTime)
-        self.remove(popis_tenzor)
 
-        popis_tenzor2 = Text("""
-        Tenzor vpravo je v souřadné soustavě otočené
-        proti směru hodinových ručiček o 45 stupňů.
-        """).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
-        self.play(FadeIn(tenzor2["O"]),Create(popis_tenzor2),run_time=AnimationRuntime)
+        self.play(FadeIn(tenzor1["O"]))
         self.wait(duration=5*WaitTime)
-        self.remove(popis_tenzor2)
 
+        self.play(FadeIn(tenzor2["O"]))
+        self.wait(duration=5*WaitTime)
+        
         vg = VGroup()
         vg.add(rct,squareL, squareR, squareC)
 
         self.wait(WaitTime)
-        popis = Text("""
-        Deformace se nejlépe studuje na reprezentativním
-        elementu (RVE - representative volume element).
-        Ve dvoudimenzionálním případě na čtverci.
-        """).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
-        self.play(Write(square),Create(popis),run_time=AnimationRuntime)
+        self.play(FadeIn(square))
         self.wait(duration=4*WaitTime)
-        self.remove(popis)
 
-        popis = Text("""
-        Pro potřeby našich souřadných soustav potřebujeme 
-        elementy zarovnané s osami. Tedy bílé čtverce 
-        v základní poloze pro bílou soustavu a červené 
-        pootočené pro soustavu červenou.
-        """).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
         self.play(
             ReplacementTransform(square, squareL),
-            ReplacementTransform(square1, squareR),
-            ReplacementTransform(square2, squareC),
-            Create(popis)
+            ReplacementTransform(square.copy(), squareR),
+            ReplacementTransform(square.copy(), squareC)
         )
         self.wait(duration=4*WaitTime)
-  
 
         b1 = VGroup(Brace(squareL, color=YELLOW),Brace(squareR, color=YELLOW))
         b2 = VGroup(Brace(squareL, direction=LEFT, color=YELLOW),Brace(squareR, direction=LEFT, color=YELLOW))
         b3 = Brace(squareC, direction=LEFT+DOWN, color=YELLOW)
         b4 = Brace(squareC, direction=RIGHT+DOWN, color=YELLOW)
-        #self.add(b1,b2,b3,b4)
-        self.remove(popis)
 
         angle1= VGroup(*[Arc(
-                radius=0.5,
+                radius=0.3,
                 start_angle=0*DEGREES,
                 angle =90*DEGREES,
-                color=YELLOW
-            ).shift(_.get_left()*RIGHT, _.get_bottom()*UP) for _ in [squareL,squareR] ])
-
+                color=YELLOW, stroke_width=8
+            ).move_to(_,aligned_edge=DL) for _ in [squareL,squareR] ])
         angle2= Arc(
-                radius=0.5,
+                radius=0.3,
                 start_angle=45*DEGREES,
                 angle =90*DEGREES,
-                color=YELLOW
+                color=YELLOW, stroke_width=8
             ).shift(squareC.get_bottom()*UP)    
 
+  
         def explain_element(tensor,element,text,marker=[]):
             temp1 = VGroup(*[SurroundingRectangle(tensor.get_entries()[_]) for _ in element],*marker)
-            temp2 = Text(text).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
-            self.play(Create(temp1),Create(temp2))
+            # temp2 = Text(text).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
+            self.play(FadeIn(temp1))
             self.wait(duration=6*WaitTime)
-            self.remove(temp1,temp2,*marker)
+            self.play(FadeOut(temp1),*[FadeOut(i) for i in marker])
             
 
         explain_element(tenzor1["O"],[0],"""
@@ -183,6 +145,36 @@ class Deformation(Scene):
         směřující původně ve směru os. Očekáváme
         nulovou hodnotu, pravý úhel se zachová.
         """,marker=angle1)
+
+        # This rotates the 2D scene to 3D and back
+
+
+        angle11= VGroup(*[angle1[0].copy().flip(RIGHT).set_color(BLUE).move_to(_,aligned_edge=UL) for _ in [squareL,squareR] ])
+        self.play(FadeIn(angle1),FadeIn(angle11))
+        self.wait(2*WaitTime)
+
+        self.move_camera(
+            phi=30 * DEGREES,
+            theta=-50 * DEGREES
+        )
+        
+        def update_drawing(d,dt):
+            d.rotate_about_origin(dt, RIGHT)
+
+        [_.add_updater(update_drawing) for _ in [*vg,angle11,angle1]]
+        
+        self.wait(PI)
+        [_.remove_updater(update_drawing) for _ in [*vg,angle11,angle1]]
+
+        self.move_camera(
+            phi=0 * DEGREES,
+            theta=-90 * DEGREES
+        )
+        self.wait(3*WaitTime)
+        self.play(FadeOut(angle1),FadeOut(angle11))
+
+        # end of 3D stuff
+
         explain_element(tenzor2["O"],[0,3],"""
         Diagonální prvky tenzoru deformace v otočené 
         soustavě vyjadřují relativní změnu délek stran
@@ -214,32 +206,24 @@ class Deformation(Scene):
             ReplacementTransform(tenzor2["O"], tenzor2["N"]),
         )
 
-        popis = Text("""
-        Posun nesouvisí s deformací. 
-        Oba tenzory zůstávají nulové.
-        """).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
-        self.play(ReplacementTransform(vg, vg1), Create(popis),run_time=AnimationRuntime)
+        self.play(ReplacementTransform(vg, vg1))
         self.wait(duration=3*WaitTime)
-        self.remove(popis)
 
-        popis = Text("""
-        Změna tvaru se již projeví na obou tenzorech. 
-        Vidíme, že jsou splněna přirozená očekávání, 
-        která jsme zformulovali před simulací. 
-        """).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
         self.play(ReplacementTransform(vg1,vg2), \
             ReplacementTransform(tenzor1["N"], tenzor1["D"]), \
             ReplacementTransform(tenzor2["N"], tenzor2["D"]), 
-            Create(popis),
             run_time=AnimationRuntime)
         self.wait(10*WaitTime)    
 
-        self.clear()
+        #self.clear()
 
 class Transformace(Scene):
 
 
     def MatrixProduct(self,A,B,C,run_time=AnimationRuntime):
+        """
+        The function takes three matrices 2x2 as argument and animates the mutliplication using linear combination of columns.
+        """
         a = A.copy()
         b = B.copy()
         c = C.copy()
@@ -266,43 +250,43 @@ class Transformace(Scene):
             B.get_columns()[i].set_color(PINK)
             self.play(AnimationGroup(
                 ReplacementTransform(B.copy().get_columns()[i][0],lincomb[0]),
-                ReplacementTransform(A.copy().get_brackets().copy(),lincomb[1].get_brackets()),
-                *[ReplacementTransform(_,__) for _,__ in zip(A.get_columns().copy()[0],lincomb[1].get_columns()[0])],
+                AnimationGroup(ReplacementTransform(A.copy().get_brackets().copy(),lincomb[1].get_brackets()),
+                ReplacementTransform(A.get_columns().copy()[0],lincomb[1].get_columns()[0])),
                 FadeIn(lincomb[2]),
                 ReplacementTransform(B.copy().get_columns()[i][1],lincomb[3]),
-                ReplacementTransform(A.copy().get_brackets(),lincomb[4].get_brackets()),
-                *[ReplacementTransform(_,__) for _,__ in zip(A.get_columns().copy()[1],lincomb[4].get_columns()[0])],
+                AnimationGroup(ReplacementTransform(A.copy().get_brackets(),lincomb[4].get_brackets()),
+                ReplacementTransform(A.get_columns().copy()[1],lincomb[4].get_columns()[0])),
                 FadeIn(lincomb[5]),
                 lag_ratio=0.6
             ))    
             self.wait()
             self.play(FadeIn(lincomb[6]))
             self.wait()
-            self.play(AnimationGroup(*[ReplacementTransform(_,__) for _,__ in zip(lincomb.copy()[6].get_columns()[0],C.get_columns()[i])],lag_ratio=0.4))
+            temp = lincomb.copy()[6].get_columns()[0]
+            self.play(ReplacementTransform(temp,C.get_columns()[i]))
             self.wait()
             self.play(
                 FadeOut(lincomb),
                 FadeToColor(A,WHITE),
                 FadeToColor(B,WHITE)
                 )
-        #self.play(FadeIn(C))
     
     def construct(self):
 
+        title = Title(r"Odvození rovnice pro transformaci tenzorů").to_edge(UP)
+        self.add(title)
         # Formalni odvozeni transformacni rovnice pro tenzory
         lines = VGroup(
-            Text ("Transformace zobrazení nebo tenzoru"),
             MathTex("V = A U"),
             MathTex("RV' = A R U'"),
             MathTex(r"V' = R^{-1} A R U'"),
             MathTex(r"V' = ","(R^{-1} A R)",r"U'")
         )
-        lines.arrange(DOWN)#, buff=LARGE_BUFF)
-        self.add(lines[0])
+        lines.arrange(DOWN).next_to(title,DOWN, buff=LARGE_BUFF)
         self.wait()
-        self.play(FadeIn(lines[1]),run_time=AnimationRuntime)
+        self.play(FadeIn(lines[0]),run_time=AnimationRuntime)
         self.wait()
-        for i in [1,2,3]:
+        for i in [0,1,2]:
             self.play(
             TransformMatchingShapes(lines[i].copy(), lines[i+1], path_arc=90 * DEGREES, run_time=AnimationRuntime)
             ),
@@ -322,30 +306,32 @@ class Transformace(Scene):
         number_plane = NumberPlane(
         x_range=[-2, 2, .5],
         y_range=[-2, 2, .5],
+        background_line_style={
+                        "stroke_color": GREEN
+                    }
         )#.scale(0.5)
         zacatek = np.array([0,0,0])
         e1 = Arrow(start=zacatek, end=2*RIGHT, color=RED, buff=0)
         e2 = e1.copy()
         e2.rotate_about_origin(90*DEGREES)
-        circ = Circle(radius=2.0,color=WHITE, stroke_width=1)
+        circ = Circle(radius=2.0,color=WHITE, stroke_width=3)
         e12 = VGroup(e1,e2)
         e12_r = e12.copy()
         e12_r.rotate_about_origin(theta*DEGREES)
         
         line1 = Line(start=[2*np.cos(theta*DEGREES),2*np.sin(theta*DEGREES),0],end=[2*np.cos(theta*DEGREES),0,0],color= YELLOW, stroke_width=6)
         line1r = line1.copy().rotate_about_origin(90*DEGREES)
-        line2 = Line(start=[2*np.cos(theta*DEGREES),0,0],end=[0,0,0],color= GREEN,stroke_width=6)
+        line2 = Line(start=[2*np.cos(theta*DEGREES),0,0],end=[0,0,0],color= BLUE,stroke_width=6)
         line2r = line2.copy().rotate_about_origin(90*DEGREES)
-        VGroup(e12,e12_r,number_plane,circ,line1,line1r,line2,line2r).shift(3*DOWN,LEFT)
 
         #e1_coor=np.ndarray([np.cos(theta),np.sin(theta)])
         #e2_coor=np.ndarray([-np.sin(theta),np.cos(theta)])
         self.play(FadeIn(number_plane), run_time=AnimationRuntime)
         self.play(Create(e12), run_time=AnimationRuntime)
-        self.play(Succession(
+        self.play(AnimationGroup(
             Create(circ),
             ReplacementTransform(e12,e12_r),
-            lag_ratio=1, run_time=AnimationRuntime))
+            lag_ratio=0.4, run_time=AnimationRuntime))
         self.wait(WaitTime)
 
         h_buf = 2
@@ -362,6 +348,7 @@ class Transformace(Scene):
         self.play(ReplacementTransform(line2.copy(),line2r), run_time=AnimationRuntime)
         self.play(FadeIn(e2r_text), run_time=AnimationRuntime)
 
+        self.play(AnimationGroup(*[_.animate.shift(2*DOWN,LEFT) for _ in self.mobjects],lag_ratio=0.02))
 
         R_theta = Matrix([[r"\cos(\theta)", r"-\sin(\theta)"], 
             [r"\sin(\theta)",r"\cos(\theta)"]], h_buff=h_buf).to_edge(UL)
@@ -369,11 +356,6 @@ class Transformace(Scene):
             v_buff=v_buf).to_edge(UR)
         R = VGroup(MathTex(r"\frac{\sqrt 2}{2}"), Matrix([[r"1", r"-1"], [r"1",r"1"]]))
         R.arrange(RIGHT, buff=0.5).to_edge(UR)
-
-
-        # #R_theta = MathTex(r"\begin{bmatrix} \cos(\theta)&-\sin(\theta)\\\sin(\theta)&\cos(\theta)\end{bmatrix}").to_edge(UL)
-        # R0 =  MathTex(r"R=\begin{bmatrix} \frac{\sqrt 2}2&-\frac{\sqrt 2}2\\\frac{\sqrt 2}2&\frac{\sqrt 2}2\end{bmatrix}").next_to(R_theta,RIGHT, buff=1)
-        # R = VGroup(MathTex(r"R=\frac{\sqrt 2}{2}"),Matrix([[r"1", r"-1"], [r"1",r"1"]]),).arrange(RIGHT).next_to(R_theta,RIGHT, buff=1)
 
         self.play(FadeIn(R_theta.get_brackets()))
         self.play(
@@ -392,7 +374,7 @@ class Transformace(Scene):
         self.play(ReplacementTransform(R0,R), run_time=3*AnimationRuntime)
         self.wait(4*WaitTime)
         
-        self.clear()
+        self.play(AnimationGroup(*[FadeOut(_) for _ in self.mobjects],lag_ratio=0.05))
         # Nasobeni matic
 
         R = VGroup(MathTex("R","=",r"\frac{\sqrt 2}{2}"), Matrix([[r"1", r"-1"], [r"1",r"1"]])).arrange(RIGHT).to_corner(UL)
@@ -429,12 +411,22 @@ class Transformace(Scene):
         self.play(*[ReplacementTransform(what.copy(),where) for what,where in zip(
             [R[0][0],R[0][1],R[0][2],elementy[0],elementy[3],R[1].get_brackets()],
             [Rinv[0][0],Rinv[0][1],Rinv[0][2],e[0],e[3],Rinv[1].get_brackets()]
-            )],run_time=AnimationRuntime, path_arc=PI/2)
+            )],run_time=2*AnimationRuntime, path_arc=PI/2)
 
-        self.play(*[ReplacementTransform(what.copy(),where) for what,where in zip(
+        self.wait(WaitTime)
+
+        sipky = VGroup(
+            Arrow(start=elementy[1],end = e[2], buff=0.4, color=YELLOW),
+            Arrow(start=elementy[2],end = e[1], buff=0.4, color=BLUE)
+        )
+        self.play(FadeIn(sipky))
+        self.play(AnimationGroup(*[ReplacementTransform(what.copy(),where) for what,where in zip(
             [elementy[1],elementy[2]],
             [e[2],e[1]]
-            )],run_time=AnimationRuntime, path_arc=PI/2)            
+            )],run_time=3*AnimationRuntime, path_arc=PI/2,lag_ratio=.5))            
+        self.play(FadeOut(sipky))
+
+        self.wait(WaitTime)
 
         self.play(AnimationGroup(
             *[ReplacementTransform(what.copy(),where) for what,where in zip([
@@ -447,10 +439,9 @@ class Transformace(Scene):
                 Rinv[1],
                 D[1],
                 R[1]
-                ], [*vypocet[0],*[vypocet[i] for i in [1,2,3]]])],run_time=5*AnimationRuntime
+                ], [*vypocet[0],*[vypocet[i] for i in [1,2,3]]])],run_time=7*AnimationRuntime
             ,lag_ratio=0.3))
         self.play(*[FadeOut(_) for _ in [R,Rinv,D]], run_time=AnimationRuntime) 
-        #self.play(ReplacementTransform(vypocet,vypocet_cp)) 
         self.play(vypocet.animate.to_corner(UL),run_time=AnimationRuntime)
 
         self.play(AnimationGroup(
@@ -459,17 +450,55 @@ class Transformace(Scene):
                 [*vypocet2[0],vypocet2[2]]
                 )],run_time=AnimationRuntime
             ,lag_ratio=0.05))
-        self.wait(WaitTime)    
+        self.wait(3*WaitTime)    
 
         self.MatrixProduct(vypocet[1],vypocet[2],vypocet2[1])
         self.wait(WaitTime)
         self.play(FadeIn(vypocet2[3]))
         self.MatrixProduct(vypocet2[1],vypocet2[2],vypocet2[4])
 
-        #vypocet2.next_to(vypocet,DOWN, aligned_edge=LEFT).shift(RIGHT)
         vypocet3.next_to(vypocet2,DOWN, aligned_edge=LEFT)
         self.wait()
         self.play(FadeIn(vypocet3))
-        #self.add(vypocet2,vypocet3)
 
-        self.wait(5*WaitTime)
+        self.wait(10*WaitTime)
+
+komentar = """
+
+Při zkoumání mechanického namáhání materiálu je nezbytné mít možnost popsat
+silové působení na materíál a vyvolanou deformaci materiálu. Pro vyjádření
+deformace se používá tenzor deformace a v kartézských souřadnicích tento tenzor
+můžeme chápat jako matici. Skutečnost, že se nejedná o skalární veličinu, ale
+tenzor, s sebou nese některé nepříjmené důsledky. Například není úplně
+triviální vyjádřit hodnoty v soustavě souřadnic, která vznikne pootočením.
+Neintuitivnost spočívá i v tom, že stejné namáhání se může v jedné soustavě
+jevit jako čistě normálové namáhání a v jiné třeba jako čistě smykové namáhání
+nebo kombinace obojího.
+
+Budeme uvažovat elastický pás, který natáhneme na polovinu. Tímto natažením se
+pás zúží, například o deset procent. To je poměrně realistická představa
+chování elastického materiálu. 
+
+Změnu tvaru budeme popisovat ve dvou soustavách. Jedna soustava, bílá, bude
+respektovat geometrii pásu. Její souřadné osy budou ve směru pásu a tím i ve
+směru namáhání. Druhá soustava, červená, bude mít osy sklonéně. Například o 45
+stupňů, aby situace byla symetrická a obě osy byly vzhledem k pásu stejně
+skloněny.
+
+V bílé soustavě budeme mít bílý tenzor deformace, v červené soustavě červený. 
+
+Deformaci nejlépe sledujeme na reprezentativním elementu materiálu, což je ve
+dvou dimenzích čtverec. Přesněji, čtverec se stranami ve směru os, tedy budeme
+mít bílý element pro bílou soustavu a červený pro červenou.
+
+Vysvětlíme si, jaké veličiny vidíme v tenzorech deformace. Vlevo nahoře v bílém
+tenzoru vidíme relativní prodloužení vodorovné strany bílého čtverce. to bude padesát procent, tedy jedna polovina. 
+
+V pravém dolním rohu vidíme relativní prodloužení svislé strany čtverce. To
+bude záporné, protože strana se zkracuje a hodnota bude minus jedna desetina.
+
+Ve vedlejší diagonále bude číslo, které vyjařuje polovinu úhlu, o který se k
+sobě skloní obě vyznačené strany čtverce. Zde díky symetrii nedojde ke změně
+úhlu a proto ve vedlejší diagonále budou nuly.
+
+"""

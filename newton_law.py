@@ -10,7 +10,7 @@ random.seed(10)
 
 AnimationRuntime = 1.5
 WaitTime = 2
-obrazek = r"c:\Users\marik\manim\mug"
+obrazek = r"c:\Users\marik\Documents\GitHub\manim\mug"
 
 def rgb2hex(a):
     r,g,b = a 
@@ -51,7 +51,8 @@ class Intro(Scene):
         stream_lines.start_animation(warm_up=True, flow_speed=1.5)
         self.wait(stream_lines.virtual_time / stream_lines.flow_speed*15)
 
-        self.wait(6*WaitTime)
+        stream_lines.add_to_back()
+        self.wait(8*WaitTime)
         self.remove(stream_lines)
         self.play(
             *[FadeOut(mob)for mob in self.mobjects]
@@ -155,7 +156,7 @@ class Diference(MovingCameraScene):
         self.play(AnimationGroup(FadeOut(slopes),FadeOut(komentar),FadeIn(slopes2),FadeIn(komentar2)))
         self.play(delka_dx.animate.set_value(1.5), run_time=5, rate_func=linear)
         self.play(delka_dx.animate.set_value(0.5), run_time=5, rate_func=linear)
-        self.wait(3*WaitTime)
+        self.wait(4*WaitTime)
         self.remove(slopes2,delka_dx,komentar2,gr_primka)
         self.add(graf)
         self.wait(3*WaitTime)
@@ -291,7 +292,7 @@ class Diference(MovingCameraScene):
             self.wait(5*WaitTime)
             self.play(AnimationGroup(*[FadeOut(_) for _ in [primka,vd,hd]], lag_ratio=.5))
 
-        self.wait(5*WaitTime)
+        self.wait(8*WaitTime)
         predstav(diference[0],diference[1],distanc[1],vdistanc[0],dopredna)
         predstav(diference[2],diference[3],distanc[0],vdistanc[1],zpetna)
         predstav(diference[4],diference[5],distanc[2],vdistanc[2],centralni)
@@ -442,7 +443,7 @@ class Simulace(Scene):
         ).arrange(DOWN, aligned_edge=LEFT).next_to(title,DOWN).to_edge(LEFT)
 
         simulace = VGroup(
-            cTex(r"nastav T,t,h,T0,k"),
+            cTex(r"nastav T=100,t=0,h,T0,k"),
             cTex(r"opakuj v cyklu:"),
             cTex(r"vypočítej změnu teploty: dT=h*k*(T-T0)"),
             cTex(r"posuň čas: t=t+h"),
@@ -547,30 +548,34 @@ class Simulace(Scene):
             )
 
         self.add(stream_lines)
+        self.wait(2*WaitTime)
         stream_lines.start_animation(warm_up=True, flow_speed=1.5)
-        self.wait(stream_lines.virtual_time / stream_lines.flow_speed*2)
-        self.wait(20*WaitTime)
+        self.wait(4*WaitTime)
+        stream_lines.end_animation()
+        self.wait(5*WaitTime)
 
 komentar = """ 
 
 Dobrý den, v tomto videu si ukážeme metody, díky kterým matematika dokáže
 pracovat s rychlostí změn funkcí. To je velmi užitečná dovednost, protože nám
-zpřístupňuje možnost modelovat přírodní zákony. Tedy provádět experimenty na
-počítači a předpovídat budoucí vývoj studovaných systémů.
+zpřístupňuje možnost modelovat přírodní zákony. Díky tomu můžeme provádět
+experimenty na počítači a předpovídat budoucí vývoj studovaných systémů.
 
 
-Matematické pojetí rychlosti změny je derivace. Pro numerické modelování, kdy
-nepracujeme se spojitými funkcemi, ale s číselnými řadami používáme aproximaci
-derivace pomocí konečných diferencí. Pomocí nich si ukážeme možnost modelování
-fyzikálního zákona na příkladě ochlazování hrnku s kávou.
+Veličiny v přírodě se mění spojitě a matematické pojetí rychlosti změny slojité
+veličiny je derivace. Pro numerické modelování ale nepracujeme se spojitými
+funkcemi. Pracujeme s číselnými řadami. Proto používáme aproximaci derivace
+pomocí konečných diferencí. Pomocí nich si na závěr videa ukážeme možnost
+modelování fyzikálního zákona na příkladě ochlazování hrnku s kávou.
 
 ====================================
 
 Rychlost růstu je nejsnazší zavést pro lineární funkce. Stačí uvažovat
 trojúhelník jako na obrázku s vodorovnou odvěsnou jednotkové délky. Svislá
-odvěsna je mírou rychlosti růstu a nazývá se směrnice. V běžném životě takto
-definujeme stoupání, například u silnice. Jasně vidíme, že nezáleží na
-konkrétní poloze nakresleného trojúhleníka. 
+odvěsna v takovém trojúhelníku je mírou rychlosti růstu a nazývá se směrnice.
+Není to nic neobvyklého. V běžném životě takto definujeme stoupání, například u
+silnice. Jasně vidíme, že nezáleží na konkrétní poloze nakresleného
+trojúhleníka.
 
 Pokud nechceme pracovat s odvěsnou jednotkové délky, můžeme pracovat s
 trojúhelníkem libovolných rozměrů a směrnici najít podílem svislé a vodorovné
@@ -578,9 +583,8 @@ vzdálenosti bodů.
 
 Pro nelineární funkce je situace komplikovanější. Aby bylo vůbec mozné rychlost
 růstu zavést, musíme pracovat s lineární aproximací, tedy s tečnou ke grafu.
-Místo směrnice potom používáme pojem derivace. Aproximace je však jenom
-lokální, v různých bodech funkce roste různou rychlostí. Vidíme, že se tečna
-při pohybu naklání.
+Místo směrnice odpovídá derivaci. Aproximace tečnou je však jenom lokální.
+Podél křivky se tečna naklání a různých bodech funkce roste různou rychlostí.
 
 Zajímejme se o rychlost růstu v bodě vyznačeném na obrázku. Při numerických
 simulacích bohužel nemáme k dispozici celou křivku, jako na obrázku, ale jenom
@@ -631,22 +635,20 @@ současného stavu hledáme stavy předchozí.
 Použití dopředné diference si ukážeme na modelování časového vývoje teploty
 hrnku s kávou. Na začátku je hrnek horký a z fyziky, z Newtonova zákona tepelné
 výměny, víme, že rychlost poklesu teploty je dána teplotním rozdílem kávy a
-okolí. Přesněji, obě veličiny jsou úměrné. Pro aplikaci tohoto přírodního
+okolí. Přesněji, obě veličiny jsou úměrné. Pro převedení tohoto přírodního
 zákona do podoby umožňující numerickou simulaci si označíme potřebné veličiny.
 Dále si ujasníme vztah mezi rychlostí změny teploty a parametry systému. Tento
-vztah je nutné matematizovat. Rychlost poklesy teploty je záporně vzatá
+vztah je nutné matematizovat. Rychlost poklesu teploty je záporně vzatá
 rychlost růstu a tedy záporně vzatá derivace teploty podle času. Rozdíl teplot
-zapíšeme snadno, prostým odečtením potřebných veličin. Úměrnost je slovní
-obrat pro násobení konstantnou. Tím se nám slovní vyjádření transformovalo do
-matematického vztahu umožňujícího provádět numerické simulace. Pro pohodlí
-ještě osamostatnníme derivaci převedením znaménka minus na opačnou stranu. Tím
-dostaneme matematický model uvažovaného děje. Tento model je dále nutné převést do
-podoby pro numerickou simulaci.
+zapíšeme snadno, prostým odečtením potřebných veličin. Úměrnost je slovní obrat
+pro násobení konstantnou. Pro pohodlí ještě osamostatnníme derivaci převedením
+znaménka minus na opačnou stranu. Tím dostaneme matematický model uvažovaného
+děje. Tento model je dále nutné převést do podoby pro numerickou simulaci.
 
-Derivaci nahradíme dopřednou diferencí s krokem délky h. V tomto modelu
-vyjádříme teplotu v časovém okamžiku t+h pomocí teploty v časovém okamžiku t a
-pomocí parametru systému představovaného konstantou úměrnosti k, pomocí teploty
-okolí T0 a dále pomocí délky kroku h.
+Derivaci nahradíme dopřednou diferencí s krokem délky h. V získaném vztahu
+vyjádříme teplotu v časovém okamžiku t+h pomocí teploty v časovém okamžiku t,
+pomocí kroku h numerické aproximace a pomocí parametrů systému jako jsou
+konstanta úměrnosti k a teplota okolí T0.
 
 Výsledkem je vzorec, který udává, jak se teplota v čase t dá použít pro
 nalezení teploty v čase t+h. V matematice se tento postup nazývá Eulerova
@@ -660,11 +662,11 @@ Máme tedy matematický model ochlazování ve formě rovnice s derivací. Dále
 numerické schema pro simulaci. Toto schema je snadné implementovat v libovolném
 programu na numerické výpočty nebo i v tabulkovém procesoru. V pseudokódu na
 obrazovce vidíme, že nejprve je nutné nastavit hodnoty parametrů a počáteční
-stav. Teplotu budeme měrřit od času nula a počáteční teplota je sto stupňů.
-Teplota okolí T0 a konstanta k jsou parametry systému a zjistíme je například
-měřením. Volba kroku h je v naší moci, souvisí s přesností simulace a s délkou
-výpočtu. Začátečníci ji mohou zvolit nějak rozumně a vyzkoušet, jestli změna
-kroku má vliv na chování simulace.
+stav. Simulaci zahájíme v čase nula a počáteční teplota je sto stupňů. Teplota
+okolí T0 a konstanta k jsou parametry systému a zjistíme je například měřením.
+Volba kroku h je v naší moci, souvisí s přesností simulace a s délkou výpočtu.
+Začátečníci ji mohou zvolit nějak rozumně a vyzkoušet, jestli změna kroku má
+vliv na chování simulace.
 
 Po nastavení parametrů v cyklu vypočítáme změnu teploty, posuneme čas, opravíme
 teplotu a uložíme data. Výpočetní výkon stačí malý a není problém nechat cyklus

@@ -1,16 +1,23 @@
 from manim import *
-from manim.animation.animation import DEFAULT_ANIMATION_RUN_TIME
 import numpy as np
-from numpy.core.numeric import outer
 
 animation_runtime = 15
+config.max_files_cached = 400
 
 # from https://favpng.com/png_view/wood-frame-wood-circle-png/Kts40pG2
 wood_img = r"c:\Users\marik\Documents\GitHub\manim\wood"
 
-class Intro(Scene):
+class Eigenvectors(Scene):
 
     def construct(self):
+
+        title = Title(r"Vlastní směry matice")
+        autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
+        self.play(GrowFromCenter(title))
+        self.play(GrowFromCenter(autor[0]))
+        self.play(GrowFromCenter(autor[1]))
+        self.wait(10)
+        self.play(FadeOut(title),FadeOut(autor))
 
         wood_obj = ImageMobject(wood_img)
         varianty = [
@@ -31,7 +38,7 @@ class Intro(Scene):
             r"Symetrická matice"
             ]
 
-        obrazky = Group(Mobject(),Mobject(),Mobject(),Mobject(),wood_obj.copy().scale_to_fit_width(3),wood_obj.copy().rotate(19).scale_to_fit_width(3))
+        obrazky = Group(Mobject(),Mobject(),Mobject(),Mobject(),wood_obj.copy().scale_to_fit_width(3),wood_obj.copy().rotate(19*DEGREES).scale_to_fit_width(3))
         obrazky.to_corner(DR)    
 
         number_plane = NumberPlane()
@@ -39,6 +46,7 @@ class Intro(Scene):
         # optimg=VGroup()
         # self.add(optimg)
 
+        first = True
         for _komentar,_varianty,img in zip (komentar,varianty,obrazky):
             a11,a12,a21,a22 = _varianty
             matice = np.array([[a11,a12],[a21,a22]])
@@ -75,7 +83,9 @@ class Intro(Scene):
                 uhly = [0,uhly_limit]   
 
             self.wait()
-            print(uhly)
+            if first:
+                first = False
+                self.wait(10)
             for i in range(len(uhly)-1):
                 self.play(UHEL.animate.set_value(uhly[i+1]), run_time = animation_runtime*(uhly[i+1]-uhly[i])/uhly_limit, rate_func=linear)
                 self.wait()
