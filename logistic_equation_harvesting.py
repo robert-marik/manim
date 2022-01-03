@@ -24,8 +24,6 @@ def value2hex(value):
     #print("value2hex ",value)
     return rgb2hex(colorsys.hsv_to_rgb(0.99*value*0.75, 0.95, 0.95))
 
-
-
 class Intro(Scene):
 
     def construct(self):
@@ -49,7 +47,6 @@ class Intro(Scene):
 
 
         #self.clear()
-
 
 class Odvozeni(Scene):
 
@@ -102,14 +99,9 @@ class Odvozeni(Scene):
             self.wait(2)
         self.wait(10)
 
-
 class Transformace(Scene):
 
     def construct(self):
-        #self.nadpis()
-        #self.clear()
-        #self.odvozeni()
-        #self.clear()
         self.portrety(wait_duration=3)
         self.wait(10)
         self.clear()
@@ -118,9 +110,6 @@ class Transformace(Scene):
         self.clear()
         self.portrety(h=0.3, IC=0.4, max_step_IC=0.01, wait_duration=0.5)
         self.wait(10)
-
-        # self.clear()
-        #self.portrety()
 
     def portrety(self, h=0, IC=0.1, max_step_IC=0.05, wait_duration=1):
 
@@ -266,6 +255,7 @@ class Transformace(Scene):
             y = np.append(y,0)
         #print(y)
 
+        # Increasing and decreasing solutions are drawn with different colors
         def n2c(number):
             if number > y_points[1] and number < y_points[2]:
                 return(YELLOW)
@@ -273,13 +263,11 @@ class Transformace(Scene):
                 return(WHITE)    
 
         cs = [n2c(s.y[0][0]) for s in sol]
-        #print(cs)
         p = [ax.plot_line_graph(s.t,s.y[0],add_vertex_dots=False,stroke_width=2).set_color(c) for s,c in zip(sol,cs)]
 
         self.play(AnimationGroup(
             *[Create(_) for _ in p],
         lag_ratio=0.2))
-        #self.play(ShowCreationThenFadeOut(q))
         
         mouse= ImageMobject(obrazek).scale_to_fit_width(.8).set_color(WHITE).to_corner(DL)
 
@@ -406,7 +394,6 @@ class Transformace(Scene):
         #draw_mouses(0.5)
         self.wait(wait_duration)
         self.play(poloha.animate.set_value(len(x)-1), run_time=6, rate_func=linear)
-
 
 komentar = """
 
