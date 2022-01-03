@@ -4,27 +4,12 @@ from manim.animation.animation import DEFAULT_ANIMATION_RUN_TIME
 import numpy as np
 from numpy.core.numeric import outer
 import colorsys
+from common_definitions import *
 
 animation_runtime = 15
 
 # from https://favpng.com/png_view/wood-frame-wood-circle-png/Kts40pG2
 wood_img = r"c:\Users\marik\Documents\GitHub\manim\wood"
-
-
-def rgb2hex(a):
-    r,g,b = a 
-    return "#{:02x}{:02x}{:02x}".format(int(255*r),int(255*g),int(255*b))
-
-def value2hex(value):
-    """
-    The function converts value from the interval from 0 to 1 into a color.
-    """
-    temp = 0.99*(value)*0.8+0.2
-    if temp<0:
-        temp = 0
-    if temp>0.99:
-        temp = 0.99
-    return rgb2hex(colorsys.hsv_to_rgb(temp, 0.99, 0.99))
 
 a = 1/14
 b = 7
@@ -32,11 +17,10 @@ A = 1/8
 B = 2.5
 wood_img = r"c:\Users\marik\Documents\GitHub\manim\wood"
 
-
 def function(x,y):
     X = a*(x+b)
     Y = A*(y+B)
-    return((Y**2 + X))
+    return(-(Y**2 + X))
 
 def gradient(x,y,z=0):
     X = a*(x+b)
@@ -61,7 +45,7 @@ class Flow(MovingCameraScene):
 
     def construct(self):
 
-        title = Title(r"Gradient a tok v ortotropním materiálu")
+        title = Title(r"Gradient a tok ve dřevě (v ortotropním materiálu)")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(GrowFromCenter(title))
         self.play(GrowFromCenter(autor[0]))
@@ -84,11 +68,11 @@ class Flow(MovingCameraScene):
         gradient_min = np.min(gradienty)
 
 
+        number_of_contours = 20
         countours = VGroup(*[
-            ImplicitFunction(lambda x,y:function(x,y)-i)
-            .set_color(value2hex((i-dolni_mez)/(horni_mez-dolni_mez))) for i in [i/10*(.8*horni_mez-dolni_mez)+dolni_mez for i in range (20)]
-            ])
-
+            ImplicitFunction(lambda x,y:function(x,y)-i)            
+            .set_color(temperature_to_color(i, dolni_mez,horni_mez)) for i in np.linspace(dolni_mez + 0.05*(horni_mez-dolni_mez), horni_mez ,number_of_contours)]
+            )
 
         vectors_unscaled_opposite = ArrowVectorField(lambda p:-gradient(*p)[0]*RIGHT-gradient(*p)[1]*UP,
         x_range=[-7,7,1],
