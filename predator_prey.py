@@ -36,13 +36,12 @@ for i in range(1,number_of_curves):
     curves[i],infodict = integrate.odeint(dX_dt, X0, t, full_output=True)
 
 X = curves.pop(4)
-# c:\Users\marik\Documents\GitHub\manim
 bunny = r"icons\rabbit-shape"
 fox = r"icons\fox-sitting"
 
 myaxis_config={'tips':False}
 
-class Phase_portarit(Scene):
+class PhasePortarit(Scene):
     def construct(self):
 
         equations = VGroup(
@@ -52,33 +51,75 @@ class Phase_portarit(Scene):
         equations.to_corner(UL)
         self.add(equations)
 
+        phase_portarit = Group()
         axes = Axes(
             x_range=[0,60,1e6],
             y_range=[0,40,1e6],
             x_length=6,
             y_length=4, 
             **myaxis_config
-        ).to_corner(DL)
-        self.add(axes)
-
+        )
+        phase_portarit.add(axes)
         stationary_point = Dot(axes.c2p(*X_f1))
-        self.add(stationary_point)
+        phase_portarit.add(stationary_point)
+
+        fox_img = ImageMobject(fox)
+        fox_img.scale_to_fit_width(1.5).set_color(RED).next_to(axes.y_axis, LEFT, aligned_edge=UP)
+        bunny_img = ImageMobject(bunny)
+        bunny_img.scale_to_fit_width(1).set_color(WHITE).next_to(axes.x_axis,RIGHT)
+        phase_portarit.add(fox_img,bunny_img)
+        phase_portarit.to_corner(DL)
+        self.add(phase_portarit)
+
+        phase_portarit_arrows = VGroup()
+        delka = 3
+
+        data = []        
+        for i in np.linspace(*axes.x_range[:2],12):
+            for j in np.linspace(*axes.y_range[:2],12):
+                if i*j == 0:
+                    continue
+                start = np.array([i,j])
+                rhs = dX_dt([i,j])
+                norm = np.sqrt(rhs[0]**2+rhs[1]**2)
+                end = start + rhs/norm*delka
+                data += [[start,end,norm]]
+
+        maximum = np.max([i[2] for i in data])
+        print(maximum)
+        for i in data:                                
+            phase_portarit_arrows.add(
+                Arrow(
+                    start=axes.c2p(*i[0],0), 
+                    end=axes.c2p(*i[1],0), 
+                    buff=0, 
+                    max_stroke_width_to_length_ratio = 20, 
+                    max_tip_length_to_length_ratio = 0.4,
+                    color = temperature_to_color(i[2]*5, min_temp=0, max_temp=maximum),
+                    stroke_width=10,
+                )
+            )
+
+
+
+        self.add(phase_portarit_arrows)        
+        self.wait()
+        self.play(AnimationGroup(
+            *[i.animate.set_fill(opacity = 0.5).set_stroke(opacity=0.5) for i in phase_portarit_arrows]
+            ))
 
         x,y = X.T
         graph = axes.plot_line_graph(x_values=x, y_values=y, add_vertex_dots=False)
         self.add(graph)
-        fox_img = ImageMobject(fox).scale_to_fit_width(1.5).set_color(RED).next_to(axes.y_axis,RIGHT, aligned_edge=UP)
-        bunny_img = ImageMobject(bunny).scale_to_fit_width(1).set_color(WHITE).next_to(axes.x_axis,RIGHT)
-        self.add(fox_img,bunny_img)
 
         time = ValueTracker(0)
         
         allcurves = VGroup(
             *[axes.plot_line_graph(x_values=curves[i][:450,0], y_values=curves[i][:450,1], add_vertex_dots=False) for i in curves.keys()]
         )
-        allcurves.set_stroke(color=BLUE, width=1)
+        allcurves.set_stroke(color=BLUE, width=2)
 
-        self.play(AnimationGroup(*[Create(_) for _ in allcurves],lag_ratio=0.3, run_time=4))
+        self.play(AnimationGroup(*[Create(_) for _ in allcurves],lag_ratio=0.1, run_time=3))
         self.add(allcurves)
 
         axes2 = Axes(
@@ -86,23 +127,26 @@ class Phase_portarit(Scene):
             y_range=[0,60,1e6],
             x_length=8,
             y_length=2,
-            **myaxis_config,
-
+            **myaxis_config
         )
         labels2 = VGroup(Tex(r"$t$").next_to(axes2.x_axis))
         graph2 = VGroup(axes2,labels2)
         graph2.to_corner(UR)
         self.add(graph2)
+
         graph_foxes = axes2.plot_line_graph(x_values=t, y_values=X[:,1], add_vertex_dots=False).set_color(RED)
         graph_bunnies = axes2.plot_line_graph(x_values=t, y_values=X[:,0], add_vertex_dots=False).set_color(WHITE)
-
         self.add(graph_foxes,graph_bunnies)
 
+        kwds = {
+                'value_max' : 60, 
+                'values' : [0,10,20,30,40,50,60]
+                }
         def draw_for_animation(t_index):
             watches = VGroup(
-                analog_indicator(x[t_index],value_max = 60,values = [0,10,20,30,40,50,60]),
-                analog_indicator(y[t_index],value_max = 60,values = [0,10,20,30,40,50,60])
-            ).arrange().to_edge(RIGHT)
+                analog_indicator(x[t_index],**kwds),
+                analog_indicator(y[t_index],**kwds)
+            ).arrange().to_edge(RIGHT).shift(DOWN*0.5)
             
             line_marker = VGroup(
                 RegularPolygon(n=3, start_angle=np.pi / 2, stroke_width=0).set_fill(
@@ -120,14 +164,11 @@ class Phase_portarit(Scene):
         report = always_redraw(lambda: draw_for_animation(int(time.get_value())) )
         fox_img_watches = ImageMobject(fox).scale_to_fit_width(0.5).set_color(RED).next_to(report[1][1],DOWN)
         bunny_img_watches = ImageMobject(bunny).scale_to_fit_width(.3).set_color(WHITE).next_to(report[1][0],DOWN)
-
-
         self.add(report, fox_img_watches, bunny_img_watches)
 
         for i in range(5):
             self.play(time.animate.set_value(tnumber-1), run_time=5, rate_func=linear)
             time.set_value(0)
-
         
         self.wait()
 

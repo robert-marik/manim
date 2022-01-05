@@ -5,14 +5,14 @@ from scipy.integrate import solve_ivp  # řešení diferenciálních rovnic
 import colorsys
 import random
 from common_definitions import *
+import os
 
 config.max_files_cached = 400
 random.seed(10)
 
 AnimationRuntime = 1.5
 WaitTime = 2
-obrazek = r"c:\Users\marik\Documents\GitHub\manim\mug"
-#obrazek = r"/home/marik/work/vyuka/manim/mug"
+obrazek = os.path.join('icons', 'mug')
 
 def value2hex(value):
     """

@@ -67,36 +67,34 @@ class Flow(MovingCameraScene):
         gradient_max = np.max(gradienty)
         gradient_min = np.min(gradienty)
 
-
         number_of_contours = 20
         countours = VGroup(*[
             ImplicitFunction(lambda x,y:function(x,y)-i)            
             .set_color(temperature_to_color(i, dolni_mez,horni_mez)) for i in np.linspace(dolni_mez + 0.05*(horni_mez-dolni_mez), horni_mez ,number_of_contours)]
-            )
+        )
 
         vectors_unscaled_opposite = ArrowVectorField(lambda p:-gradient(*p)[0]*RIGHT-gradient(*p)[1]*UP,
-        x_range=[-7,7,1],
-        y_range=[-4,4,1],
-        color = WHITE,
-        length_func = lambda n: 10*n,
+            x_range=[-7,7,1],
+            y_range=[-4,4,1],
+            color = WHITE,
+            length_func = lambda n: 10*n,
         )
 
         vectors_unscaled = ArrowVectorField(lambda p:gradient(*p)[0]*RIGHT+gradient(*p)[1]*UP,
-        x_range=[-7,7,1],
-        y_range=[-4,4,1],
-        color = WHITE,
-        length_func = lambda n: 10*n,
+            x_range=[-7,7,1],
+            y_range=[-4,4,1],
+            color = WHITE,
+            length_func = lambda n: 10*n,
         )
 
-
         vectors = ArrowVectorField(lambda p:gradient(*p)[0]*RIGHT+gradient(*p)[1]*UP,
-        x_range=[-7,7,1],
-        y_range=[-4,4,1],
-        colors = [RED, YELLOW, BLUE, DARK_GRAY],
-        min_color_scheme_value=gradient_min, 
-        max_color_scheme_value=gradient_max, 
-        length_func = lambda norm: 0.95 * sigmoid(norm),
-        stroke_width = 10,
+            x_range=[-7,7,1],
+            y_range=[-4,4,1],
+            colors = [RED, YELLOW, BLUE, DARK_GRAY],
+            min_color_scheme_value=gradient_min, 
+            max_color_scheme_value=gradient_max, 
+            length_func = lambda norm: 0.95 * sigmoid(norm),
+            stroke_width = 10,
         vector_config={"max_stroke_width_to_length_ratio":10, "max_tip_length_to_length_ratio":0.4}
         )
 

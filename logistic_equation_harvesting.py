@@ -2,13 +2,14 @@ from manim import *
 from scipy.integrate import solve_ivp  # řešení diferenciálních rovnic
 import colorsys
 import random
+import os
 
 config.max_files_cached = 200
 random.seed(10)
 
 AnimationRuntime = 1.5
 WaitTime = 2
-obrazek = r"c:\Users\marik\manim\mouse"
+obrazek = os.path.join("icons","mouse")
 
 def rgb2hex(a):
     r,g,b = a 
@@ -99,7 +100,7 @@ class Odvozeni(Scene):
             self.wait(2)
         self.wait(10)
 
-class Transformace(Scene):
+class Simulace(Scene):
 
     def construct(self):
         self.portrety(wait_duration=3)
