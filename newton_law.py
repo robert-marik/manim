@@ -4,6 +4,7 @@ from numpy.lib.function_base import place
 from scipy.integrate import solve_ivp  # řešení diferenciálních rovnic
 import colorsys
 import random
+from common_definitions import *
 
 config.max_files_cached = 400
 random.seed(10)
@@ -11,13 +12,7 @@ random.seed(10)
 AnimationRuntime = 1.5
 WaitTime = 2
 obrazek = r"c:\Users\marik\Documents\GitHub\manim\mug"
-
-def rgb2hex(a):
-    r,g,b = a 
-    return "#{:02x}{:02x}{:02x}".format(int(255*r),int(255*g),int(255*b))
-
-def hex2rgb(hexcode):
-    return tuple(map(ord,hexcode[1:].decode('hex')))
+#obrazek = r"/home/marik/work/vyuka/manim/mug"
 
 def value2hex(value):
     """
@@ -29,7 +24,7 @@ def value2hex(value):
     if temp>0.99:
         temp = 0.99
     return rgb2hex(colorsys.hsv_to_rgb(temp, 0.99, 0.99))
-
+    
 class Intro(Scene):
 
     def construct(self):
@@ -526,8 +521,18 @@ class Simulace(Scene):
 
         sol = always_redraw(lambda : ax.plot_line_graph(x[:int(poloha.get_value())],y[:int(poloha.get_value())],
                     add_vertex_dots=False).set_color(YELLOW))
-
         self.add(sol)
+
+        analog = always_redraw(
+            lambda : VGroup(
+                analog_indicator(y[int(np.round(poloha.get_value()))],
+                    value_max=100,
+                    values=[25*i for i in range(5)], 
+                    label_min="0", 
+                    label_max="100", 
+                    title=r"$T/{}^\circ\mathrm C$")
+        ).to_edge(RIGHT))
+        self.add(analog)
 
         stop_index = np.argwhere(np.array(y)<51)[0][0]
         self.play(poloha.animate.set_value(stop_index), run_time=10, rate_func=linear)
