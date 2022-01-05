@@ -36,9 +36,9 @@ for i in range(1,number_of_curves):
     curves[i],infodict = integrate.odeint(dX_dt, X0, t, full_output=True)
 
 X = curves.pop(4)
-
-bunny = r"c:\Users\marik\Documents\GitHub\manim\icons\rabbit-shape"
-fox = r"c:\Users\marik\Documents\GitHub\manim\icons\fox-sitting"
+# c:\Users\marik\Documents\GitHub\manim
+bunny = r"icons\rabbit-shape"
+fox = r"icons\fox-sitting"
 
 myaxis_config={'tips':False}
 
