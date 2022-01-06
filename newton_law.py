@@ -1,6 +1,4 @@
-from typing_extensions import runtime
 from manim import *
-from numpy.lib.function_base import place
 from scipy.integrate import solve_ivp  # řešení diferenciálních rovnic
 import colorsys
 import random
@@ -17,6 +15,7 @@ obrazek = os.path.join('icons', 'mug')
 def value2hex(value):
     """
     The function converts value from the interval from 0 to 1 into a color.
+    The colors are from red to green and to blue.
     """
     temp = 0.99*(1-value-0.1)*0.75
     if temp<0:
