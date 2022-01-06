@@ -5,6 +5,7 @@ import numpy as np
 from numpy.core.numeric import outer
 import colorsys
 from common_definitions import *
+import os
 
 animation_runtime = 15
 
@@ -15,7 +16,7 @@ a = 1/14
 b = 7
 A = 1/8
 B = 2.5
-wood_img = r"c:\Users\marik\Documents\GitHub\manim\wood"
+wood_img = os.path.join("icons","wood")
 
 def function(x,y):
     X = a*(x+b)
