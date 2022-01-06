@@ -566,7 +566,7 @@ zpřístupňuje možnost modelovat přírodní zákony. Díky tomu můžeme prov
 experimenty na počítači a předpovídat budoucí vývoj studovaných systémů.
 
 
-Veličiny v přírodě se mění spojitě a matematické pojetí rychlosti změny slojité
+Veličiny v přírodě se mění spojitě a matematické pojetí rychlosti změny spojité
 veličiny je derivace. Pro numerické modelování ale nepracujeme se spojitými
 funkcemi. Pracujeme s číselnými řadami. Proto používáme aproximaci derivace
 pomocí konečných diferencí. Pomocí nich si na závěr videa ukážeme možnost
@@ -587,7 +587,7 @@ vzdálenosti bodů.
 
 Pro nelineární funkce je situace komplikovanější. Aby bylo vůbec mozné rychlost
 růstu zavést, musíme pracovat s lineární aproximací, tedy s tečnou ke grafu.
-Místo směrnice odpovídá derivaci. Aproximace tečnou je však jenom lokální.
+Místo směrnice máme derivaci. Aproximace tečnou je však jenom lokální.
 Podél křivky se tečna naklání a různých bodech funkce roste různou rychlostí.
 
 Zajímejme se o rychlost růstu v bodě vyznačeném na obrázku. Při numerických
