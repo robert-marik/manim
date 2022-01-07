@@ -439,7 +439,7 @@ class Simulace(Scene):
         simulace = VGroup(
             cTex(r"nastav T=100,t=0,h,T0,k"),
             cTex(r"opakuj v cyklu:"),
-            cTex(r"vypočítej změnu teploty: dT=h*k*(T-T0)"),
+            cTex(r"vypočítej změnu teploty: dT=-k*(T-T0)*h"),
             cTex(r"posuň čas: t=t+h"),
             cTex(r"oprav teplotu: T=T+dT"),
             cTex(r"ulož T,t"),
