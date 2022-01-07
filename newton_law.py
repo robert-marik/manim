@@ -46,7 +46,7 @@ class Intro(Scene):
         self.wait(stream_lines.virtual_time / stream_lines.flow_speed*15)
 
         stream_lines.add_to_back()
-        self.wait(8*WaitTime)
+        self.wait(4*WaitTime)
         self.remove(stream_lines)
         self.play(
             *[FadeOut(mob)for mob in self.mobjects]
@@ -563,14 +563,8 @@ komentar = """
 Dobrý den, v tomto videu si ukážeme metody, díky kterým matematika dokáže
 pracovat s rychlostí změn funkcí. To je velmi užitečná dovednost, protože nám
 zpřístupňuje možnost modelovat přírodní zákony. Díky tomu můžeme provádět
-experimenty na počítači a předpovídat budoucí vývoj studovaných systémů.
-
-
-Veličiny v přírodě se mění spojitě a matematické pojetí rychlosti změny spojité
-veličiny je derivace. Pro numerické modelování ale nepracujeme se spojitými
-funkcemi. Pracujeme s číselnými řadami. Proto používáme aproximaci derivace
-pomocí konečných diferencí. Pomocí nich si na závěr videa ukážeme možnost
-modelování fyzikálního zákona na příkladě ochlazování hrnku s kávou.
+experimenty na počítači a předpovídat budoucí vývoj studovaných systémů. Jako
+příklad budeme modelovat ochlazování hrnku s kávou.
 
 ====================================
 
@@ -587,14 +581,14 @@ vzdálenosti bodů.
 
 Pro nelineární funkce je situace komplikovanější. Aby bylo vůbec mozné rychlost
 růstu zavést, musíme pracovat s lineární aproximací, tedy s tečnou ke grafu.
-Místo směrnice máme derivaci. Aproximace tečnou je však jenom lokální.
-Podél křivky se tečna naklání a různých bodech funkce roste různou rychlostí.
+Místo směrnice máme derivaci. Aproximace tečnou je však jenom lokální. Podél
+křivky se tečna naklání a v různých bodech funkce roste různou rychlostí.
 
 Zajímejme se o rychlost růstu v bodě vyznačeném na obrázku. Při numerických
 simulacích bohužel nemáme k dispozici celou křivku, jako na obrázku, ale jenom
 funkční hodnoty v určitých bodech. Ideálně v bodech rovnoměrně rozmístěných
 podél osy x. Na obrázku to je se vzdáleností bodů trošku přehnané, ale
-představme si, že musíme rychlost růstu v oranžovém bodě zjistit jenom z teček
+představme si, že rychlost růstu v oranžovém bodě musíme zjistit jenom z teček
 na grafu.
 
 První možností je použít k získání informace o rychlosti růstu nejbliží tečku
@@ -613,41 +607,36 @@ Pro numerickou simulaci musíme geometrickou představu transformovat do přesn�
 vzorců. Funkci si označme f, bod našeho zájmu x, krok mezi body na grafu h.
 Sousedé bodu x budou tedy x+h a x-h.
 
-Dopředná diference používá body na grafu s první souřadnicí x a x+h. Jejich
-vodorovná vzdálenost je h a svislá vzdálenost je rozdíl funkčních hodnot. To
-nám za použití podílu dává vzorec pro dopřednou diferenci.
+Dopředná diference používá funkční hodnoty v bodech x a x+h. Vodorovná
+vzdálenost bodů na grafu je h a svislá vzdálenost je rozdíl funkčních hodnot.
+To nám za použití podílu dává vzorec pro dopřednou diferenci.
 
-Zpětná diference používá body na grafu s první souřadnicí x a x-h. Vodorovná
-vzdálenost je opět h a svislá opět rozdíl funkčních hodnot. Tím máme vzorec pro
-zpětnou diferenci.
+Zpětná diference používá funkční hodnoty v bodech x a x-h. Vodorovná vzdálenost
+je opět h a svislá opět rozdíl funkčních hodnot. Tím máme vzorec pro zpětnou
+diferenci.
 
-Centrální diference používá body na grafu s první souřadnicí x+h a x-h. Jejich
-vodorovná vzdálenost je 2h a svislá opět rozdíl funkčních hodnot.
+Centrální diference používá funkční hodnoty v bodech x+h a x-h. Vodorovná
+vzdálenost bodů je 2h a svislá opět rozdíl funkčních hodnot.
 
 Máme tedy vzorce pro všechny tři diference a k tomu derivaci. Kdy kterou
-použít? Záleží do jisté míry nás. Derivaci, přesnou rychlost růstu, používáme
-při formulaci přírodních zákonů, protože takto příroda a svět okolo nás
-fungují. Centrální diference je nejpřesnější aproximace derivace a používáme
-ji, pokud známe funkci a potřebujeme najít rychlost růstu této funkce.
-Dopřednou diferenci používáme, pokud potřebujeme simulovat časový vývoj a
-prodlužovat funkci směrem doprava. To si za chviličku ukážeme. Zpětnou
-diferenci použijeme například pokud modelujeme vývoj zpětně v čase, tedy ze
-současného stavu hledáme stavy předchozí.
+použít? Při formulaci přírodních zákonů použijeme derivaci, protože takto
+příroda a svět okolo nás fungují. Pro simulaci vývoje v čase dopředu použijeme
+dopřednou diferenci. To si za chviličku ukážeme.
 
 =========================================================
 
-Použití dopředné diference si ukážeme na modelování časového vývoje teploty
-hrnku s kávou. Na začátku je hrnek horký a z fyziky, z Newtonova zákona tepelné
-výměny, víme, že rychlost poklesu teploty je dána teplotním rozdílem kávy a
-okolí. Přesněji, obě veličiny jsou úměrné. Pro převedení tohoto přírodního
-zákona do podoby umožňující numerickou simulaci si označíme potřebné veličiny.
-Dále si ujasníme vztah mezi rychlostí změny teploty a parametry systému. Tento
-vztah je nutné matematizovat. Rychlost poklesu teploty je záporně vzatá
-rychlost růstu a tedy záporně vzatá derivace teploty podle času. Rozdíl teplot
-zapíšeme snadno, prostým odečtením potřebných veličin. Úměrnost je slovní obrat
-pro násobení konstantnou. Pro pohodlí ještě osamostatnníme derivaci převedením
-znaménka minus na opačnou stranu. Tím dostaneme matematický model uvažovaného
-děje. Tento model je dále nutné převést do podoby pro numerickou simulaci.
+Budeme modelovat časový vývoj teploty hrnku s kávou. Na začátku je hrnek horký a
+z fyziky, z Newtonova zákona tepelné výměny, víme, že rychlost poklesu teploty
+je dána teplotním rozdílem kávy a okolí. Přesněji, obě veličiny jsou úměrné.
+Pro převedení tohoto přírodního zákona do podoby umožňující numerickou simulaci
+si označíme potřebné veličiny. Dále si ujasníme vztah mezi rychlostí změny
+teploty a parametry systému. Tento vztah je nutné matematizovat. Rychlost
+poklesu teploty je záporně vzatá rychlost růstu a tedy záporně vzatá derivace
+teploty podle času. Rozdíl teplot zapíšeme snadno, prostým odečtením potřebných
+veličin. Úměrnost je slovní obrat pro násobení konstantnou. Pro pohodlí ještě
+osamostatnníme derivaci převedením znaménka minus na opačnou stranu. Tím
+dostaneme matematický model uvažovaného děje. Tento model je dále nutné převést
+do podoby pro numerickou simulaci.
 
 Derivaci nahradíme dopřednou diferencí s krokem délky h. V získaném vztahu
 vyjádříme teplotu v časovém okamžiku t+h pomocí teploty v časovém okamžiku t,
@@ -689,7 +678,7 @@ umožňuje simulovat postupné ohřívání ledové kávy.
 
 Ve videu jsme si ukázali, jak měříme rychlost změny funkcí, jak tuto rychlost
 můžeme využít při matematické formulaci přírodního děje, jak tuto matematickou
-formulaci můžeme upravit do formy vhodné pro numerické simluace a jak se
+formulaci můžeme upravit do formy vhodné pro numerické simulace a jak se
 takové numerické simulace dají realizovat.
 
 """

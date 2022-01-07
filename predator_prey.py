@@ -350,6 +350,8 @@ class PhasePortrait(Scene):
         self.play(AnimationGroup(
             TransformMatchingShapes(equations4[0][2].copy(),label_y),
             TransformMatchingShapes(equations4[1][2].copy(),label_x),
+            FadeToColor(equations4[0][0],RED),
+            FadeToColor(equations4[1][2],RED),
             lag_ratio=1
         ))
 

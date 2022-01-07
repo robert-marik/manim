@@ -105,7 +105,6 @@ class Flow(MovingCameraScene):
             dt=0.5,
             virtual_time=3, opacity=0.75
             ).set_z_index(-1)
-           
 
         funkce = VGroup(MathTex(r"f=20-y^2-x"),MathTex(r"-\nabla f = \begin{bmatrix} 1\\2y\end{bmatrix}"))
         funkce.arrange(DOWN,aligned_edge=LEFT).to_corner(UL).add_background_rectangle(opacity=0.9, buff=0.5).set_z_index(10)
@@ -116,19 +115,15 @@ class Flow(MovingCameraScene):
         self.play(AnimationGroup(*[Create(_) for _ in countours], lag_ratio=0.1))
         self.wait()
 
-
-        # self.play(AnimationGroup(*[GrowArrow(vec) for vec in vectors_unscaled_opposite],lag_ratio=.01),runtime=5  )
         self.play(AnimationGroup(*[GrowArrow(_) for _ in vectors_unscaled_opposite], lag_ratio=0.05, run_time=2))
         self.wait(8)
         self.play(ReplacementTransform(vectors_unscaled_opposite,vectors_unscaled))
-
 
         self.wait()
         self.play(ReplacementTransform(vectors_unscaled,vectors))
         self.wait()
         self.add(curves)
         self.wait()
-
 
         vlastni_vektory=VGroup(*[vectors[3+9*i] for i in range(14)])
         surroundingRectangle= SurroundingRectangle(vlastni_vektory[1:-1],color=YELLOW, buff=0.15)
@@ -178,7 +173,6 @@ class Flow(MovingCameraScene):
             virtual_time=3, opacity=0.75
             ).set_z_index(-1)
 
-
         matice_D = VGroup(
             VGroup(MathTex("D={}"),Matrix([[d11,d12],[d12,d22]])).arrange(RIGHT),
             VGroup(MathTex(r"\lambda_1={}"+str(lambda1))),
@@ -191,7 +185,6 @@ class Flow(MovingCameraScene):
         self.add(obrazek)
         self.wait()
         self.play(AnimationGroup(*[Wiggle(_) for _ in vlastni_vektory],Create(surroundingRectangle),lag_ratio=.05))
-
 
         self.wait()
         self.play(ReplacementTransform(curves,curves_with_D),ReplacementTransform(vectors.copy(),vectors_with_D),FadeToColor(vectors.set_opacity(.5),GRAY))
@@ -213,6 +206,5 @@ class Flow(MovingCameraScene):
             self.wait(5)
             self.play(Restore(self.camera.frame),FadeOut(detail_frame), running_time = 2)   
             self.wait()     
-
 
         self.wait()

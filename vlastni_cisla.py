@@ -1,14 +1,32 @@
-import numpy as np
+from manim import *
 
-a11,a12,a21,a22=1,0.2,0.2,1
-# a11,a12,a21,a22=1.2,0,0,1.2
-# a11,a12,a21,a22=1,0.3,-0.3,1
-matice = np.array([[a11,a12],[a21,a22]])
+class Pokus(Scene):
+    def construct(self):
+        title = Title(r"Odvození rovnice pro transformaci tenzorů").to_edge(UP)
+        self.add(title)
+        # Formalni odvozeni transformacni rovnice pro tenzory
+        lines = MathTex(
+            r"{{V}} &= {{A}} {{U}}\\",
+            r"{{RV'}} &= {{A}} {{R U'}}\\",
+            r"{{V'}} &= {{ R^{-1} }} {{A}} {{R U'}}\\",
+            r"{{V'}} &= (R^{-1} A R) {{U'}}"
+        )
+        print(len(lines))
+        groups = [
+            lines[:5],
+            lines[5:11],
+            lines[11:19],
+            lines[19:]
+            ]
 
-vv = np.linalg.eig(matice)
-print(vv[1].T[1])
-print(np.pi + np.arctan(-1))
-uhly = [0,180]
+        self.play(FadeIn(groups[0]))
+        for i in [0,1,2]:
+            self.play(
+            TransformMatchingShapes(
+                groups[i].copy(), 
+                groups[i+1], 
+                path_arc=90 * DEGREES)
+            ),
+            self.wait(.5)           
 
-for i in range(len(uhly)-1):
-    print (i)
+        self.wait()

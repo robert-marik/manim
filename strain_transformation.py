@@ -274,27 +274,38 @@ class Transformace(Scene):
     def construct(self):
 
         title = Title(r"Odvození rovnice pro transformaci tenzorů").to_edge(UP)
-        self.add(title)
-        # Formalni odvozeni transformacni rovnice pro tenzory
-        lines = VGroup(
-            MathTex("V = A U"),
-            MathTex("RV' = A R U'"),
-            MathTex(r"V' = R^{-1} A R U'"),
-            MathTex(r"V' = ","(R^{-1} A R)",r"U'")
+        self.play(FadeIn(title))
+        self.wait(WaitTime)
+        lines = MathTex(
+            r"{{V}} &= {{A}} {{U}}\\",
+            r"{{RV'}} &= {{A}} {{R U'}}\\",
+            r"{{V'}} &= {{ R^{-1} }} {{A}} {{R U'}}\\",
+            r"{{V'}} &= {{(R^{-1} A R)}} {{U'}}"
         )
-        lines.arrange(DOWN).next_to(title,DOWN, buff=LARGE_BUFF)
-        self.wait()
-        self.play(FadeIn(lines[0]),run_time=AnimationRuntime)
-        self.wait()
+        print(len(lines))
+        groups = [
+            lines[:5],
+            lines[5:11],
+            lines[11:19],
+            lines[19:]
+            ]
+
+        self.play(FadeIn(groups[0]))
+        self.wait(WaitTime)
         for i in [0,1,2]:
             self.play(
-            TransformMatchingShapes(lines[i].copy(), lines[i+1], path_arc=90 * DEGREES, run_time=AnimationRuntime)
+            TransformMatchingShapes(
+                groups[i].copy(), 
+                groups[i+1], 
+                path_arc=90 * DEGREES)
             ),
             self.wait(WaitTime)           
 
-        svorka = Brace(lines[-1][1], direction=DOWN)
+        self.wait(WaitTime)         
+
+        svorka = Brace(lines[-3], direction=DOWN)
         popisek = svorka.get_text("Tenzor v čárkované soustavě souřadnic")
-        lines[-1][1].set_color(YELLOW)
+        lines[-3].set_color(YELLOW)
         self.play(FadeIn(svorka), FadeIn(popisek), run_time=AnimationRuntime)
         self.wait(WaitTime*5)
 
@@ -328,11 +339,12 @@ class Transformace(Scene):
         #e2_coor=np.ndarray([-np.sin(theta),np.cos(theta)])
         self.play(FadeIn(number_plane), run_time=AnimationRuntime)
         self.play(Create(e12), run_time=AnimationRuntime)
+        self.wait(WaitTime)
         self.play(AnimationGroup(
             Create(circ),
             ReplacementTransform(e12,e12_r),
             lag_ratio=0.4, run_time=AnimationRuntime))
-        self.wait(WaitTime)
+        self.wait(2*WaitTime)
 
         h_buf = 2
         v_buf = 1.5
@@ -481,7 +493,7 @@ chování elastického materiálu.
 
 Změnu tvaru budeme popisovat ve dvou soustavách. Jedna soustava, bílá, bude
 respektovat geometrii pásu. Její souřadné osy budou ve směru pásu a tím i ve
-směru namáhání. Druhá soustava, červená, bude mít osy sklonéně. Například o 45
+směru namáhání. Druhá soustava, červená, bude mít osy pootočené. Například o 45
 stupňů, aby situace byla symetrická a obě osy byly vzhledem k pásu stejně
 skloněny.
 
@@ -492,7 +504,8 @@ dvou dimenzích čtverec. Přesněji, čtverec se stranami ve směru os, tedy bu
 mít bílý element pro bílou soustavu a červený pro červenou.
 
 Vysvětlíme si, jaké veličiny vidíme v tenzorech deformace. Vlevo nahoře v bílém
-tenzoru vidíme relativní prodloužení vodorovné strany bílého čtverce. to bude padesát procent, tedy jedna polovina. 
+tenzoru vidíme relativní prodloužení vodorovné strany bílého čtverce. to bude
+padesát procent, tedy jedna polovina. 
 
 V pravém dolním rohu vidíme relativní prodloužení svislé strany čtverce. To
 bude záporné, protože strana se zkracuje a hodnota bude minus jedna desetina.
@@ -501,4 +514,14 @@ Ve vedlejší diagonále bude číslo, které vyjařuje polovinu úhlu, o který
 sobě skloní obě vyznačené strany čtverce. Zde díky symetrii nedojde ke změně
 úhlu a proto ve vedlejší diagonále budou nuly.
 
-"""
+=====================================
+
+Nyní si odvodíme rovnici pro transfromaci komponent tenzoru mezi navzájem
+pootočenými soustavami. Tenzory se transformují stejně jako zobrazení. Mějme
+zobrazení vektoru U na vektor V reprezentované maticí A. Vektory vyjádříme v
+druhé soustavě souřadnic, například v čárkované, pomocí matice přechodu R.
+Vynásobením zleva inverzní maticí osamostatníme vektor V' a výraz, který zbyde
+před vektorem U' je vlastně matice převádějící vektor U' na V'. Tedy to je matice
+zobrazení v čárkované souřadné soustavě.
+
+""" 
