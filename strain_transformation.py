@@ -71,20 +71,20 @@ class Deformation(ThreeDScene):
         temp = VGroup(osy)
 
         self.play(FadeIn(temp))
-        self.wait(duration=10*WaitTime)
+        self.wait(duration=5*WaitTime)
 
 
         self.play(FadeIn(osyr))
-        self.wait(duration=10*WaitTime)
+        self.wait(duration=5*WaitTime)
 
 
         self.play(ReplacementTransform(tvg2,rct))
 
         self.play(FadeIn(tenzor1["O"]))
-        self.wait(duration=5*WaitTime)
+        self.wait(duration=2*WaitTime)
 
         self.play(FadeIn(tenzor2["O"]))
-        self.wait(duration=5*WaitTime)
+        self.wait(duration=2*WaitTime)
         
         vg = VGroup()
         vg.add(rct,squareL, squareR, squareC)
@@ -103,7 +103,7 @@ class Deformation(ThreeDScene):
         b1 = VGroup(Brace(squareL, color=YELLOW),Brace(squareR, color=YELLOW))
         b2 = VGroup(Brace(squareL, direction=LEFT, color=YELLOW),Brace(squareR, direction=LEFT, color=YELLOW))
         b3 = Brace(squareC, direction=LEFT+DOWN, color=YELLOW)
-        b4 = Brace(squareC, direction=RIGHT+DOWN, color=YELLOW)
+        b4 = Brace(squareC, direction=RIGHT+DOWN, color=BLUE)
 
         angle1= VGroup(*[Arc(
                 radius=0.3,
@@ -117,41 +117,31 @@ class Deformation(ThreeDScene):
                 angle =90*DEGREES,
                 color=YELLOW, stroke_width=8
             ).shift(squareC.get_bottom()*UP)    
-
   
-        def explain_element(tensor,element,text,marker=[]):
+        def explain_element(tensor,element,marker=[], extracolor = None):
             temp1 = VGroup(*[SurroundingRectangle(tensor.get_entries()[_]) for _ in element],*marker)
             # temp2 = Text(text).scale(0.75).next_to(vg,DOWN).to_edge(LEFT)
+            if extracolor is not None:
+                temp1[0].set_color(extracolor)
             self.play(FadeIn(temp1))
-            self.wait(duration=6*WaitTime)
-            self.play(FadeOut(temp1),*[FadeOut(i) for i in marker])
-            
+            return(temp1)
 
-        explain_element(tenzor1["O"],[0],"""
-        Levý horní prvek tenzoru deformace vyjadřuje
-        relativní prodloužení vodorovné strany 
-        bílého čtverce. Protože se strana prodlužuje
-        o polovinu, očekáváme hodnotu 0.5.
-        """,marker=[b1])
-        explain_element(tenzor1["O"],[3],"""
-        Pravý dolní prvek tenzoru deformace vyjadřuje 
-        relativní prodloužení svislé strany bílého čtverce. 
-        Protože se strana zkracuje o deset procent, 
-        očekáváme hodnotu −0.1. 
-        """,marker=[b2])
-        explain_element(tenzor1["O"],[1,2],"""
-        Mimodiagonální prvky vyjařují polovinu úhlu,
-        o který se při deformaci sevřou vektory 
-        směřující původně ve směru os. Očekáváme
-        nulovou hodnotu, pravý úhel se zachová.
-        """,marker=angle1)
+        t = explain_element(tenzor1["O"],[0],marker=[b1])
+        self.wait(duration=4*WaitTime)
+        self.play(FadeOut(t))
+        t = explain_element(tenzor1["O"],[3],marker=[b2])
+        self.wait(duration=4*WaitTime)
+        self.play(FadeOut(t))
 
+        t = explain_element(tenzor1["O"],[1,2],marker=[angle1])
+        self.wait(duration=6*WaitTime)
         # This rotates the 2D scene to 3D and back
-
-
         angle11= VGroup(*[angle1[0].copy().flip(RIGHT).set_color(BLUE).move_to(_,aligned_edge=UL) for _ in [squareL,squareR] ])
-        self.play(FadeIn(angle1),FadeIn(angle11))
-        self.wait(2*WaitTime)
+        self.play(FadeIn(angle11))
+        self.wait(5*WaitTime)
+        rotation_axis = DashedLine(start=[-4,0,0], end = [4,0,0], color=YELLOW)
+        self.play(FadeIn(rotation_axis))
+        self.wait(WaitTime)
 
         self.move_camera(
             phi=30 * DEGREES,
@@ -171,29 +161,44 @@ class Deformation(ThreeDScene):
             theta=-90 * DEGREES
         )
         self.wait(3*WaitTime)
-        self.play(FadeOut(angle1),FadeOut(angle11))
-
         # end of 3D stuff
+        self.play(FadeOut(t), FadeOut(angle11), FadeOut(rotation_axis))
 
-        explain_element(tenzor2["O"],[0,3],"""
-        Diagonální prvky tenzoru deformace v otočené 
-        soustavě vyjadřují relativní změnu délek stran
-        červeného čtverce. Očkáváme obě hodnoty stejné,
-        situace je symetrická.
-        """,marker=[b3,b4])
-        explain_element(tenzor2["O"],[1,2],"""
-        Mimodiagonální prvky vyjadřují polovinu úhlu, 
-        o který se sevřou vektory směřující před 
-        deformací ve směru červených os. Očekáváme 
-        zápornou hodnotu, vektory se rozevírají.
-        """,marker=angle2)
+        t = explain_element(tenzor2["O"],[0,3],marker=[b3,b4], extracolor=BLUE)
+        self.wait(duration=6*WaitTime)
 
-        angle= VGroup(*[Arc(
-                    radius=0.5,
-                    start_angle=0*DEGREES,
-                    angle =90*DEGREES,
-                    color=YELLOW
-            ).shift(_.get_left()*RIGHT, _.get_bottom()*UP) for _ in [squareL,squareR] ])
+        rotation_axis = DashedLine(start=[0,-2,0], end = [0,2,0], color=YELLOW)
+        self.play(FadeIn(rotation_axis))
+        self.wait(duration=2*WaitTime)
+        
+        # This rotates the 2D scene to 3D and back
+        self.move_camera(
+            phi=30 * DEGREES,
+            theta=-50 * DEGREES
+        )
+        
+        def update_drawing(d,dt):
+            d.rotate_about_origin(dt, UP)
+
+        [_.add_updater(update_drawing) for _ in [*vg,b3,b4]]
+        
+        self.wait(PI)
+        [_.remove_updater(update_drawing) for _ in [*vg,b3,b4]]
+
+        self.move_camera(
+            phi=0 * DEGREES,
+            theta=-90 * DEGREES
+        )
+        self.wait(3*WaitTime)
+        # end of 3D stuff        
+
+        self.play(FadeOut(t), FadeOut(rotation_axis))
+
+        self.wait(duration=WaitTime)
+        t = explain_element(tenzor2["O"],[1,2],marker=[angle2])
+        self.wait(duration=5*WaitTime)
+        self.play(FadeOut(t))
+
 
         vg2 = vg.copy()
         vg1 = vg.copy()
@@ -275,7 +280,7 @@ class Transformace(Scene):
 
         title = Title(r"Odvození rovnice pro transformaci tenzorů").to_edge(UP)
         self.play(FadeIn(title))
-        self.wait(WaitTime)
+        self.wait(5*WaitTime)         
         lines = MathTex(
             r"{{V}} &= {{A}} {{U}}\\",
             r"{{RV'}} &= {{A}} {{R U'}}\\",
@@ -299,9 +304,9 @@ class Transformace(Scene):
                 groups[i+1], 
                 path_arc=90 * DEGREES)
             ),
-            self.wait(WaitTime)           
+            self.wait(5*WaitTime)           
 
-        self.wait(WaitTime)         
+        self.wait(5*WaitTime)         
 
         svorka = Brace(lines[-3], direction=DOWN)
         popisek = svorka.get_text("Tenzor v čárkované soustavě souřadnic")
@@ -418,7 +423,7 @@ class Transformace(Scene):
         elementy = R[1].get_entries()
         e = Rinv[1].get_entries()
 
-        self.wait(4*WaitTime)
+        self.wait(6*WaitTime)
         
         self.play(*[ReplacementTransform(what.copy(),where) for what,where in zip(
             [R[0][0],R[0][1],R[0][2],elementy[0],elementy[3],R[1].get_brackets()],
@@ -477,17 +482,14 @@ class Transformace(Scene):
 
 komentar = """
 
-Při zkoumání mechanického namáhání materiálu je nezbytné mít možnost popsat
-silové působení na materíál a vyvolanou deformaci materiálu. Pro vyjádření
-deformace se používá tenzor deformace a v kartézských souřadnicích tento tenzor
-můžeme chápat jako matici. Skutečnost, že se nejedná o skalární veličinu, ale
-tenzor, s sebou nese některé nepříjmené důsledky. Například není úplně
-triviální vyjádřit hodnoty v soustavě souřadnic, která vznikne pootočením.
-Neintuitivnost spočívá i v tom, že stejné namáhání se může v jedné soustavě
-jevit jako čistě normálové namáhání a v jiné třeba jako čistě smykové namáhání
-nebo kombinace obojího.
+Dobrý den, v tomto videu si ukážeme, proč je potřeba mít transformační rovnice
+pro vyjadřování deformace tělesa v různých souřadných soustavách. Ukážeme si,
+že transformační rovnice vyplývají snadno z lineární algebry a maticového
+počtu. Budeme používat tenzor deformace z mechaniky tuhého tělesa a
+transformaci souřadnic z analytické geometrie. Pokud se během videa ve výkladu
+ztratíte, zmíněné dvě partie si můžete zopakovat pro lepší pochopení.
 
-Budeme uvažovat elastický pás, který natáhneme na polovinu. Tímto natažením se
+Budeme studovat elastický pás, který natáhneme o polovinu. Tímto natažením se
 pás zúží, například o deset procent. To je poměrně realistická představa
 chování elastického materiálu. 
 
@@ -500,28 +502,85 @@ skloněny.
 V bílé soustavě budeme mít bílý tenzor deformace, v červené soustavě červený. 
 
 Deformaci nejlépe sledujeme na reprezentativním elementu materiálu, což je ve
-dvou dimenzích čtverec. Přesněji, čtverec se stranami ve směru os, tedy budeme
-mít bílý element pro bílou soustavu a červený pro červenou.
+dvou dimenzích čtverec. Přesněji, čtverec se stranami ve směru os. Použijeme
+bílý element pro bílou soustavu a červený pro červenou.
 
-Vysvětlíme si, jaké veličiny vidíme v tenzorech deformace. Vlevo nahoře v bílém
-tenzoru vidíme relativní prodloužení vodorovné strany bílého čtverce. to bude
-padesát procent, tedy jedna polovina. 
+Připomeňme si, jaké veličiny vidíme v tenzorech deformace. Vlevo nahoře v bílém
+tenzoru vidíme relativní prodloužení vodorovné strany bílého čtverce.
+Prodlužujeme podélně o polovinu délky, proto zde bude jedna polovina.
 
 V pravém dolním rohu vidíme relativní prodloužení svislé strany čtverce. To
 bude záporné, protože strana se zkracuje a hodnota bude minus jedna desetina.
 
-Ve vedlejší diagonále bude číslo, které vyjařuje polovinu úhlu, o který se k
-sobě skloní obě vyznačené strany čtverce. Zde díky symetrii nedojde ke změně
-úhlu a proto ve vedlejší diagonále budou nuly.
+Ve vedlejší diagonále bude číslo, které vyjařuje polovinu úhlu, o který se
+zmenší úhel žlutě vyznačený na obrázku. Ten se ale nedeformuje nijak.
+Abychom se o tom přesvědčili, stačí ukázat, že žlutý úhel bude pořád stejný
+jako modrý úhel. To ukážeme snadno díky symetrii. Opravdu, pás ani materiál
+pásu ani vejší podmínky se nemění při rotaci pásu okolo podélné osy o 180
+stupňů. Tato rotace převede modře vyznačený úhel na žlutý. Protože před i po
+otočení máme fyzikálně identickou situaci, musí být stejná i odezva materiálu.
+Proto musí oba úhly být stejně velké. Pro jistotu si tuto transformaci ukažme
+na animaci. Protože mají úhly nulovou deformaci, budou mimodiagonání prvky
+tenzoru deformace nulové.
+
+Komponenty v hlavní diagonále červeného tenzoru budou stejně velké, protože
+odpovídají relativnímu prodloužení stran červeného čtverce. Odpovídající strany
+čverce a komponenty tenzoru jsou vyznačeny stejnou barvou. Strany jsou stejně
+skloněné k pásu a proto jejich deformace bude stejná. Pro pečlivé zdůvodnění
+tohoto tvrzení by se zase dalo využít argumentu symetrie, tentokrát s překlopením
+podél osy kolmé na osu pásu. Modrá značka se překlopí na žlutou a naopak, ale
+jinak je situace naprosto identická jako před otočením. Proto musí být hodnoty
+vyznačené v tenzoru žlutým a modrým rámečkem stejné.
+
+Čísla ve vedlejší diagonále udávají polovinu zmenšení úhlu v červeném
+čtverečku. Natažením pásu se úhel zvětší, proto tyto hodnoty budou záporné,
+zvětšení je záporné zmenšení.
+
+A teď zkusíme deformovat. Nejprve posuneme pás do vhodné polohy. Tato
+transformace nemění tvar pásu a oba tenzory deformace jsou nulové. Po natažení
+vidíme, že je do puntíku splněna naše předpověď. Bílý tenzor je diagonální s
+čísly 0.5 a -0.1. Červený tenzor má v hlavní diagonále stejná čísla a ve
+vedlješí záporná čísla. 
+
+V dalším si ukážeme, jak vypočítat komponenty červeného tenzoru z komponent
+tenzoru  bílého.
 
 =====================================
 
-Nyní si odvodíme rovnici pro transfromaci komponent tenzoru mezi navzájem
+Nejprve odvodíme rovnici pro transformaci komponent tenzoru mezi navzájem
 pootočenými soustavami. Tenzory se transformují stejně jako zobrazení. Mějme
-zobrazení vektoru U na vektor V reprezentované maticí A. Vektory vyjádříme v
-druhé soustavě souřadnic, například v čárkované, pomocí matice přechodu R.
-Vynásobením zleva inverzní maticí osamostatníme vektor V' a výraz, který zbyde
-před vektorem U' je vlastně matice převádějící vektor U' na V'. Tedy to je matice
-zobrazení v čárkované souřadné soustavě.
+zobrazení vektoru U na vektor V reprezentované maticí A. V souřadnicích V=A*U.
+Přejdeme do jiné soustavy souřadnic, v ní si souřadnice označíme například
+čárkovaně. Mezi souřadnicemi v různých soustavách převádíme pomocí matice
+přechodu R. Vynásobením zleva inverzní maticí R^{-1} osamostatníme vektor V' a
+výraz, který zbyde před vektorem U' je vlastně matice převádějící vektor U' na
+V'. Tedy to je matice našeho zobrazení v čárkované souřadné soustavě. Stejně se
+transformuje i tenzor deformace.
 
-""" 
+Pro nalezení matice předchodu R musíme najít souřadnice jednotkových vektorů ve
+směru os pootočené soustavy. To je záležitost definice funkcí sinus a kosinus na
+jednotkové kružnici a použití shodných trojúhelníků. Získané souřadnice vytvoří
+sloupce matice přechodu R. V našem konkrétním případě je úhel 45 stupňů a proto
+můžeme goniometrické funkce vyčíslit numericky. Dokonce můžeme využít toho, že se
+v matici opakuje stále stejná numerická hodnota a tuto hodnotu vytknout.
+
+Máme tedy matici přechodu vyjařující rotaci souřadnic a tenzor deformace v
+soustavě respektující geometrii úlohy. Nalezení inverzní matice je v případě
+matice rotace triviální, inverze bude matice transponovaná.
+
+Potom už stačí matice vynásobit ve správném pořadí, přičemž skalární násobky
+můžeme shromáždit všechny vpředu.
+
+Násobení matic není nic jiného než výpočet lineární kombinace sloupců první
+matice při použití koeficientů ze sloupců druhé matice. Jako výsledky dostáváme
+sloupce matice, která je součinem. Tuto operaci provedeme celkem dvakrát,
+protože mezi třemi maticemi jsou dva maticové součiny. Na závěr vynásobíme
+matici číslem stojícím před maticí a vidíme, že jsme našli tenzor deformace
+přesně v tom tvaru, jako jsme měli v simulaci natahování pásu.
+
+Ve videu jsme si připomněli, jak popisujeme deformaci elastických těles,
+ujasnili jsme si, že tento popis souvisí s volbou souřadné soustavy a ukázali
+jsme si, jak přejít od popisu v jedné souřadné soustavě do soustavy jiné.
+
+
+"""
