@@ -350,8 +350,8 @@ class PhasePortrait(Scene):
         self.play(AnimationGroup(
             TransformMatchingShapes(equations4[0][2].copy(),label_y),
             TransformMatchingShapes(equations4[1][2].copy(),label_x),
-            FadeToColor(equations4[0][0],RED),
-            FadeToColor(equations4[1][2],RED),
+            AnimationGroup(FadeToColor(equations4[0][0],RED),
+            FadeToColor(equations4[1][2],RED)),
             lag_ratio=1
         ))
 
@@ -367,35 +367,20 @@ class PhasePortrait(Scene):
         allcurves.set_stroke(color=BLUE, width=4)
         allcurves_higher_a.set_stroke(color=BLUE, width=4)
 
-
         self.play(
             AnimationGroup(
                 FadeOut(line_x, line_y, label_x, label_y),
-                FadeIn(stationary_point_higher_a),
+                ReplacementTransform(stationary_point, stationary_point_higher_a),
                 *[
                     AnimationGroup(FadeOut(_),FadeIn(__)) for _,__ in zip(
                         [*allcurves[:4], graph, *allcurves[4:]],
                         [*allcurves_higher_a[:4], graph_higher_a, *allcurves_higher_a[4:]] 
                         )
                 ],
-                FadeToColor(stationary_point,GRAY),
                 lag_ratio=1,
                 run_time=5
             )
         )
-        # self.play(
-        #     AnimationGroup(
-        #         FadeOut(line_x, line_y, label_x, label_y),
-        #         *[
-        #             ReplacementTransform(_,__) for _,__ in zip(
-        #                 [*allcurves, stationary_point.copy(), graph],
-        #                 [*allcurves_higher_a, stationary_point_higher_a, graph_higher_a] 
-        #                 )
-        #         ],
-        #         FadeToColor(stationary_point,GRAY),
-        #         lag_ratio=0.2
-        #     )
-        # )
 
 
         self.wait()
