@@ -156,8 +156,8 @@ class Eigenvectors(ThreeDScene):
         )
         self.wait(wait_time)
         self.play(
-            FadeOut(board['img']),FadeIn(board['img_perp']),
-            FadeOut(board_copy['img']),FadeIn(board_copy['img_perp']),
+            ReplacementTransform(board['img'],board['img_perp']),
+            ReplacementTransform(board_copy['img'],board_copy['img_perp']),
             ReplacementTransform(board['arrow'],board['arrow_short']),
             ReplacementTransform(board_copy['arrow'],board_copy['arrow_short']),
         )
@@ -165,8 +165,8 @@ class Eigenvectors(ThreeDScene):
         self.play(
             ReplacementTransform(board['arrow_short'],board['arrow_declined']),
             ReplacementTransform(board_copy['arrow_short'],board_copy['arrow_declined']),
-            FadeOut(board['img_perp']),FadeIn(board['img_slanted']),
-            FadeOut(board_copy['img_perp']),FadeIn(board_copy['img_slanted']),
+            ReplacementTransform(board['img_perp'],board['img_slanted']),
+            ReplacementTransform(board_copy['img_perp'],board_copy['img_slanted']),
         )
         self.wait(wait_time)
 
