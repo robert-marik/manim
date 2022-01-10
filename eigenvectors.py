@@ -87,18 +87,13 @@ class Eigenvectors(ThreeDScene):
             phi=30 * DEGREES,
             theta=-50 * DEGREES
         )
-
-        [_.add_updater(update_drawing) for  _ in board_copy.values()]
-        
+        [_.add_updater(update_drawing) for  _ in board_copy.values()]        
         self.wait(PI)
         [_.remove_updater(update_drawing) for _ in board_copy.values()]
-
         board_copy['img'] = ImageMobject(wood_longitudal_f).scale_to_fit_width(6).set_color(WHITE).move_to(board_copy['rectangle'])
         board_copy['img_perp'] = ImageMobject(wood_perp_f).scale_to_fit_width(6).set_color(WHITE).move_to(board_copy['rectangle'])
         board_copy['img_slanted'] = ImageMobject(wood_slanted_f).scale_to_fit_width(6).set_color(WHITE).move_to(board_copy['rectangle'])
-
         self.play(FadeIn(board_copy['img']))
-
         self.move_camera(
             phi=0 * DEGREES,
             theta=-90 * DEGREES
@@ -164,9 +159,10 @@ class Eigenvectors(ThreeDScene):
 
         first = True
         for _komentar,_varianty,img in zip (komentar,varianty,obrazky):
-            a11,a12,a21,a22 = _varianty
-            matice = np.array([[a11,a12],[a21,a22]])
-            matice_mobj_ = Matrix([[a11, a12], [a21, a22]], h_buff = 1.5).set_z_index(10)
+            # a11,a12,a21,a22 = _varianty
+            # matice = np.array([[a11,a12],[a21,a22]])
+            matice = np.reshape(_varianty,(2,2))
+            matice_mobj_ = Matrix(matice, h_buff = 1.5).set_z_index(10)
             matice_mobj = VGroup(MathTex(r"{\vec v").set_color(RED),MathTex(r"{}={}"),matice_mobj_,MathTex(r"\vec u").set_color(YELLOW))
             matice_mobj.arrange(RIGHT).to_corner(UL).add_background_rectangle(opacity=0.5, buff=.5)
             komentar_mobj = Tex(_komentar).to_corner(UR).add_background_rectangle(opacity=0.5, buff=.5)
@@ -225,16 +221,7 @@ class Eigenvectors(ThreeDScene):
             vv2 = [*vv[1].T[1]*5,0]
             output.add(Line(start = [-i for i in vv1],end = vv1, color=GREEN) )
             output.add(Line(start = [-i for i in vv2], end = vv2, color=GREEN))
-            # if np.abs(vv1[1]*vv2[1]+vv1[0]*vv2[0]) < 0.01:
-            #     self.remove(optimg)
-            #     if vv1[1]*vv2[1]==0:
-            #         otoceni = 0
-            #     else:
-            #         otoceni = min (np.arctan(vv1[1]/vv1[0]),np.arctan(vv1[1]/vv1[0]))
-            #     print(vv1,vv2,otoceni)
-            #     wood_img = obrazek_obj.copy().rotate(otoceni*DEGREES).scale_to_fit_width(3).to_corner(DR)
-            #     optimg = wood_img
-            #     self.add(optimg)
+
                 
         return output 
 
