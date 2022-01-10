@@ -87,9 +87,16 @@ class Eigenvectors(ThreeDScene):
             phi=30 * DEGREES,
             theta=-50 * DEGREES
         )
-        [_.add_updater(update_drawing) for  _ in board_copy.values()]        
-        self.wait(PI)
-        [_.remove_updater(update_drawing) for _ in board_copy.values()]
+
+        board_copy['img'] = ImageMobject(wood_longitudal).scale_to_fit_width(6).set_color(WHITE).move_to(board_copy['rectangle'])
+        self.add(board_copy['img'])
+
+        [_.add_updater(update_drawing) for  _ in [*board_copy.values(),board_copy['img']]]        
+        self.wait(PI/2)
+        board_copy['img'] = ImageMobject(wood_longitudal_f).scale_to_fit_width(6).set_color(WHITE).move_to(board_copy['rectangle'])
+
+        self.wait(PI/2)
+        [_.remove_updater(update_drawing) for _ in [*board_copy.values(),board_copy['img']]]
         board_copy['img'] = ImageMobject(wood_longitudal_f).scale_to_fit_width(6).set_color(WHITE).move_to(board_copy['rectangle'])
         board_copy['img_perp'] = ImageMobject(wood_perp_f).scale_to_fit_width(6).set_color(WHITE).move_to(board_copy['rectangle'])
         board_copy['img_slanted'] = ImageMobject(wood_slanted_f).scale_to_fit_width(6).set_color(WHITE).move_to(board_copy['rectangle'])
