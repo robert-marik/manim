@@ -319,20 +319,19 @@ komentar = """
 Dobrý den, v tomto videu si ukážeme souvislost anatomických směrů dřeva s pojmy
 lineární algebry. Z fyziky je známo, že tok tepla určíme násobením součinitele
 tepelné vodivosti se spádem teploty. Zatímco ale v kovech teplo teče přesně ve
-směru klesající teploty, ve dřevě to je jinak. Tok se částečně stáčí do
-podélného směru. Proto musí součinitel tepla mít maticový charakter a tok
-vypočteme násobením této matice s vektorem definujícícm spád teploty. 
+směru klesající teploty, ve dřevě to je jinak. Součinitel vedení tepla má
+maticový charakter, tok vypočteme maticovým součinem a tento tok nemusí mířit
+přesně směrem, kterým klesá teplota. Obecně mají oba vektory jiný směr.
 
 Někdy se však směr toku tepla a směr spádu teploty přece jenom shodují i u
-dřeva. Například pokud teplota klesá v podélném směru. V tomto případě teplo
-teče také v podélném směru. Opravdu. Představme si situaci s vedením tepla ve
-dvourozměrném případě v kusu prkna. Vlevo je horký konec, vpravo studený. Prkno
-je nařezáno podélně. Představme si, že teplo by teklo například doprava nahoru.
-Překlopením okolo delší hrany dostaneme opět prkno s podélným směrem zleva
-doprava, s horým koncem nalevo a studeným napravo. Tedy stejně jako před
-překlopením. Je to tedy fyzikálně zcela stejná situace, ale tok tepla změnil
-směr. To je absurdní, takto příroda nefunguje. Proto tok tepla v tomto případě
-musí být v podélném směru. 
+dřeva. Například pokud teplota klesá v podélném směru. Opravdu. Představme si
+situaci s vedením tepla ve dvourozměrném případě v kusu prkna. Vlevo je horký
+konec, vpravo studený. Prkno je nařezáno podélně. Představme si, že teplo by
+teklo například doprava nahoru. Překlopením okolo delší hrany dostaneme opět
+prkno s podélným směrem zleva doprava, s horým koncem nalevo a studeným napravo.
+Stejně jako před překlopením. Je to tedy fyzikálně zcela stejná situace, ale tok
+tepla změnil směr. To je absurdní, takto příroda nefunguje. Proto tok tepla v
+tomto případě musí být v podélném směru. 
 
 Podobnou argumentaci můžeme použít i pro prkno nařezané kolmo na podélný směr.
 Jediný rozdíl je v tom, že stejný teplotní spád vyvolá menší tepelný tok,
@@ -344,64 +343,67 @@ tomto případě se tok tepla od směru spádu teploty odklonit může a skuteč
 odklání.
 
 Z uvedeného vidíme, že ve dvou případech dřevo pošle teplo ve směru spádu
-teploty. Pokud je tento spád podél nebo napříč. Toto je zjednodušený
-dvoudimenzionální model, ve 3D bychom měli směry tři, podélný, radiální a
-tangenciální. 
+teploty. Toto je zjednodušený dvoudimenzionální model, ve 3D bychom měli směry
+tři, podélný, radiální a tangenciální. 
 
 Vzhledem k tom, že přepočet spádu teploty na tok obstarává maticové zobrazení
-násobení, znamená to, že u tohoto zobrazení je stejný směr vzoru a obrazu. V
-aplikacích i v teoretické matematice je nezbytné umět identifikvat takovou
-situaci a proto si vektory mající uvedenou vlastnost vysloužily název vlastní
-vektory. Teď se na ně podíváme geometricky. 
+reprezentované násobením, znamená to, že u tohoto zobrazení je stejný směr vzoru
+a obrazu. V aplikacích i v teoretické matematice je nezbytné umět identifikvat
+takovou situaci a proto si vektory mající uvedenou vlastnost vysloužily název
+vlastní vektory. Teď se na ně podíváme geometricky. 
 
 Žlutý vektor na obrázku je vektor u. Jeho obrazem ve zobrazení představovaném
 maticí na obrazovce je červený vektor v. Žlutým vektorem budeme otáčet v rovině
 a budeme sledovat, kdy budou oba vektory rovnoběžné. Buď souhlasně rovnoběžné
 nebo nesouhlasně rovnoběžné, tj. pokud míří přesně stejným nebo přesně opačným
-směrem. V situaci, kdy toto nastane, animaci na chvíli zastavíme. Zastávky,
-vlastní směry, jsou vyznačeny zeleně. Podíl délek vektorů opatřený případně
-znaménkem minus pokud vektory míří na opačnou stranu se nazývá vlastní hodnota.
-V prvním případě vidíme dva vlastní směry zleva dole směrem doprava nahoru a
-poté zprava dole směrem doleva nahoru. V tomto případě míří při zastavení oba
-vektory stejným směrem a obě vlastní hodnoty jsou kladné. Jiná matice má jednu
+směrem. V situaci, kdy toto nastane, animaci na chvíli zastavíme. Tyto zastávky
+jsou vlastní směry a jsou vyznačeny zeleně. Podíl délek vektorů opatřený
+případně znaménkem minus pokud vektory míří na opačnou stranu se nazývá vlastní
+hodnota. V prvním případě vidíme dvě zelené přímka a tedy dva vlastní směry. V
+tomto případě míří při zastavení oba vektory stejným směrem a obě vlastní
+hodnoty jsou kladné. 
+
+Matice nemusí mít jenom kladné vlastní hodnoty. Matice na obrázku má jedno
 vlastní hodnotu kladnou a druhou zápornou. Toto je málo zajímavé z praktického
 hlediska, protože situace, kdy teplo samovolně teče proti směru spádu teploty v
 přírodě nenastává. 
 
-Matice nemusí mít žádný vlastní směr. Například matice s jednotkami v hlavní
-diagonále a opačnými čísly blízkými k nule ve vedlejší diagonále je matice
-malých rotací a ta vektor jenom potočí. Obraz zaostává za vzorem o konstantní
-úhel a vektory nikdy nemíří ani stejným ani opačným směrem. Ani takto materiály
-v přírodě nefungují.
+Matice nemusí mít dokonce žádný vlastní směr. Například matice s jedničkami v
+hlavní diagonále a opačnými čísly blízkými k nule ve vedlejší diagonále je
+matice malých rotací a ta vektor jenom potočí. Obraz zaostává za vzorem o
+konstantní úhel a vektory nikdy nemíří ani stejným ani opačným směrem. Ani takto
+materiály v přírodě nefungují.
 
-Matice může mít naopak každý směr vlastní. To jsou nejhezčí materiály z hlediska
-popisu vlastností. Teplo teče směrem, kterým klesá teplota. Takto fungují
-materiály, mající ve všech směrech stejné vlastnosti. Například kovy. Příslušná
-matice je násobkem jednotkové matice.
+Matice může mít naopak každý směr vlastní. Teplo teče vždy směrem, kterým klesá
+teplota. Takto fungují materiály, mající ve všech směrech stejné vlastnosti.
+Například kovy. Příslušná matice je násobkem jednotkové matice. To jsou nejhezčí
+materiály z hlediska popisu vlastností. 
 
 Matice diagonální s různými hodnotami v diagonále už vyjadřuje komplikovanější
 situaci. Vlastní směry jsou kolmé a ve směrech souřadných os. To je příjemné.
 Vlastní čísla však nejsou stejná. Tedy ve dvou směrech teče teplo směrem spádu
-teploty, ale jednou lépe a podruhé hůře. Přesně jako jsme měli u dřeva. V
+teploty, ale jednou lépe a podruhé hůře. Přesně jako to máme u dřeva. V
 případech mimo vlastní směry se tok od spádu teploty odklání ve prospěch směru s
 vyšší vodivostí, což je zde vodorovně. Naše matice odpovídá chování dřeva s
-podélným směrem zleva doprava. Diagonální matice jsou pořád pěkné a relativně
-snadné na zpracovávání. Aby nám v modelech materiálové vlastnosti vedly na
-diagonální matice, snažíme se při studiu dřevěného materiálu volit souřadné osy
-v anatomických směrech dřeva.
+podélným směrem zleva doprava. Matematicky jsou diagonální matice pořád ještě
+pěkné a relativně snadné na zpracovávání. Aby nám v modelech materiálové
+vlastnosti vedly na diagonální matice, snažíme se při studiu dřevěného materiálu
+volit souřadné osy v anatomických směrech dřeva.
 
 Pokud taková volba není možná a osy jsou skloněné vůči anatomickým směrům dřeva,
 není příslušná matice už diagonální. Je symetrická, například jako na obrázku.
-Co zůstává je kolmost vlastních směrů. V animaci vidíme, že je opět v jednom
-vlastním směru obraz delší než ve druhém. To odpovídá podélnému a příčnému směru
-dřeva v tomto pořadí. Přesně jako na obrazovce.
+Co zůstává je kolmost vlastních směrů. V animaci vidíme, že podobně jako u
+diagonální matice je v jednom vlastním směru obraz delší než ve druhém. To
+odpovídá podélnému a příčnému směru dřeva v tomto pořadí. Přesně jako na
+obrazovce. Takové matice tedy popisují dřevo, u kterého nemíří anatomické směry
+ve směrech os souřadnic.
 
 Ve videu jsme si ukázali, jak se dá symetrie využít k tomu, že v některých
-případech umíme ukázat, že podnět a odezva při materiálovém namá hání mají stejný
-směr. Pro identifikaci takových situací matematika zavádí pojem vlastní směr.
-Ukázali jsme si, jak vlastní směry souvisí s tvarem matice. Prakticky zajímavými
-případy z hlediska materiálových vlastností jsou diagonální matice a symetrická
-matice.
+případech umíme ukázat, že podnět a odezva při materiálovém namá hání mají
+stejný směr. Pro identifikaci takových situací matematika zavádí pojem vlastní
+směr. Ukázali jsme si, jak vlastní směry souvisí s tvarem matice. Prakticky
+zajímavými případy z hlediska materiálových vlastností jsou diagonální matice a
+symetrická matice.
 
 """
         
