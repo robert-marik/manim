@@ -399,7 +399,7 @@ obrazovce. Takové matice tedy popisují dřevo, u kterého nemíří anatomick�
 ve směrech os souřadnic.
 
 Ve videu jsme si ukázali, jak se dá symetrie využít k tomu, že v některých
-případech umíme ukázat, že podnět a odezva při materiálovém namá hání mají
+případech umíme ukázat, že podnět a odezva při materiálovém namáhání mají
 stejný směr. Pro identifikaci takových situací matematika zavádí pojem vlastní
 směr. Ukázali jsme si, jak vlastní směry souvisí s tvarem matice. Prakticky
 zajímavými případy z hlediska materiálových vlastností jsou diagonální matice a
