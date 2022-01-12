@@ -41,12 +41,13 @@ class Eigenvectors(ThreeDScene):
         lambda_matrix = Matrix([[3,1],[1,2]])
         matrix_v_drevo = Matrix([[7],[0]])
         texty = VGroup(
-            Tex(r"$\bullet$ $\vec v = \lambda \vec u$,\quad $\vec v$ je tok, $\vec u$ je spád teploty"),
+            Tex(r"$\bullet$ $\vec v = \lambda \vec u$,\quad $\vec v$ je tok tepla, $\vec u$ je spád teploty"),
             Tex(
                     r"$\bullet$ Materiál typu kov: $\lambda = 5$,", 
                     r"$\displaystyle\vec u=\begin{bmatrix} 2\\-1\end{bmatrix},$",
                     r"$\displaystyle\vec v=$",
-                    r"$\displaystyle 5\begin{bmatrix} 2\\-1\end{bmatrix}$"
+                    r"$\displaystyle 5\begin{bmatrix} 2\\-1\end{bmatrix}$",
+                    r"$=\displaystyle \begin{bmatrix} 10\\-5\end{bmatrix}$"
             ).arrange(RIGHT, buff=0.2),
             VGroup(
                 Tex(r"$\bullet$ Materiál typu dřevo: $\lambda = {}$"), 
@@ -66,12 +67,12 @@ class Eigenvectors(ThreeDScene):
 
         m = texty[3]
         m.to_edge(RIGHT)
-        tok_kov = Tex(r"$\displaystyle \begin{bmatrix} 10\\-5\end{bmatrix}$").move_to(texty[1][3])
-        for _ in [texty[0],texty[1],texty[2],texty[3][0:4]]:
+        for _ in [texty[0],texty[1][:4],texty[2],texty[3][0:4]]:
             self.play(FadeIn(_))
             self.wait()
 
-        self.play(ReplacementTransform(texty[1][3],tok_kov))
+        self.play(FadeIn(texty[1][4]))
+        self.wait()
         self.MatrixProduct(m[1],m[2],matrix_v_drevo)
         self.wait()
         texty[4].shift(RIGHT)
