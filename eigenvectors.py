@@ -321,18 +321,18 @@ Dobrý den, v tomto videu si ukážeme souvislost anatomických směrů dřeva s
 lineární algebry. Z fyziky je známo, že tok tepla určíme násobením součinitele
 tepelné vodivosti se spádem teploty. Zatímco ale v kovech teplo teče přesně ve
 směru klesající teploty, ve dřevě to je jinak. Součinitel vedení tepla má
-maticový charakter, tok vypočteme maticovým součinem a tento tok nemusí mířit
+maticový charakter. Tok vypočteme maticovým součinem a tento tok nemusí mířit
 přesně směrem, kterým klesá teplota. Obecně mají oba vektory jiný směr.
 
-Někdy se však směr toku tepla a směr spádu teploty přece jenom shodují i u
-dřeva. Například pokud teplota klesá v podélném směru. Opravdu. Představme si
-situaci s vedením tepla ve dvourozměrném případě v kusu prkna. Vlevo je horký
-konec, vpravo studený. Prkno je nařezáno podélně. Představme si, že teplo by
-teklo například doprava nahoru. Překlopením okolo delší hrany dostaneme opět
-prkno s podélným směrem zleva doprava, s horým koncem nalevo a studeným napravo.
-Stejně jako před překlopením. Je to tedy fyzikálně zcela stejná situace, ale tok
-tepla změnil směr. To je absurdní, takto příroda nefunguje. Proto tok tepla v
-tomto případě musí být v podélném směru. 
+Někdy se směr toku tepla a směr spádu teploty přece jenom shodují i u dřeva.
+Například pokud teplota klesá v podélném směru. Opravdu. Představme si situaci
+s vedením tepla ve dvourozměrném případě v kusu prkna. Vlevo je horký konec,
+vpravo studený. Prkno je nařezáno podélně. Představme si, že teplo by teklo
+například doprava nahoru. Překlopením okolo delší hrany dostaneme opět prkno s
+podélným směrem zleva doprava, s horým koncem nalevo a studeným napravo. Stejně
+jako před překlopením. Je to tedy fyzikálně zcela stejná situace, ale tok tepla
+změnil směr. To je absurdní, takto příroda nefunguje. Proto tok tepla v tomto
+případě musí být v podélném směru.
 
 Podobnou argumentaci můžeme použít i pro prkno nařezané kolmo na podélný směr.
 Jediný rozdíl je v tom, že stejný teplotní spád vyvolá menší tepelný tok,
@@ -348,10 +348,10 @@ teploty. Toto je zjednodušený dvoudimenzionální model, ve 3D bychom měli sm
 tři, podélný, radiální a tangenciální. 
 
 Vzhledem k tom, že přepočet spádu teploty na tok obstarává maticové zobrazení
-reprezentované násobením, znamená to, že u tohoto zobrazení je stejný směr vzoru
-a obrazu. V aplikacích i v teoretické matematice je nezbytné umět identifikvat
-takovou situaci a proto si vektory mající uvedenou vlastnost vysloužily název
-vlastní vektory. Teď se na ně podíváme geometricky. 
+reprezentované násobením, znamená to, že u tohoto zobrazení je stejný směr
+vzoru a obrazu. V aplikacích i v teoretické matematice je nezbytné umět
+identifikovat takovou situaci a proto si vektory mající uvedenou vlastnost
+vysloužily název vlastní vektory. Teď se na ně podíváme geometricky.
 
 Žlutý vektor na obrázku je vektor u. Jeho obrazem ve zobrazení představovaném
 maticí na obrazovce je červený vektor v. Žlutým vektorem budeme otáčet v rovině
