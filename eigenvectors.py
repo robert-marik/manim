@@ -360,11 +360,11 @@ nebo nesouhlasně rovnoběžné, tj. pokud míří přesně stejným nebo přesn
 směrem. V situaci, kdy toto nastane, animaci na chvíli zastavíme. Tyto zastávky
 jsou vlastní směry a jsou vyznačeny zeleně. Podíl délek vektorů opatřený
 případně znaménkem minus pokud vektory míří na opačnou stranu se nazývá vlastní
-hodnota. V prvním případě vidíme dvě zelené přímka a tedy dva vlastní směry. V
+hodnota. V prvním případě vidíme dvě zelené přímky a tedy dva vlastní směry. V
 tomto případě míří při zastavení oba vektory stejným směrem a obě vlastní
 hodnoty jsou kladné. 
 
-Matice nemusí mít jenom kladné vlastní hodnoty. Matice na obrázku má jedno
+Matice nemusí mít jenom kladné vlastní hodnoty. Matice na obrazovce má jednu
 vlastní hodnotu kladnou a druhou zápornou. Toto je málo zajímavé z praktického
 hlediska, protože situace, kdy teplo samovolně teče proti směru spádu teploty v
 přírodě nenastává. 
