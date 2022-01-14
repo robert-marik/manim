@@ -238,15 +238,16 @@ podzemní vody.
 
 Budeme studovat dvourozměrný materiál s určitým rozložením teploty. Termosnímek
 by mohl vypadat jako na obrazovce. Každé teplotě je přiřazena nějaká barva.
-Toto rozložení teploty definuje podnět, na který příroda raeaguje a snaží se
-vyrovnat tepelnou nerovnováhu tokem tepla. Výsledný tok tepla je souhra tohoto
-podnětu s materiálovými vlastnostmi. Nejprve prozkoumejme tento podnět.
+Toto rozložení teploty definuje podnět, na který příroda reaguje a snaží se
+vyrovnat teploty tokem tepla. Výsledný tok tepla je souhra tohoto podnětu s
+materiálovými vlastnostmi. Nejprve prozkoumejme tento podnět.
 
 Na obrazovce je příliš mnoho informací. To není vždy ideální. Zkusíme si
-vytáhnout jenom některé izotermy, tedy křivky podél nichž je teplota
-konstantní. Pomocí těchto křivek můžeme identifikovat gradient, tedy vektor
-udávající směr a intezitu růstu teploty. Bílé šipky znázorňující gradient jsou
-kolmé k izotermám a jsou delší tam, kde jsou izotermy nahusto.
+vytáhnout jenom některé křivky podél nichž je teplota konstantní. Jedná se o
+vrtevnice, nebo v kontextu teploty lépe o izotermy. Pomocí těchto izoterm
+můžeme identifikovat gradient teploty. To je vektor udávající směr a intezitu
+růstu teploty. Bílé šipky znázorňující gradient jsou kolmé k izotermám a jsou
+delší tam, kde jsou izotermy nahusto.
 
 Pro potřeby toku nepotřebujeme sledovat růst, ale pokles teploty. Vynásobíme
 tedy gradient minus jedničkou a máme záporně vzatý gradient, ukazující směr
@@ -256,8 +257,15 @@ zkrátit na stejnou délku a informaci o délce gradientu zakódovat do barvy
 
 Všechny šipky jsou teď kolmé na izotermy a směřují do míst s menší teplotou.
 Takto, ve směru šipek, by se dalo do pohybu teplo v materiálech, které mají ve
-všech směrech stejné vlastnosti. Například v kovech.
+všech směrech stejné vlastnosti. Například v kovech. Stejně velký gradient
+vyvolá stejně velký tok a ten je vždy ve směru poklesu.
 
+V případě dřeva jsou v různých směrech různé vlasnosti a gradient podélným
+směrem vyvolá větší tok než stejně velký gradient směrem napříč. Navíc, pokud
+gradient není v anatomickém směru dřeva, tak se směr poklesu teploty a směr
+toku tepla neshodují. Záporně vzatý gradient přepočítáváme na tok pomocí
+maticového násobení a situace může vypadat například tak jako na plátně. Zde
+máme matici se dvěma vlastníma hodnotama, kterým náleží dva vlastní směry. 
 
 
 """
