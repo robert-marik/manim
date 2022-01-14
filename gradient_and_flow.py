@@ -76,9 +76,18 @@ class Flow(MovingCameraScene):
         gradient_min = np.min(gradienty)
 
         number_of_contours = 20
-        contours = VGroup(*[
-            ImplicitFunction(lambda x,y:function(x,y)-i)            
-            .set_color(temperature_to_color(i, dolni_mez,horni_mez)) for i in np.linspace(dolni_mez + 0.05*(horni_mez-dolni_mez), horni_mez ,number_of_contours)
+        # Contours using implicit plot are more general but slower
+        # contours = VGroup(*[
+        #     ImplicitFunction(lambda x,y:function(x,y)-i)            
+        #     .set_color(temperature_to_color(i, dolni_mez,horni_mez)) for i in np.linspace(dolni_mez + 0.05*(horni_mez-dolni_mez), horni_mez ,number_of_contours)
+        #     ]
+        # )
+        contours = VGroup(
+            *[
+                ParametricFunction(lambda t : np.array([(-C-(A*(t+B))**2)/a -b ,t,0]), 
+                   t_range = np.array([-4.3,4.3,0.1])).set_color(temperature_to_color(C, dolni_mez,horni_mez))
+                   for C in 
+                   np.linspace(dolni_mez + 0.05*(horni_mez-dolni_mez), horni_mez ,number_of_contours)
             ]
         )
 
