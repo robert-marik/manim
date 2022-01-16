@@ -479,3 +479,51 @@ class Sestaveni(Scene):
         self.play(FadeIn(final2))
 
         self.wait(20)
+
+komentar = """
+
+Dobrý den, vítejte u videa, kde si ukážeme matematický popis vedení tepla. Je
+to nádherné cvičení na využití funkcí více proměnných, ale také krok do světa
+reálných aplikací, protože se jedná o speciální případ difuzní rovnice,
+popisující téměř veškeré transportní jevy v přírodě.
+
+Ukážeme si, jak funguje vedení tepla. Spíš si vlastně jenom detailněji popíšeme
+to co zná každý z běžného života. Ukážeme si, jak matematika umí detailně
+popsat proces vedení tepla a jak dokáže fyzikální principy řídící tento děj
+transformovat do modelu umožňujícího dělat experimenty v počítači, takzvaně "in
+silico".
+
+Uvažujme vedení tepla v tyči. Tyč sestavíme ze tří kousků o teplotách 100, 50 a
+0 stupňů a přidáme na koníc krátké kousky o teplotách osmdesát a dvacet stupňů.
+Teploty osmdesát a dvace na koncích udržujeme a sledujeme, co se děje s
+teplotou podél tyče.
+
+Příroda má tendenci vyrovnávat teploty a z místa o vyšší teplotě teče teplo do
+místa s nižší teplotou. Intenzita toku souvisí s teplotním spádem. Vysoký
+teplotní rozdíl způsobí vysoký teplotní tok. Na začátku je teplotní rozdíl
+jenom na rozhraní částí s různou teplotou. Jak se však teplo předává, reaguje
+tyč na dodávání tepla navyšováním teploty a na úbytek tepla snižováním teploty.
+
+Budeme sledovat na termosnímku tyče teplotu, v některých místech budeme
+vypisovat teploty. Pro grafické znázornění si vykreslíme teplotní profil a
+intenzitu toku tepla. Ten je kladný, pokud teplo teče doprava a záporný, pokud
+teče doleva. Protože jsou oba grafy pod sebou, je snadné zkontrolovat, že
+kladný tok je tam, kde teplota směrem doprava klesá a záporný tam, kde roste.
+
+Protože tok se během pokusu mění příliš, měníme na dolním grafu měřítko a
+vypisujeme hodnoty pro maximum a minimum. Všímejme si, jak se teploty
+vyrovnávají, to snižuje intenzitu toku a nakonec teplota v tyči klesá
+rovnoměrně po celé délce, což způsobí konstantní tok podél celé tyče. To
+znamená, že se nikde v tyči nehromadí teplo, žádná část se již dál neohřívá ani
+naopak. Jenom dodáváme teplo na udržení teplotního rozdílu mezi osmdesáti a
+dvaceti stupni.
+
+Animace není příliš šikovná na detailní informace, co se děje během našeho
+pokusu. Pro vizualizaci je lepší si informace lépe vizualizovat. Například pro
+různé časy zachytit průběh teploty podél tyče, nebo v různých místech sledovat
+časový vývoj teploty. Můžeme dokonce mít i obojí současně ve 3D grafu, avšak to
+je spíše na efekt než pro detailní zpracování. Jednodušší řešení jsou často
+efektivnější, například můžeme vypsat data do tabulky a z ní potřebné vizuální
+informace generovat.
+
+"""
