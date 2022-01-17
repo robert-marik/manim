@@ -92,7 +92,7 @@ class HeatTransfer(Scene):
 
         numbers = True
         kwds = {}
-        for t in [0,1,2,3,4,5,6,7,8,9,10,12,15,20,30,40,80,100,150,200,300,400,1000]:
+        for t in [0,1,2,3,4,5,6,7,8,9,10,12,15,20,30,40,60,80,100,150,200,300,400,1000]:
             self.remove(rod)
             if t>800:
                 numbers = True
@@ -159,9 +159,11 @@ class Graphs3D(ThreeDScene):
         ax = ThreeDAxes(
             x_range=[-.1,1.05,1], 
             z_range=[-10,120,20], 
-            y_range=[0,250,1e6],
-            z_length = 3
-            ).scale(0.75).shift(2*RIGHT+.1*DOWN)
+            y_range=[0,190,1e6],
+            z_length = 4,
+            y_length = 20,
+            x_length = 8,
+            ).scale(0.75).shift(2*RIGHT-1.05*DOWN)
         self.set_camera_orientation(phi=2*PI/5, theta=-PI/3)
         tmax = 100
         tstep = 4
@@ -181,9 +183,15 @@ class Graphs3D(ThreeDScene):
                 )
             )
         graphs.set_stroke(color=WHITE, width=2)
-        labz = ax.get_z_axis_label(Tex(r"$T(x,t)$")).shift(LEFT)
-        labx = ax.get_x_axis_label(Tex(r"$x$")).rotate(PI/2,axis=RIGHT)
-        laby = ax.get_y_axis_label(Tex(r"$t$")).rotate(PI/2,axis=RIGHT)
+        Tlab = Tex(r"$T(x,t)$").move_to([-5,3,0])
+        xlab = Tex(r"$x$").move_to([3,-3.5,0])
+        tlab = Tex(r"$t$").move_to([3.5,2.5,0])
+        self.add_fixed_in_frame_mobjects(Tlab)
+        self.add_fixed_in_frame_mobjects(tlab)
+        self.add_fixed_in_frame_mobjects(xlab)
+        #labz = ax.get_z_axis_label(Tex(r"$T(x,t)$"), direction=OUT)#.rotate(PI/2,axis=RIGHT)
+        #labx = ax.get_x_axis_label(Tex(r"$x$"), direction=-50*UP)#.rotate(PI/2,axis=RIGHT)
+        #laby = ax.get_y_axis_label(Tex(r"$t$"))#.rotate(PI/2,axis=RIGHT)
 
         # shift = np.array([0,0,0])
         # ds = np.array([.5,.5,0])
@@ -191,14 +199,15 @@ class Graphs3D(ThreeDScene):
         #     i.shift(shift)
         #     shift=shift+ds
 
-        self.add(ax,labx,laby,labz)
+        self.add(ax)
+        #,labx,laby,labz)
         self.play(AnimationGroup(
             *[Create(i) for i in graphs],
             lag_ratio=.8
             ), run_time=15
         )
         self.wait(20)
-        self.play(*[FadeOut(i) for i in self.mobjects])
+        #self.play(*[FadeOut(i) for i in self.mobjects])
 
 class Table(Scene):
     def construct(self):
