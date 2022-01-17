@@ -193,21 +193,14 @@ class Graphs3D(ThreeDScene):
         #labx = ax.get_x_axis_label(Tex(r"$x$"), direction=-50*UP)#.rotate(PI/2,axis=RIGHT)
         #laby = ax.get_y_axis_label(Tex(r"$t$"))#.rotate(PI/2,axis=RIGHT)
 
-        # shift = np.array([0,0,0])
-        # ds = np.array([.5,.5,0])
-        # for i in graphs:
-        #     i.shift(shift)
-        #     shift=shift+ds
-
         self.add(ax)
-        #,labx,laby,labz)
         self.play(AnimationGroup(
             *[Create(i) for i in graphs],
             lag_ratio=.8
             ), run_time=15
         )
         self.wait(20)
-        #self.play(*[FadeOut(i) for i in self.mobjects])
+        self.play(*[FadeOut(i) for i in self.mobjects])
 
 class Table(Scene):
     def construct(self):
