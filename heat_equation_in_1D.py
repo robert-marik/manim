@@ -17,8 +17,6 @@ class HeatTransfer(Scene):
     def construct(self):
 
         ax2 = Axes(x_range=[0,1,2],y_range=[-1,1,2], y_length=1, x_length=12)
-        ax3 = ax2.copy()
-        ax4 = ax2.copy()
 
         def plot_rod(
                 ax_, 
@@ -112,29 +110,31 @@ class HeatTransfer(Scene):
             all_rods += [plot_rod(ax2, x_interval, T, t=t, numbers=numbers, **kwds )]
 
         self.remove(*self.mobjects)
-        rod = VGroup()
         rod = all_rods[0]
+
+        title = Title(r"Vedení tepla v tyči").to_edge(UP)
+        self.play(GrowFromCenter(title))        
+        self.wait(.5)
+
+        for i in all_rods:
+            i.shift(2*DOWN)
 
         self.play(FadeIn(rod[:2]))  # rod
         self.play(FadeIn(rod[4]))  # time value
-        self.wait(3)
-        # self.play(FadeIn(rod[2][0:2])) # Temperature graph
-        # self.wait()
-        # self.play(FadeIn(rod[2][2:]))  # heat flow
-        # self.wait(10)
-        # self.play(FadeIn( rod[3]))  # heat flow min/max
-        # self.wait()
-        # self.wait()
-        # 
-
+        self.wait(10)
+        
         for i in range(1,len(all_rods)):
             self.remove(*self.mobjects)
             curr_rod = all_rods[i]
+            self.add(title)
             self.add(curr_rod[:2], curr_rod[4])
             self.wait(0.2)
 
         self.wait(10)
         self.remove(*self.mobjects)
+
+        for i in all_rods:
+            i.shift(2*UP)
 
         self.play(FadeIn(rod[:2]))  # rod
         self.play(FadeIn(rod[4]))  # time value
@@ -157,8 +157,10 @@ class HeatTransfer(Scene):
             self.play(
                 AnimationGroup(*[Indicate(i) for i in [rct[2],rct[3]]],lag_ratio=0.05) 
             )
-
         self.wait(10)
+        self.play(
+                AnimationGroup(*[FadeOut(i) for i in [rct[2],rct[3]]],lag_ratio=0.05) 
+            )
 
         for i in range(3):
             self.play(
@@ -166,20 +168,25 @@ class HeatTransfer(Scene):
             )
 
         self.wait(10)
-        self.remove(*self.mobjects)
+        self.play(
+                AnimationGroup(*[FadeOut(i) for i in [rct[0],rct[1]]],lag_ratio=0.05) 
+            )        
+        #self.remove(*self.mobjects)
 
-        for i in range(0,len(all_rods)):
-            self.remove(rod)
-            rod = all_rods[i]
-            self.add(rod)
-            self.wait()
+        #self.add(rod)
+        newrod = rod
+        for i in range(1,len(all_rods)):
+            prevrod = newrod
+            newrod = all_rods[i]
+            self.play(FadeIn(newrod),FadeOut(prevrod), run_time=0.5)
+            self.wait(0.5)
             #if t<5:
             #    self.wait()
             #else:
             #    numbers = False
             #    self.wait(.5)
         
-        self.wait(2)
+        self.wait(20)
         self.play(*[FadeOut(i) for i in self.mobjects])
 
 class Graphs2D(Scene):
@@ -313,29 +320,36 @@ class Equation(Scene):
         def MyTex(s):
             return Tex(r"$\bullet$\quad \begin{minipage}[t]{10cm}\rightskip 0 pt plus 1 fill "+s+r"\end{minipage}")
 
+        title = Title(r"Odvození matematického tvaru rovnice vedení tepla").to_edge(UP)
+        self.play(GrowFromCenter(title))        
+        self.wait(5)
+
         statements = Group(
             MyTex(r"Teplota ($T$) řídí tok tepla ($q$). Teplo teče do míst s~menší teplotou.").scale(0.8),
             MyTex(r"Tok tepla řídí teplotu. V místě, kam víc tepla přitéká, než odtéká, teplota roste. To je tam, kde tok tepla slábne.").scale(0.8),
-        ).arrange(DOWN, aligned_edge=LEFT).to_edge(UP)
+        ).arrange(DOWN, aligned_edge=LEFT).next_to(title, DOWN)
+
+        self.play(FadeIn(statements))
+        self.wait(10)
+
+        self.play(FadeOut(statements[1],title))
+        self.play(statements[0].animate.to_edge(UP))
 
         ax = Axes(
-                x_range=[-1,1,10],                 
-                y_range=[-1,1,10],
-                x_length=10,
-                y_length=3, 
-                tips = False,
-                x_axis_config = {}
-                ).next_to(statements,DOWN)
+            x_range=[-1,1,10],                 
+            y_range=[-1,1,10],
+            x_length=10,
+            y_length=3, 
+            tips = False,
+            x_axis_config = {}
+            ).next_to(statements[0],DOWN, buff=1)
 
         labels = ax.get_axis_labels(
                     MathTex(r"\frac{\partial T}{\partial x}").scale(1),
                     MathTex(r"q").scale(1), 
                 )
-        self.add(statements)
+        self.play(FadeIn(ax,labels))
         self.wait(10)
-
-        self.play(FadeOut(statements[1]), FadeIn(ax,labels))
-        self.wait()
 
         Tr = Tex(r"Teplota doprava roste")    
         Tk = Tex(r"Teplota doprava klesá")    
@@ -349,41 +363,41 @@ class Equation(Scene):
             VGroup(Tk.copy(),Qp.copy()).scale(0.8).arrange(DOWN).move_to(ax.c2p(-0.5,0.5,0)),
             ]
 
-        self.wait(5)
+        self.wait(10)
         self.add(Kvadranty[0][0],Kvadranty[1][0])
-        self.wait(5)
+        self.wait(10)
         self.add(Kvadranty[2][0],Kvadranty[3][0])
-        self.wait(5)
+        self.wait(10)
         self.add(Kvadranty[0][1],Kvadranty[3][1])
-        self.wait(5)
+        self.wait(10)
         self.add(Kvadranty[2][1],Kvadranty[1][1])
-        self.wait(5)
+        self.wait(10)
         for i in [0,2]:
             Kvadranty[i].set_color(RED)
-        self.wait(5)
-        self.play(FadeOut(*[Kvadranty[i] for  i in [0,2]]))
         self.wait(10)
+        self.play(FadeOut(*[Kvadranty[i] for  i in [0,2]]))
+        self.wait(15)
         center = Dot(ax.c2p(0,0,0), radius=0.1)
         graf = ax.plot(lambda x:-np.arctan(x*5)/2, x_range=[-1,1,0.1])
         self.add(center)
-        self.wait(10)
+        self.wait(15)
         self.play(ReplacementTransform(
             VGroup(Kvadranty[1],Kvadranty[3],center),
             graf)
             )
-        self.wait(10)
+        self.wait(15)
 
         lingraf = ax.plot(lambda x:-(x*5)/2, x_range=[-.2,.2,0.1]).set_color(YELLOW)
         self.play(FadeIn (lingraf))
         self.play(FadeOut(graf))
-        self.wait(10)
+        self.wait(20)
 
         FourierI = MathTex(r" = - k").next_to(labels[1]).shift(0.1*UP)
         FourierIa = MathTex(r"\frac{\partial T}{\partial x}").next_to(FourierI)
         self.play(FadeIn(FourierI))
         kopie = labels[1].copy()
         self.play(ReplacementTransform(labels[0].copy(),FourierIa))
-        self.wait(10)
+        self.wait(20)
         self.play(*[FadeOut(i) for i in self.mobjects])
 
 
@@ -426,26 +440,24 @@ class Equation(Scene):
         row2 = [t3,t4,text[1]]
 
         self.play(*[Indicate(i) for i in row1])
-        self.wait(5)
+        self.wait(10)
         self.play(*[Indicate(i) for i in row2])
-        self.wait(5)
+        self.wait(10)
         self.play(*[Indicate(i) for i in col2])
-        self.wait(5)
+        self.wait(10)
         for i in col2:
             i.set_color(BLUE)
         self.play(FadeIn(text[2]))
-        self.wait(5)
+        self.wait(10)
         self.play(*[Indicate(i) for i in col1])
-        self.wait(5)
+        self.wait(10)
         for i in col1:
             i.set_color(RED)
         self.play(FadeIn(text[3]))
-        self.wait(10)
+        self.wait(20)
 
 
         self.play(FadeOut(tbl,*text))
-
-
 
         ax2 = Axes(
                 x_range=[-1,1,10],                 
@@ -581,15 +593,14 @@ stupňů. Teploty osmdesát a dvacet na koncích udržujeme a sledujeme, co se d
 teplotou podél tyče.
 
 Příroda má tendenci vyrovnávat teploty a z místa o vyšší teplotě teče teplo do
-místa s nižší teplotou. Intenzita toku souvisí s teplotním spádem. Vysoký
-teplotní rozdíl způsobí vysoký teplotní tok. Na začátku je teplotní rozdíl jenom
-na rozhraní částí s různou teplotou. Jak se však teplo předává, navyšuje se
-teplota v místě, kam je teplo dodáváno a snižuje v místech, odkud je teplo
-odebíráno.
+místa s nižší teplotou. Intenzita toku souvisí s teplotním spádem. Jak teplo
+proudí, navyšuje se teplota v místě, kam je teplo dodáváno a snižuje v místech,
+odkud je teplo odebíráno. Teploty se vyrovnávají a nakonec teplota klesá
+pozvolna a rovnoměrně od teplého konce ke studenému.
 
-Pro grafické znázornění si vykreslíme teplotní profil a intenzitu toku tepla.
-Osu x budeme směrovat doprava, jak je nejpřirozenější. Tok je potom kladný,
-pokud teplo teče doprava a záporný, pokud teče doleva. 
+Pro grafické znázornění se vrátíme na začátek a si vykreslíme teplotní profil a
+intenzitu toku tepla. Osu x budeme směrovat doprava, jak je nejpřirozenější.
+Tok je potom kladný, pokud teplo teče doprava a záporný, pokud teče doleva.
 
 Protože jsou grafy s teplotou i tokem pod sebou, je snadné zkontrolovat, že
 kladný tok je tam, kde teplota směrem doprava klesá a záporný tam, kde roste.
@@ -603,22 +614,22 @@ U konců tyče jsou dva malé skoky o dvacet stupňů nahoru. Protože teplota k
 doleva, teče teplo doleva a je záporné. Tomu odpovídají dva peaky směrem dolů.
 Jsou menší než kladné peaky, protože jsou vyvolány menším teplotním rozdílem.
 
-Tok se během pokusu poměrně výrazně mění. Proto budeme na grafu s tokem měnit
-měřítko a vypisovat hodnoty pro maximum a minimum. 
+Tok tepla se během pokusu poměrně výrazně mění. Proto budeme na grafu s tokem
+měnit měřítko a vypisovat hodnoty pro maximum a minimum.
 
-Všímejme si, jak se teploty vyrovnávají. Vyrovnávání teploty snižuje intenzitu
-toku a nakonec teplota v tyči klesá rovnoměrně po celé délce, což způsobí
-konstantní tok podél celé tyče. To znamená, že se nikde v tyči nehromadí teplo.
-Žádná část se již dál neohřívá ani naopak. Jenom dodáváme teplo na udržení
-teplotního rozdílu mezi osmdesáti a dvaceti stupni. Jedná se o stav, kdy se
-sledované veličiny nemění, o stacionární stav.
+Všímejme si, jak se teploty vyrovnávají a jak vyrovnávání teploty snižuje
+intenzitu toku. Nakonec teplota v tyči klesá rovnoměrně po celé délce, což
+způsobí konstantní tok podél celé tyče. To znamená, že se nikde v tyči
+nehromadí teplo. Žádná část se již dál neohřívá ani naopak. Jenom dodáváme
+teplo na udržení teplotního rozdílu mezi osmdesáti a dvaceti stupni. Jedná se o
+stav, kdy se sledované veličiny nemění, o stacionární stav.
 
 Animace dává dobrý přehled o tom, co se děje v tyči, ale není příliš šikovná na
 připadné numerické zpracování výsledků. Pro další zpracování je lepší informace
 prezentovat lépe. Například můžeme pro různé časy zachytit průběh teploty podél
-tyče, nebo v různých místech sledovat časový vývoj teploty. Můžeme dokonce mít i
-obojí současně ve 3D grafu, avšak to je spíše na efekt než pro detailní
-zpracování. Jednodušší řešení jsou často efektivnější, například můžeme vypsat
+tyče, nebo v různých místech sledovat časový vývoj teploty. Můžeme dokonce mít
+i obojí současně ve 3D grafu, avšak to je spíše na oko než pro další numerické
+zpracování. Jednodušší řešení jsou často přínosnější. Například můžeme vypsat
 data do tabulky a z ní potřebné vizuální informace generovat.
 
 Nyní víme, jak se chová teplo při vedení v jedné dimenzi a umíme tyto informace
@@ -642,7 +653,7 @@ roste. Záporná derivace znamená, že teplota směrem doprava klesá.
 Kladný tok znamená, že teplo teče směrem doprava, záporný tok je tok doleva. 
 
 Protože teplo teče směrem poklesu teploty, dvě kombinace nejsou fyzikálně
-relevantní. Závislost mezi veličinami tedy bude ve zyblých dvou oblastech. Navíc
+relevantní. Závislost mezi veličinami tedy bude ve zbylých dvou oblastech. Navíc
 bude tato závislost procházet počátkem, protože bez teplotního spádu není tok
 tepla. Závislost může být zcela obecná, ale určitě bude spojitá a v okolí
 počátku ji můžeme aproximovat lineární funkcí, žlutou přímkou. To znamená, že
@@ -660,7 +671,7 @@ nebo zesilovat. Například se může měnit ze dvou jednotek na sedm nebo naopa
 U toku doleva je situace podobná, ale tok je záporný. Pokud numericky směrem
 doleva do materiálu tečou dvě jednotky a vytéká sedm jednotek, máme situaci jako
 vlevo dole. Tok se mění z hodnoty -7 na hodnotu -2. Nezapomeňme, že hodnoty toku
-nečteme ve směru toku, ale ve směru os. Tedy zleva doprava. Podobně v pravé
+nečteme ve směru toku, ale ve směru osy. Tedy zleva doprava. Podobně v pravé
 části se tok mění z minus dvou na minus sedm a to znamená, že zprava doleva do
 materiálu teče sedm jednotek a vytékají dvě jednotky. 
 
