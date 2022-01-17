@@ -217,13 +217,21 @@ class Table(Scene):
         ).scale(.7).to_edge(UP)
         lab = t0.get_labels()
         lab.set_color(BLUE)
-        t0.get_horizontal_lines()[2].set_stroke(width=8, color=GRAY)
-        self.add(t0)
-        self.wait()
+        t0.get_horizontal_lines()[2].set_stroke(width=8, color=BLUE)
+        self.play(Create(t0.get_labels()))
+        self.play(Create(t0.get_horizontal_lines()[2]))
+        self.play(
+            AnimationGroup(
+                *[Create(i) for i in t0.get_entries_without_labels()],
+                lag_ratio=0.8
+            ),
+            run_time = 5
+            )
+        self.wait(10)
 
 
 
-        self.wait()
+        
 
 class Equation(Scene):
 
