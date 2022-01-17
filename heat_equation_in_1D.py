@@ -1,3 +1,4 @@
+from curses.textpad import rectangle
 from logging import NullHandler
 from telnetlib import DO
 from tkinter import CENTER
@@ -101,6 +102,7 @@ class HeatTransfer(Scene):
         numbers = True
         kwds = {}
         list_times = [0,1,2,3,4,5,6,7,8,9,10,12,15,20,30,40,60,80,100,150,200,300,400,1000]
+        #list_times = [0,1]
         
         all_rods=[]
         for t in list_times:
@@ -129,7 +131,7 @@ class HeatTransfer(Scene):
             self.remove(*self.mobjects)
             curr_rod = all_rods[i]
             self.add(curr_rod[:2], curr_rod[4])
-            self.wait()
+            self.wait(0.2)
 
         self.wait(10)
         self.remove(*self.mobjects)
@@ -141,12 +143,32 @@ class HeatTransfer(Scene):
         self.wait()
         self.play(FadeIn(rod[2][2:]))  # heat flow
         self.wait(5)
-        self.play(FadeIn( rod[3]))  # heat flow min/max
+        self.play(FadeIn(rod[3]))  # heat flow min/max
         self.wait(5)
 
+        rct = VGroup(
+                Rectangle(height=6, width=0.5).move_to(ax2.c2p(0.055,0,0)),
+                Rectangle(height=6, width=0.5).move_to(ax2.c2p(0.945,0,0)),
+                Rectangle(height=6, width=0.5).move_to(ax2.c2p(0.345,0,0)),
+                Rectangle(height=6, width=0.5).move_to(ax2.c2p(0.645,0,0)),
+        ).set_color(GRAY)
+
+        for i in range(3):
+            self.play(
+                AnimationGroup(*[Indicate(i) for i in [rct[2],rct[3]]],lag_ratio=0.05) 
+            )
+
+        self.wait(10)
+
+        for i in range(3):
+            self.play(
+                AnimationGroup(*[Indicate(i) for i in [rct[0],rct[1]]],lag_ratio=0.05) 
+            )
+
+        self.wait(10)
         self.remove(*self.mobjects)
 
-        for i in range(1,len(all_rods)):
+        for i in range(0,len(all_rods)):
             self.remove(rod)
             rod = all_rods[i]
             self.add(rod)
