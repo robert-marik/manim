@@ -1,8 +1,12 @@
 from manim import *
 import colorsys
 
-def temperature_to_color(temp, min_temp=-1, max_temp=1):
+def temperature_to_color(
+    temp, 
+    min_temp=-1, 
+    max_temp=1,
     colors = [BLUE, TEAL, GREEN, YELLOW, "#ff0000"]
+    ):
 
     alpha = inverse_interpolate(min_temp, max_temp, temp)
     index, sub_alpha = integer_interpolate(
