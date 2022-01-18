@@ -153,7 +153,7 @@ class HeatTransfer(Scene):
                 Rectangle(height=6, width=0.5).move_to(ax2.c2p(0.645,0,0)),
         ).set_color(GRAY)
 
-        for i in range(3):
+        for j in range(3):
             self.play(
                 AnimationGroup(*[Indicate(i) for i in [rct[2],rct[3]]],lag_ratio=0.05) 
             )
@@ -162,7 +162,7 @@ class HeatTransfer(Scene):
                 AnimationGroup(*[FadeOut(i) for i in [rct[2],rct[3]]],lag_ratio=0.05) 
             )
 
-        for i in range(3):
+        for j in range(3):
             self.play(
                 AnimationGroup(*[Indicate(i) for i in [rct[0],rct[1]]],lag_ratio=0.05) 
             )
@@ -363,41 +363,40 @@ class Equation(Scene):
             VGroup(Tk.copy(),Qp.copy()).scale(0.8).arrange(DOWN).move_to(ax.c2p(-0.5,0.5,0)),
             ]
 
-        self.wait(10)
         self.add(Kvadranty[0][0],Kvadranty[1][0])
-        self.wait(10)
+        self.wait()
         self.add(Kvadranty[2][0],Kvadranty[3][0])
-        self.wait(10)
+        self.wait()
         self.add(Kvadranty[0][1],Kvadranty[3][1])
-        self.wait(10)
+        self.wait()
         self.add(Kvadranty[2][1],Kvadranty[1][1])
-        self.wait(10)
+        self.wait()
         for i in [0,2]:
             Kvadranty[i].set_color(RED)
-        self.wait(10)
+        self.wait(3)
         self.play(FadeOut(*[Kvadranty[i] for  i in [0,2]]))
-        self.wait(15)
+        self.wait(5)
         center = Dot(ax.c2p(0,0,0), radius=0.1)
         graf = ax.plot(lambda x:-np.arctan(x*5)/2, x_range=[-1,1,0.1])
         self.add(center)
-        self.wait(15)
+        self.wait(5)
         self.play(ReplacementTransform(
             VGroup(Kvadranty[1],Kvadranty[3],center),
             graf)
             )
-        self.wait(15)
+        self.wait(10)
 
         lingraf = ax.plot(lambda x:-(x*5)/2, x_range=[-.2,.2,0.1]).set_color(YELLOW)
         self.play(FadeIn (lingraf))
         self.play(FadeOut(graf))
-        self.wait(20)
+        self.wait(10)
 
         FourierI = MathTex(r" = - k").next_to(labels[1]).shift(0.1*UP)
         FourierIa = MathTex(r"\frac{\partial T}{\partial x}").next_to(FourierI)
         self.play(FadeIn(FourierI))
         kopie = labels[1].copy()
         self.play(ReplacementTransform(labels[0].copy(),FourierIa))
-        self.wait(20)
+        self.wait(10)
         self.play(*[FadeOut(i) for i in self.mobjects])
 
 
@@ -434,15 +433,20 @@ class Equation(Scene):
         col2 = [t1,t3]
 
         self.add(tbl,text[0],text[1])
-        self.wait(10)
+        self.wait(5)
 
         row1 = [t1,t2,text[0]]
         row2 = [t3,t4,text[1]]
 
-        self.play(*[Indicate(i) for i in row1])
-        self.wait(10)
-        self.play(*[Indicate(i) for i in row2])
-        self.wait(10)
+        for i in range(3):
+            self.play(*[Indicate(i) for i in row1])
+        self.wait(5)
+        for i in range(3):
+            self.play(*[Indicate(i) for i in [row2[0],row2[2]]])
+        self.wait()            
+        for i in range(3):
+            self.play(*[Indicate(i) for i in [row2[1],row2[2]]])
+        self.wait(5)
         self.play(*[Indicate(i) for i in col2])
         self.wait(10)
         for i in col2:
@@ -504,21 +508,18 @@ class Equation(Scene):
             Kvadranty[i].set_color(RED)
         self.wait(3)
         self.play(FadeOut(*[Kvadranty[i] for  i in [0,2]]))
-        self.wait(3)
-        center = Dot(ax2.c2p(0,0,0), radius=0.1)
+        self.wait()
         graf = ax2.plot(lambda x:-np.arctan(x*5)/2, x_range=[-1,1,0.1])
-        self.add(center)
-        self.wait(3)
         self.play(ReplacementTransform(
-            VGroup(Kvadranty[1],Kvadranty[3],center),
+            VGroup(Kvadranty[1],Kvadranty[3]),
             graf)
             )
-        self.wait(3)
+        self.wait()
 
         lingraf = ax2.plot(lambda x:-(x*5)/2, x_range=[-.2,.2,0.1]).set_color(YELLOW)
         self.play(FadeIn (lingraf))
         self.play(FadeOut(graf))
-        self.wait(10)
+        self.wait()
         FourierIIa = MathTex(r"c\varrho").next_to(labels2[1],LEFT) 
         FourierIIb = MathTex(r"= -{}").next_to(labels2[1],RIGHT)
         FourierIIc = MathTex(r"\frac{\partial q}{\partial x}").next_to(FourierIIb)
@@ -598,37 +599,39 @@ proudí, navyšuje se teplota v místě, kam je teplo dodáváno a snižuje v m�
 odkud je teplo odebíráno. Teploty se vyrovnávají a nakonec teplota klesá
 pozvolna a rovnoměrně od teplého konce ke studenému.
 
-Pro grafické znázornění se vrátíme na začátek a si vykreslíme teplotní profil a
-intenzitu toku tepla. Osu x budeme směrovat doprava, jak je nejpřirozenější.
-Tok je potom kladný, pokud teplo teče doprava a záporný, pokud teče doleva.
+Pro grafické znázornění se vrátíme v čase na začátek a vykreslíme si teplotní
+profil a intenzitu toku tepla. Osu x budeme směrovat doprava, jak je
+nejpřirozenější. Tok je potom kladný, pokud teplo teče doprava a záporný, pokud
+teče doleva.
 
 Protože jsou grafy s teplotou i tokem pod sebou, je snadné zkontrolovat, že
 kladný tok je tam, kde teplota směrem doprava klesá a záporný tam, kde roste.
 Pojďme si tato místa najít.
 
-Na začátku je jsou uprostřed dva velké skoky dolů, ze sta stupňů na padesát a
-poté z padesáti na nulu. Tomu odpovídá velký tok směrem doprava, tedy vysoký
-kladný peak na žlutém grafu s tokem. 
+Uprostřed jsou dva velké skoky dolů, ze sta stupňů na padesát a poté z padesáti
+na nulu. Tomu odpovídá velký tok směrem doprava, tedy vysoký kladný peak na
+žlutém grafu s tokem. 
 
-U konců tyče jsou dva malé skoky o dvacet stupňů nahoru. Protože teplota klesá
-doleva, teče teplo doleva a je záporné. Tomu odpovídají dva peaky směrem dolů.
-Jsou menší než kladné peaky, protože jsou vyvolány menším teplotním rozdílem.
+U konců tyče jsou dva malé skoky o dvacet stupňů nahoru. Protože na nich teplota
+klesá doleva, teče teplo doleva a je záporné. Tomu odpovídají dva peaky směrem
+dolů. Jsou menší než kladné peaky, protože jsou vyvolány menším teplotním
+rozdílem.
 
 Tok tepla se během pokusu poměrně výrazně mění. Proto budeme na grafu s tokem
 měnit měřítko a vypisovat hodnoty pro maximum a minimum.
 
 Všímejme si, jak se teploty vyrovnávají a jak vyrovnávání teploty snižuje
 intenzitu toku. Nakonec teplota v tyči klesá rovnoměrně po celé délce, což
-způsobí konstantní tok podél celé tyče. To znamená, že se nikde v tyči
-nehromadí teplo. Žádná část se již dál neohřívá ani naopak. Jenom dodáváme
-teplo na udržení teplotního rozdílu mezi osmdesáti a dvaceti stupni. Jedná se o
-stav, kdy se sledované veličiny nemění, o stacionární stav.
+způsobí konstantní tok podél celé tyče. To znamená, že se nikde v tyči nehromadí
+teplo. Žádná část se již dál neohřívá ani naopak. Jenom dodáváme teplo na
+udržení teplotního rozdílu mezi osmdesáti a dvaceti stupni. Jedná se o stav, kdy
+se sledované veličiny nemění, o stacionární stav.
 
 Animace dává dobrý přehled o tom, co se děje v tyči, ale není příliš šikovná na
 připadné numerické zpracování výsledků. Pro další zpracování je lepší informace
 prezentovat lépe. Například můžeme pro různé časy zachytit průběh teploty podél
-tyče, nebo v různých místech sledovat časový vývoj teploty. Můžeme dokonce mít
-i obojí současně ve 3D grafu, avšak to je spíše na oko než pro další numerické
+tyče, nebo v různých místech sledovat časový vývoj teploty. Můžeme dokonce mít i
+obojí současně ve 3D grafu, avšak to je spíše pro efekt než pro další numerické
 zpracování. Jednodušší řešení jsou často přínosnější. Například můžeme vypsat
 data do tabulky a z ní potřebné vizuální informace generovat.
 
@@ -666,7 +669,8 @@ promítne do toku tepla.
 Nyní prozkoumáme, jak se zesilování nebo slábnutí toku projevuje na změně
 teploty. Ukážeme si čtyři případy, jak může měnící se tok vypadat. Budeme
 uvažovat kousek materiálu a tok tepla. Teplo může téct doprava a buď slábnout
-nebo zesilovat. Například se může měnit ze dvou jednotek na sedm nebo naopak. 
+nebo zesilovat. Například se může měnit ze dvou jednotek na sedm nebo naopak. To
+demonstrují dva případy v horním řádku.
 
 U toku doleva je situace podobná, ale tok je záporný. Pokud numericky směrem
 doleva do materiálu tečou dvě jednotky a vytéká sedm jednotek, máme situaci jako
@@ -684,19 +688,18 @@ V pravém sloupci naopak do materiálu teče hodně a vytéká málo, tedy se te
 akumuluje a teplota s časem roste. Tuto situaci identifikujeme tak, že tok tepla
 klesá. V našem případě buď ze 7 na 2, nebo z -2 na -7.
 
-V souřadnicích kde na vodorovnou osu vynášíme rychlost s jakou roste tok tepla
-ve směru osy a na svislou osu rychlost, s jakou roste teplota v čase, máme opět
-čtyři oblasti. Znaménko derivace teploty podle času určuje, jestli se dané místo
-ohřívá nebo ochlazuje. Znaménko derivace toku podle polohy určuje, jestli tok
-sílí nebo slábne směrem doprava. Předešlá analýza ukázala, že které dvě
-kombinace jsou fyzikálně relevantní. Totiž, že slábnutí toku způsobuje nárůst
-teploty a naopak. Stejná úvaha jakou jsme použili před chvílí ukazuje, že mezi
-veličinami na osách je přímá úměrnost se záporným koeficientem. Z fyzikálních
-důvodů píšeme konstantu úměrnosti na levou stranu, protože fyzika tuto konstantu
-úměrnosti dobře zná odjinud. Jedná se o součin hustoty a měrné tepelné kapacity.
-Tím máme i druhou rovnici pro druhý princip řídící vedení tepla. Máme rovnici
-udávající, jak se prostorové změny v toku tepla promítají do změn teploty v
-čase. 
+V souřadnicích vodorovně vynášíme rychlost s jakou roste tok tepla a svisle
+rychlost, s jakou roste teplota v čase. Máme opět čtyři oblasti. Znaménko
+derivace teploty podle času určuje, jestli se dané místo ohřívá nebo ochlazuje.
+Znaménko derivace toku podle polohy určuje, jestli tok sílí nebo slábne směrem
+doprava. Předešlá analýza ukázala, které dvě kombinace jsou fyzikálně
+relevantní. Totiž, že slábnutí toku způsobuje nárůst teploty a naopak. Stejná
+úvaha jako před chvílí ukazuje, že mezi veličinami na osách je přímá úměrnost se
+záporným koeficientem. Z fyzikálních důvodů píšeme konstantu úměrnosti na levou
+stranu, protože fyzika tuto konstantu úměrnosti dobře zná odjinud. Jedná se o
+součin hustoty a měrné tepelné kapacity. Tím máme i druhou rovnici pro druhý
+princip řídící vedení tepla. Máme rovnici udávající, jak se prostorové změny v
+toku tepla promítají do změn teploty v čase. 
 
 Pro odvození rovnice vedení tepla stačí dát dvě právě odvozené rovnice do jedné.
 Vyjdeme z rovnice udávající časovou rychlost růstu tepla v závislsoti na změnách
@@ -706,16 +709,20 @@ vztah, udávající, jak se tok tepla generuje prostorovými změnami teploty.
 
 Toto je tvar rovnice vedení tepla v jedné dimenzi. Je v něm obsažena veškerá
 fyzika řídící vedení tepla v jednodimenzionálních tělesech. Je to tvar, kde
-každá součást má přímou fyzikální interpretaci. Pro matematické studium je
-výhodnější násobení minus jedničkou nezahrnovat do derivace, ale použít větu o
-derivaci konstantního násobku. Často také pracujeme s případem, kdy konstanta k
-je nezávislá na poloze i na teplotě, tedy s homogenním materiálem s lineárními
-materiálovými vlastnostmi. Potom můžeme použít derivaci konstantního násobku
-ještě jednou a dostáváme ještě jednodušší tvar, tvar s druhou derivací.  
+každá součást má přímou fyzikální interpretaci. 
 
-Rovnice jakou jsme získali, kde neznámá je funkce dvou proměnných a v rovnici
+Pro matematické studium je výhodnější násobení minus jedničkou nezahrnovat do
+derivace, ale použít větu o derivaci konstantního násobku. Tím máme rovnici ve
+tvaru pro matematické modelování. 
+
+Často také pracujeme s případem, kdy konstanta k je nezávislá na poloze i na
+teplotě, tedy s homogenním materiálem s lineárními materiálovými vlastnostmi.
+Potom můžeme použít derivaci konstantního násobku ještě jednou a dostáváme ještě
+jednodušší tvar, tvar s druhou derivací.  
+
+Rovnice kterou jsme získali, kde neznámá je funkce dvou proměnných a v rovnici
 vystupují derivace této funkce, se nazývá pariáclní diferenciální rovnice.
-Přesné řešení těchto rovnic je obtížné. Naštěstí máme ještě i jednodušěší
+Přesné řešení těchto rovnic je obtížné. Naštěstí máme ještě i jednoduš ší
 alternativní cestu. Přibližnými metodami je možné rovnici převést na soustavu
 lineárních rovnic, kterých je sice obrovské množství, řádově tisíce a víc, ale
 každá rovnice obsahuje poměrně málo neznámých. Počítač umí takové soustavy
@@ -724,6 +731,5 @@ začali naše povídání.
 
 Ukázali jsme si, jak probíhá vedení tepla v jednorozměrné úloze a jak je možné
 odvodit rovnici, která tento proces popisuje.
-
 
 """
