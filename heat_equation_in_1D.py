@@ -713,13 +713,14 @@ je nezávislá na poloze i na teplotě, tedy s homogenním materiálem s lineár
 materiálovými vlastnostmi. Potom můžeme použít derivaci konstantního násobku
 ještě jednou a dostáváme ještě jednodušší tvar, tvar s druhou derivací.  
 
-Tato rovnice, kde neznámá je funkce dvou proměnných a v rovnici vystupují
-derivace této funkce, se nazývá pariáclní diferenciální rovnice. Přesné řešení
-těchto rovnic je obtížné. Naštěstí máme cestu. Přibližnými metodami je možné
-rovnici převést na soustavu lineárních rovnic, kterých je sice obrovské
-množství, řádově tisíce a víc, ale každá rovnice obsahuje poměrně málo
-neznámých. Počítač umí takové soustavy rychle a efektivně řešit. To mi umožnilo
-udělat simulaci, se kterou jsme začali naše povídání. 
+Rovnice jakou jsme získali, kde neznámá je funkce dvou proměnných a v rovnici
+vystupují derivace této funkce, se nazývá pariáclní diferenciální rovnice.
+Přesné řešení těchto rovnic je obtížné. Naštěstí máme ještě i jednodušěší
+alternativní cestu. Přibližnými metodami je možné rovnici převést na soustavu
+lineárních rovnic, kterých je sice obrovské množství, řádově tisíce a víc, ale
+každá rovnice obsahuje poměrně málo neznámých. Počítač umí takové soustavy
+rychle a efektivně řešit. To mi také umožnilo udělat simulaci, se kterou jsme
+začali naše povídání.
 
 Ukázali jsme si, jak probíhá vedení tepla v jednorozměrné úloze a jak je možné
 odvodit rovnici, která tento proces popisuje.
