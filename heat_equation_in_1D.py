@@ -13,6 +13,18 @@ xmin, xmax = 0,1
 dx = (xmax-xmin)/(n-1)
 x_interval = np.linspace(xmin,xmax,n)
 
+class Intro(Scene):
+    def construct(self):
+
+        title = Title(r"Rovnice vedení tepla v jedné dimenzi")
+        autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
+        self.play(GrowFromCenter(title))
+        self.play(GrowFromCenter(autor[0]))
+        self.play(GrowFromCenter(autor[1]))
+        self.wait(10)
+
+
+
 class HeatTransfer(Scene):
     def construct(self):
 
@@ -612,10 +624,10 @@ Uprostřed jsou dva velké skoky dolů, ze sta stupňů na padesát a poté z pa
 na nulu. Tomu odpovídá velký tok směrem doprava, tedy vysoký kladný peak na
 žlutém grafu s tokem. 
 
-U konců tyče jsou dva malé skoky o dvacet stupňů nahoru. Protože na nich teplota
-klesá doleva, teče teplo doleva a je záporné. Tomu odpovídají dva peaky směrem
-dolů. Jsou menší než kladné peaky, protože jsou vyvolány menším teplotním
-rozdílem.
+U konců tyče jsou dva malé skoky o dvacet stupňů nahoru. Protože na nich
+teplota klesá doleva, teče teplo doleva a tok je záporný. Tomu odpovídají dva
+peaky směrem dolů. Jsou menší než kladné peaky, protože jsou vyvolány menším
+teplotním rozdílem.
 
 Tok tepla se během pokusu poměrně výrazně mění. Proto budeme na grafu s tokem
 měnit měřítko a vypisovat hodnoty pro maximum a minimum.
