@@ -61,7 +61,12 @@ class Flow(MovingCameraScene):
         self.wait(wait_time*2)
 
 
-        number_plane = NumberPlane()
+        number_plane = NumberPlane(
+            axis_config={
+                "stroke_color": BLUE_D,
+                "stroke_width": 1, 
+                "stroke_opacity": 0.1,}
+            )
         self.play(FadeOut(VGroup(title,autor)))
 
         wood_obj = ImageMobject(wood_img)
@@ -98,9 +103,9 @@ class Flow(MovingCameraScene):
             ]
         )
 
-        self.add(function_colors)
+        self.play(GrowFromEdge(function_colors, LEFT), run_time = 5)
         self.wait(wait_time*7)
-        self.add(contours, number_plane)
+        self.add(contours)
         self.play(AnimationGroup(
             FadeOut(function_colors),
         ), run_time=5)
@@ -147,11 +152,11 @@ class Flow(MovingCameraScene):
 
         self.wait(3*wait_time)
         self.play(ReplacementTransform(vectors_unscaled,vectors))
-        self.wait(wait_time)
-        self.add(funkce)
-        self.wait(wait_time)
-        self.add(curves)
-        self.wait(wait_time)
+        self.wait(3*wait_time)
+        self.play(FadeIn(funkce))
+        self.wait(3*wait_time)
+        self.play(FadeOut(funkce), FadeIn(curves))
+        self.wait(3*wait_time)
 
         vlastni_vektory=VGroup(*[vectors[3+9*i] for i in range(14)])
         surroundingRectangle= SurroundingRectangle(vlastni_vektory[1:-1],color=YELLOW, buff=0.15)
@@ -203,16 +208,23 @@ class Flow(MovingCameraScene):
             VGroup(MathTex(r"\lambda_2={}"+str(lambda2)))
             ).arrange(DOWN).to_corner(UL).add_background_rectangle(buff=0.5).set_z_index(10)
 
-        self.remove(funkce)
-        self.add(matice_D)
-        self.wait(wait_time)
+
+        self.play(FadeIn(matice_D), FadeOut(curves))
+        self.wait(5*wait_time)
         self.add(obrazek)
-        self.wait(wait_time)
+        self.wait(2*wait_time)
         self.play(AnimationGroup(*[Wiggle(_) for _ in vlastni_vektory],Create(surroundingRectangle),lag_ratio=.05))
 
-        self.wait(wait_time)
-        self.play(ReplacementTransform(curves,curves_with_D),ReplacementTransform(vectors.copy(),vectors_with_D),FadeToColor(vectors.set_opacity(.5),GRAY))
-        self.wait(wait_time)
+        self.wait(2*wait_time)
+        self.play(FadeIn(curves_with_D),ReplacementTransform(vectors.copy(),vectors_with_D),FadeToColor(vectors.set_opacity(.5),GRAY))
+        komentar = VGroup(
+            Tex(r"šedá ${}={}$ spád teploty"), 
+            Tex(r"barevná ${}={}$ tok tepla")
+            ).arrange(DOWN, aligned_edge=LEFT, buff=0.5).next_to(
+                matice_D, DOWN).add_background_rectangle(
+                    buff=0.5).set_z_index(10)
+        self.play(FadeIn(komentar))
+        self.wait(2*wait_time)
 
         first_time = True
         # Moving camera from https://www.youtube.com/watch?v=QTlZp8tiql4
@@ -220,28 +232,28 @@ class Flow(MovingCameraScene):
             self.camera.frame.save_state()
             detail_frame = SurroundingRectangle(detail, color=PURE_RED, buff=.5)
             self.play(Create(detail_frame))
-            self.wait(2*wait_time)
+            self.wait(wait_time)
             self.play(self.camera.frame.animate.set(width=detail_frame.width*2).move_to(detail), running_time = 2)
             if first_time:
                 self.play(FadeOut(detail))
                 self.wait()
                 self.play(FadeIn(detail))
                 first_time = False
-            self.wait(5*wait_time)
+            self.wait(2*wait_time)
             self.play(Restore(self.camera.frame),FadeOut(detail_frame), running_time = 2)   
-            self.wait(2*wait_time)     
+            self.wait()     
 
-        self.wait()
+        self.wait(5*wait_time)
 
 komentar = """
 
-Dobrý den, v tomto videu si ukážeme, jak se přepočítává pomocí gradientu a
-součinitele tepelné vodivosti teplotní spád na tok tepla. Ukážeme si některé
-záludnosti na které narazíme, pokud budeme studovat materiál, mající v různých
-směrech různé vlastnosti. Nejběžnějším představitelem takového materiálu je ten
-nejhezčí a nejdostupnější, totiž dřevo.
+Dobrý den, v tomto videu se zaměříme na souvislost gradientu a toku. Například
+gradientu teploty a toku tepla. Ukážeme si některé záludnosti na které
+narazíme, pokud budeme studovat materiál, mající v různých směrech různé
+vlastnosti. Nejběžnějším představitelem takového materiálu je ten nejhezčí a
+nejdostupnější, totiž dřevo.
 
-Matematický popis je ale univerzální, stejně funguje spád koncentrace a difuzní
+Matematický popis je univerzální, stejně funguje spád koncentrace a difuzní
 tok, spád vlhkosti a pohyb vody ve dřevě nebo spád hydraulické hladiny a pohyb
 podzemní vody.
 
@@ -252,16 +264,22 @@ teploty tokem tepla. Výsledný tok tepla je souhra tohoto podnětu s materiálo
 vlastnostmi. Nejprve prozkoumejme tento podnět.
 
 Na obrazovce je příliš mnoho informací. To není vždy ideální. Zkusíme si
-vytáhnout jenom některé křivky podél nichž je teplota konstantní. Jedná se o
+vytáhnout jenom některé křivky, podél nichž je teplota konstantní. Jedná se o
 vrtevnice, nebo v kontextu teploty lépe o izotermy. Pomocí těchto izoterm můžeme
 identifikovat gradient teploty. To je vektor udávající směr a intezitu růstu
 teploty. Bílé šipky znázorňující gradient jsou kolmé k izotermám a jsou delší
 tam, kde jsou izotermy nahusto.
 
-Pro potřeby toku nepotřebujeme sledovat růst, ale pokles teploty. Vynásobíme
-tedy gradient minus jedničkou a máme záporně vzatý gradient, ukazující směr
-poklesu. Obrázek však není moc přehledný. Pro vylepšení můžeme všechny šipky
-zkrátit na stejnou délku a informaci o délce gradientu zakódovat do barvy šipek.
+Pro potřeby toku nepotřebujeme sledovat růst teploty, ale pokles. Vynásobíme
+tedy gradient minus jedničkou na záporně vzatý gradient. Ten ukazuje směr
+poklesu. Obrázek ještě není moc přehledný. Pro vylepšení můžeme všechny šipky
+zkrátit na stejnou délku a informaci o délce zakódovat do barvy šipek.
+
+Ve skutečnosti je na obrazovce termosnímek definovaný kvadratickou funkcí, kde
+záporně vzatý gradient snadno spočítáme. Ten nezávisí na x, tedy všechny šipky
+v jedné vodorovné řadě vypadají stejně. První komponenta je konstantní a druhá
+roste s y. Tedy čím výše jsme na obrazovce, tím více se záporně vzatý gradient
+přiklání ke svislému směru.
 
 Všechny šipky jsou teď kolmé na izotermy a směřují do míst s menší teplotou.
 Takto, ve směru šipek, by se dalo do pohybu teplo v materiálech, které mají ve
@@ -270,12 +288,40 @@ vyvolá stejně velký tok a ten je vždy ve směru poklesu.
 
 V případě dřeva jsou v různých směrech různé vlasnosti a gradient podélným
 směrem vyvolá větší tok než stejně velký gradient směrem napříč. Navíc, pokud
-gradient není v anatomickém směru dřeva, tak se směr poklesu teploty a směr toku
-tepla neshodují. Záporně vzatý gradient přepočítáváme na tok pomocí maticového
-násobení a situace může vypadat například tak jako na plátně. Zde máme matici se
-dvěma vlastníma hodnotama, kterým náleží dva vlastní směry. Jedna vlastní
-hodnota je třikrát větší. Ta dominije a strhává tok do svého vlastního směru. To
-by odpovídalo podélnému směru ve dřevě. Po výpočtu vlastních vektorů a umístění
-dřeva podle výsledku by situace mohla vypadat tak jako je na obrazovce. 
+gradient není v anatomickém směru dřeva, tak se směr poklesu teploty a směr
+toku tepla neshodují. Záporně vzatý gradient přepočítáváme na tok pomocí
+maticového násobení a příslušná matice může vypadat například tak jako na
+plátně.
+
+Zde máme symetrickou matici mající dvě různé vlastní hodnoty. Těm náleží dva na
+sebe kolmé vlastní směry. Jedna vlastní hodnota je třikrát větší. Ta dominuje a
+strhává tok do svého vlastního směru. To by odpovídalo podélnému směru ve
+dřevě. Po výpočtu vlastních vektorů a umístění dřeva podle výsledku by situace
+mohla vypadat tak jako je na obrazovce. Abychom moc nerušili grafiku, zobrazíme
+si z celé roviny jenom malý kousíček dřeva u kraje. Vektory mířící v podélném
+směru dřeva jsou vlastními vektory matice D. Ty si dáme do rámečku.
+
+Nyní pro všechny vektory vypočteme maticový součin s maticí D a tím najdeme
+tok. Původní vektory, záporně vzatý gradient, necháme jako duchy jenom žašedlou
+poloprůheldnou barvou a tok bude označen barevnými šipkami. 
+
+Vektory mířící v podélném směru dřeva, tedy ve směru vlastníoh vektoru, po
+násobení s maticí D nemění směr, protože to jsou vlastní vektory. V tomto
+případě teplo teče kolmo na izotermy a směr toku splývá se směrem spádu
+teploty.
+
+Pojďme se podívat jinam. Třeba dolů. Tady nejsme ve vlastním směru a proto šedá
+šipka se spádem teploty způsobila tok mířící malinko odlišným směrem. Barevná
+šipka se přiklonila k podélnému směru dřeva.
+
+Analogická situace nastane, pokud se podíváme nahoru. Opět spád teploty není ve
+vlastním směru dřeva a proto je výsledný tok daný barevnou šipkou jakýmsi
+kompromisem mezi spádem teploty a vlastním směrem dřeva. Tento kompromis je
+popsán maticovým násobením spádu teploty s maticí D.
+
+Takto umíme díky maticím a znalosti gradientu teploty počítat tok tepla. Postup
+je plně přenositelný na jakoukoliv skalární stavovou veličinu, jako je
+například koncentrace látky, obsah vody ve dřevě nebo hladina podzemní vody v
+krajině.
 
 """

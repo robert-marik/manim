@@ -399,10 +399,10 @@ class Simulace(Scene):
 komentar = """
 
 Dobrý den, v tomto videu si ukážeme, jak matematika dokáže modelovat růst
-populací živočíšných či rostlinných druhů. Ukážeme si odvození logistické
+populací živočišných či rostlinných druhů. Ukážeme si odvození logistické
 rovnice, která je základním východiskem pro modelování populací. Ukážeme si,
 jak se chovají řešení této rovnice. Také rovnici doplníme o lov konstantní
-intenzity a zjistíme, jak tento lov ovlivňuje chování řešení a trvalo
+intenzity a zjistíme, jak tento lov ovlivňuje chování řešení a trvalou
 udržitelnost populace.
 
 Logistická rovnice je rovnice založená na představě populace žijící v lokalitě
