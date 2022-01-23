@@ -33,18 +33,18 @@ class Intro(Scene):
         self.play(GrowFromCenter(title))
         self.play(GrowFromCenter(autor[0]))
         self.play(GrowFromCenter(autor[1]))
-        self.wait(1)
+        self.wait(10)
 
-        func = lambda pos: ((pos[1]+1)*(2-(pos[1]+1)) )  * UP + RIGHT
-        stream_lines = StreamLines(func, stroke_width=1, max_anchors_per_line=30, 
-            y_range=[-1,1.2,.1],
-            x_range=[-3,3,.1], 
-            padding=.5,
-            opacity=1)
+        # func = lambda pos: ((pos[1]+1)*(2-(pos[1]+1)) )  * UP + RIGHT
+        # stream_lines = StreamLines(func, stroke_width=1, max_anchors_per_line=30, 
+        #     y_range=[-1,1.2,.1],
+        #     x_range=[-3,3,.1], 
+        #     padding=.5,
+        #     opacity=1)
 
-        self.add(stream_lines)
-        stream_lines.start_animation(warm_up=True, flow_speed=1.5)
-        self.wait(stream_lines.virtual_time / stream_lines.flow_speed*10)
+        # self.add(stream_lines)
+        # stream_lines.start_animation(warm_up=True, flow_speed=1.5)
+        # self.wait(stream_lines.virtual_time / stream_lines.flow_speed*10)
 
 
         #self.clear()
@@ -282,11 +282,8 @@ class Simulace(Scene):
             axis_config={"include_numbers": False},
             ).to_edge(DOWN, buff=1.5)
         
-        pocet = 19
-        mouses = [mouse.copy().shift(i*RIGHT*0.68) for i in range(pocet)]
-        for _,__ in zip(mouses,range(pocet)):
-            barva = value2hex(__/pocet)
-            _.set_color(barva)
+        pocet = 10
+        mouses = Group(*[mouse.copy() for i in range(pocet)]).arrange().set_color(GRAY).to_edge(DOWN)
 
         self.add(*mouses)
 
@@ -400,10 +397,9 @@ komentar = """
 
 Dobrý den, v tomto videu si ukážeme, jak matematika dokáže modelovat růst
 populací živočišných či rostlinných druhů. Ukážeme si odvození logistické
-rovnice, která je základním východiskem pro modelování populací. Ukážeme si,
-jak se chovají řešení této rovnice. Také rovnici doplníme o lov konstantní
-intenzity a zjistíme, jak tento lov ovlivňuje chování řešení a trvalou
-udržitelnost populace.
+rovnice, která je základním východiskem pro modelování populací. Ukážeme si
+chování řešení této rovnice. Také rovnici doplníme o lov konstantní intenzity a
+zjistíme, jaký má tento lov vliv na schopnost populace přežít.
 
 Logistická rovnice je rovnice založená na představě populace žijící v lokalitě
 s omezenou nosnou kapacitou. Dynamika růstu populace je pomalá, pokud je
@@ -418,14 +414,14 @@ prostředí. Volnou kapacitu prostředí budeme chápat jako doplněk obsazené
 kapacity prostředí do sta procent. A na závěr do modelu zahrneme možnost lovu
 konstantní intenzitou h.
 
-Základní fráze definující náš model je, že rychlost růstu je úměrná současně
-velkosti populace a volnému místu v prostředí. Obsazené procento je podílem
-velikosti populace a nosné kapacity, tedy y/K. Volná kapacita je doplněk
-obsazeného procenta do sta procent, tedy 1-y/K.
+Základní předpoklad definující náš model je, že rychlost růstu je úměrná
+současně velkosti populace a volnému místu v prostředí. Obsazené procento je
+podílem velikosti populace a nosné kapacity, tedy y/K. Volná kapacita je
+doplněk obsazeného procenta do sta procent, tedy 1-y/K.
 
 Velikost populace dosadíme do naší slovní formulace modelu. Rychlost růstu je
 derivace velikosti populace podle času. Volné místo máme vyjádřeno z
-předchozího. Mezi navzájem úměrnými vleičinamji je matematicky vztah
+předchozího. Mezi navzájem úměrnými veličinami je matematicky vztah
 představovaný násobením konstantou. 
 
 Takto získaná rovnice se nazývá logistická rovnice a je to základní rovnice pro
@@ -438,47 +434,50 @@ způsobem sníží pravoou stranu.
 Numerický model spustíme nejprve bez lovu, tedy s nulovou hodnotou h. Pravá
 strana rovnice je parabola a po jejím nakreslení vidíme, kdy je parabola nad
 osou a kdy je pod osou. Takto vidíme, kdy populace roste a kdy klesá. Modrá
-část odpovídá hodnotám velikosti populace, kdy populace roste. červená část
+část odpovídá hodnotám velikosti populace, kdy populace roste. Červená část
 hodnotám velikosti populace, kdy velikost klesá. To je v případě, že velikost
-populace je nad nosnou kapacitou prostředí. Z tohoto grafu je snadné odhadnout,
-že z jakéhokoliv výchozího stavu se velikost populace po čase ustálí na hodnotě
-nosné kapacity prostředí.
+populace je nad nosnou kapacitou prostředí. Stacoionární bod na rozhraní modré
+a červené křivky je stailní, protože parabola protíné v bodě K vodorovnou osu
+jako klesající funkce. Z tohoto grafu je snadné poznat, že z jakéhokoliv
+nenulového výchozího stavu se velikost populace po čase ustálí na hodnotě nosné
+kapacity prostředí.
 
 Pokud chceme sledovat časový vývoj, tedy třeba za jak dlouho se budeme od nosné
-kapacity prostředí lišit o méně než deset procent, přeneseme informaci o
-monotonii do grafu udávajícího závislost velikosti populace na čase. Časový
-průběh velikosti populace najdeme vhodnou numerickou metodou. Ta je dostupná
-asi v každém skriptovacím jazyce již jako knihovna. Křivky získané pro různé
-počáteční podmínky potvrzují naši doměnku, že se velikost populace ustálí na
-hodnotě K. Třeba myši, použité v grafice, jsou takzvaní r-stratégové, mají
-vysokou hodnotu konstanty r a k nosné kapacitě prostředí se namnoží poměrně
-rychle.
+kapacity prostředí lišit o méně než deset procent, musíme najít řešení rovnice
+jako funkci času. To zařídíme použitím numerické simulace. Knihovny pro řešení
+diferenciálních rovnic jsou dostupné asi v každém skriptovacím jazyce a v
+případech, jako je tento, zupravidla stačí vzít vzorový příklad z helpu a
+modifikovat pro své potřeby. Křivky získané pro různé počáteční podmínky
+potvrzují, že se velikost populace ustálí na hodnotě K. Třeba myši jsou
+takzvaní r-stratégové, mají vysokou hodnotu konstanty r a k nosné kapacitě
+prostředí se namnoží poměrně rychle.
 
-Pro zvolenou čáteční podmínku můžeme sledovat postupný časový vývoj, můžeme
+Pro zvolenou počáteční podmínku můžeme sledovat postupný časový vývoj, můžeme
 sledovat polohu odpovídajícího bodu ve fázovém diagramu anebo sledovat, jak se
 postupně plní nosná kapacita prostředí. Obsazenost dosáhne sta procent. 
 
 Pokud do modelu zapojíme i lov, parabola ve fázovém portrétu se posune směrem
-dolů o hodnotu h. Pokud je h malé, zůstane kousek nad vodorovnou osou. Nalevo
-se objeví červená část signalizující pokles, ale od určité hranice rovnice
-předpovídá růst. Po simulaci časového vývoje pro různé počáteční podmínky
+dolů o hodnotu h. Pokud je h malé, zůstane kousek paraboly nad vodorovnou osou.
+Nalevo se objeví červená část signalizující pokles, ale od určité hranice
+rovnice předpovídá růst. Jsou zde dva kladné stacionární body, jeden nestabilní
+a jeden stabilní. Po simulaci časového vývoje pro různé počáteční podmínky
 vidíme, že pokud křivka nezačne moc nízko, populace se s lovem dokáže vyrovnat
-a hodnoty se ustálí. Sice pod nosnou kapacitou prostředí, ale populace
-nezanikne, pokud je počáteční stav dostatečně velký. Po simulaci s oranžovou
-křivkou vidíme ustálení se na hodnotě okolo tří čtvrtin nosné kapacity
-prostředí.
+a hodnoty se ustálí u stabilního stacionárního bodu. Ten je sice pod nosnou
+kapacitou prostředí, ale populace nezanikne. Po simulaci s oranžovou křivkou
+vidíme ustálení se na hodnotě okolo tří čtvrtin nosné kapacity prostředí. Pokud
+by simulace začala nízko, pod nestabilním stacionárním bodem, populace vymře.
 
-A třetí simulace, s intenzivním lovem, kdy konstanta h je tak velká, že posune
-celou parabolu pod osu x a parabola je tedy celá červená. To je ekologický
-průšvih. Velikost populace stále klesá a po čase populace s jistotou vymře. V
-praxi naštěstí zpravidla k vymření nedojde, ale omezí se nebo zakáže lov, což
-nás vrací k prvnímu případu.
+Třetí simulace je s intenzivním lovem. Konstanta h je tak velká, že posune
+celou parabolu pod osu x a parabola je tedy celá záporná, celá červená. To je
+ekologický průšvih. Velikost populace stále klesá a po čase populace s jistotou
+vymře. V praxi naštěstí zpravidla k vymření nedojde, ale omezí se nebo zakáže
+lov, což nás vrací k prvnímu případu.
 
 Uvedený model je velice jednoduchý. V praxi totiž nebývají k dispozici
-konstanty do uvažované rovnice a populace ani nežije v lokalitě sama a uvolněné
-místo by mohl začít využívat konkurent. I tak se však jedná o užitečnou
-rovnici, umožňujících definovat bezepečnou hranici pro využívání přírodních
-zdrojů. Jedná se o složitější modely, než je model, který jsme si představili,
+konstanty do uvažované rovnice. Také= se nestává, že by populace žila v
+lokalitě sama. I tak se však jedná o užitečnou rovnici, umožňujících definovat
+bezepečnou hranici pro využívání přírodních zdrojů. V praxi se sice kvůli tomu
+používají o něco složitější modely, než je model, který jsme si představili,
 ale snad u všech modelů používaných v matematické biologii je logistická
 rovnice základnám stavebním kamenem. Věřím, že teď už rozumíme tomu, proč se
 tato rovnice v modelech biologických systémů vyskytuje, co vyjadřuje a jak se
