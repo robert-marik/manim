@@ -401,10 +401,10 @@ rovnice, která je základním východiskem pro modelování populací. Ukážem
 chování řešení této rovnice. Také rovnici doplníme o lov konstantní intenzity a
 zjistíme, jaký má tento lov vliv na schopnost populace přežít.
 
-Logistická rovnice je rovnice založená na představě populace žijící v lokalitě
-s omezenou nosnou kapacitou. Dynamika růstu populace je pomalá, pokud je
-populace malá nebo pokud je v lokalitě již plno. Využijeme nejjednodušší
-závislost a to přímou úměrnost. V následujícím už budeme přesnější.
+Logistická rovnice je rovnice založená na představě populace žijící v lokalitě s
+omezenou nosnou kapacitou. Dynamika růstu populace je pomalá, pokud je populace
+malá nebo pokud je v lokalitě již plno. Využijeme nejjednodušší závislost a to
+přímou úměrnost. V následujícím už budeme přesnější.
 
 ==========================================
 
@@ -415,9 +415,9 @@ kapacity prostředí do sta procent. A na závěr do modelu zahrneme možnost lo
 konstantní intenzitou h.
 
 Základní předpoklad definující náš model je, že rychlost růstu je úměrná
-současně velkosti populace a volnému místu v prostředí. Obsazené procento je
-podílem velikosti populace a nosné kapacity, tedy y/K. Volná kapacita je
-doplněk obsazeného procenta do sta procent, tedy 1-y/K.
+současně velikosti populace a volnému místu v prostředí. Obsazené procento je
+podílem velikosti populace a nosné kapacity, tedy y/K. Volná kapacita je doplněk
+obsazeného procenta do sta procent, tedy 1-y/K.
 
 Velikost populace dosadíme do naší slovní formulace modelu. Rychlost růstu je
 derivace velikosti populace podle času. Volné místo máme vyjádřeno z
@@ -427,30 +427,30 @@ představovaný násobením konstantou.
 Takto získaná rovnice se nazývá logistická rovnice a je to základní rovnice pro
 modelování populací. Modifikovat ji nebývá težké, například omezení dynamiky
 vlivem lovu s konstantní intenzitou je jenom přidání člene, který příslušným
-způsobem sníží pravoou stranu.
+způsobem sníží pravou stranu.
 
 =============================================
 
 Numerický model spustíme nejprve bez lovu, tedy s nulovou hodnotou h. Pravá
 strana rovnice je parabola a po jejím nakreslení vidíme, kdy je parabola nad
-osou a kdy je pod osou. Takto vidíme, kdy populace roste a kdy klesá. Modrá
-část odpovídá hodnotám velikosti populace, kdy populace roste. Červená část
-hodnotám velikosti populace, kdy velikost klesá. To je v případě, že velikost
-populace je nad nosnou kapacitou prostředí. Stacoionární bod na rozhraní modré
-a červené křivky je stailní, protože parabola protíné v bodě K vodorovnou osu
-jako klesající funkce. Z tohoto grafu je snadné poznat, že z jakéhokoliv
-nenulového výchozího stavu se velikost populace po čase ustálí na hodnotě nosné
-kapacity prostředí.
+osou a kdy je pod osou. Takto vidíme, kdy populace roste a kdy klesá. Modrá část
+odpovídá hodnotám velikosti populace, kdy populace roste. Červená část hodnotám
+velikosti populace, kdy velikost klesá. To je v případě, že velikost populace je
+nad nosnou kapacitou prostředí. Stacionární bod na rozhraní modré a červené
+křivky je stabilní, protože parabola protíné v bodě K vodorovnou osu jako
+klesající funkce. Z tohoto grafu je snadné poznat, že z jakéhokoliv nenulového
+výchozího stavu se velikost populace po čase ustálí na hodnotě nosné kapacity
+prostředí.
 
 Pokud chceme sledovat časový vývoj, tedy třeba za jak dlouho se budeme od nosné
 kapacity prostředí lišit o méně než deset procent, musíme najít řešení rovnice
 jako funkci času. To zařídíme použitím numerické simulace. Knihovny pro řešení
 diferenciálních rovnic jsou dostupné asi v každém skriptovacím jazyce a v
-případech, jako je tento, zupravidla stačí vzít vzorový příklad z helpu a
+případech, jako je tento, zpravidla stačí vzít vzorový příklad z helpu a
 modifikovat pro své potřeby. Křivky získané pro různé počáteční podmínky
-potvrzují, že se velikost populace ustálí na hodnotě K. Třeba myši jsou
-takzvaní r-stratégové, mají vysokou hodnotu konstanty r a k nosné kapacitě
-prostředí se namnoží poměrně rychle.
+potvrzují, že se velikost populace ustálí na hodnotě K. Třeba myši jsou takzvaní
+r-stratégové, mají vysokou hodnotu konstanty r a k nosné kapacitě prostředí se
+namnoží poměrně rychle.
 
 Pro zvolenou počáteční podmínku můžeme sledovat postupný časový vývoj, můžeme
 sledovat polohu odpovídajícího bodu ve fázovém diagramu anebo sledovat, jak se
@@ -461,26 +461,26 @@ dolů o hodnotu h. Pokud je h malé, zůstane kousek paraboly nad vodorovnou oso
 Nalevo se objeví červená část signalizující pokles, ale od určité hranice
 rovnice předpovídá růst. Jsou zde dva kladné stacionární body, jeden nestabilní
 a jeden stabilní. Po simulaci časového vývoje pro různé počáteční podmínky
-vidíme, že pokud křivka nezačne moc nízko, populace se s lovem dokáže vyrovnat
-a hodnoty se ustálí u stabilního stacionárního bodu. Ten je sice pod nosnou
+vidíme, že pokud křivka nezačne moc nízko, populace se s lovem dokáže vyrovnat a
+hodnoty se ustálí u stabilního stacionárního bodu. Ten je sice pod nosnou
 kapacitou prostředí, ale populace nezanikne. Po simulaci s oranžovou křivkou
 vidíme ustálení se na hodnotě okolo tří čtvrtin nosné kapacity prostředí. Pokud
 by simulace začala nízko, pod nestabilním stacionárním bodem, populace vymře.
 
-Třetí simulace je s intenzivním lovem. Konstanta h je tak velká, že posune
-celou parabolu pod osu x a parabola je tedy celá záporná, celá červená. To je
+Třetí simulace je s intenzivním lovem. Konstanta h je tak velká, že posune celou
+parabolu pod osu x a parabola je tedy celá záporná, celá červená. To je
 ekologický průšvih. Velikost populace stále klesá a po čase populace s jistotou
 vymře. V praxi naštěstí zpravidla k vymření nedojde, ale omezí se nebo zakáže
 lov, což nás vrací k prvnímu případu.
 
-Uvedený model je velice jednoduchý. V praxi totiž nebývají k dispozici
-konstanty do uvažované rovnice. Také= se nestává, že by populace žila v
-lokalitě sama. I tak se však jedná o užitečnou rovnici, umožňujících definovat
-bezepečnou hranici pro využívání přírodních zdrojů. V praxi se sice kvůli tomu
-používají o něco složitější modely, než je model, který jsme si představili,
-ale snad u všech modelů používaných v matematické biologii je logistická
-rovnice základnám stavebním kamenem. Věřím, že teď už rozumíme tomu, proč se
-tato rovnice v modelech biologických systémů vyskytuje, co vyjadřuje a jak se
-modely s touto rovnicí chovají.
+Uvedený model je velice jednoduchý. V praxi totiž nebývají k dispozici konstanty
+do uvažované rovnice. Také se nestává, že by populace žila v lokalitě sama. I
+tak se však jedná o užitečnou rovnici, umožňujících definovat bezepečnou hranici
+pro využívání přírodních zdrojů. V praxi se sice kvůli tomu používají o něco
+složitější modely, než je model, který jsme si představili, ale snad u všech
+modelů používaných v matematické biologii je logistická rovnice základnám
+stavebním kamenem. Věřím, že teď už rozumíme tomu, proč se tato rovnice v
+modelech biologických systémů vyskytuje, co vyjadřuje a jak se modely s touto
+rovnicí chovají.
 
 """
