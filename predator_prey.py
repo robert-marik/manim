@@ -48,7 +48,7 @@ for i in range(1,number_of_curves):
 X = curves.pop(4)
 X_higher_a = curves_higher_a.pop(4)
 
-bunny = os.path.join("icons","rabbit-shape")
+bunny = os.path.join("icons","bunny_black")
 fox = os.path.join("icons","fox-sitting")
 myaxis_config={'tips':False}
 
