@@ -1,9 +1,11 @@
+from operator import eq
 from typing_extensions import runtime
 from manim import *
 import colorsys
 import random
 
 import numpy as np
+from sqlalchemy import null
 from common_definitions import *
 import os
 from scipy.integrate import solve_ivp  # řešení diferenciálních rovnic
@@ -126,8 +128,6 @@ class Odvozeni(Scene):
             ) 
             self.wait()
 
-
-
 class PhasePortrait(Scene):
     def construct(self):
 
@@ -136,7 +136,8 @@ class PhasePortrait(Scene):
             MathTex(r"\displaystyle\frac{\mathrm dy}{\mathrm dt}{}","{}={}","-cy+dxy").set_color(RED)
         ).arrange(DOWN, aligned_edge=LEFT)
         equations.to_corner(UL)
-        self.add(equations)
+        self.play(AnimationGroup(*[GrowFromCenter(_) for _ in equations], lag_ratio=0.7))
+        rh_sides = VGroup(equations[0][2], equations[1][2])
 
         phase_portarit = Group()
         axes = Axes(
@@ -160,7 +161,11 @@ class PhasePortrait(Scene):
         bunny_img.set_z_index(-1)
         phase_portarit.add(fox_img,bunny_img)
         phase_portarit.to_corner(DL)
-        self.add(phase_portarit)
+        #self.add(phase_portarit)
+        self.play(Create(axes.x_axis), FadeIn(bunny_img))
+        self.wait()
+        self.play(Create(axes.y_axis), FadeIn(fox_img))
+        self.wait()
 
         phase_portarit_arrows = VGroup()
         delka = 3
@@ -190,26 +195,34 @@ class PhasePortrait(Scene):
                 )
             )
 
-        self.add(phase_portarit_arrows)        
+        sipka = phase_portarit_arrows[80]
+        bod = Dot().move_to(sipka)
+        self.add(bod)
         self.wait()
+        rectangle = SurroundingRectangle(rh_sides)
+        self.play(FadeIn(rectangle))
+        self.play(FadeIn(sipka), FadeOut(bod))
+        self.wait()
+        self.remove(sipka)
+        self.wait()
+        phase_portarit_arrows.shuffle_submobjects()
+        self.play(AnimationGroup(*[FadeIn(_) for _ in phase_portarit_arrows], lag_ratio=0.1), run_time=4)
+        self.wait()
+        self.play(FadeOut(rectangle))
+        self.wait()
+        
         self.play(AnimationGroup(
             *[i.animate.set_fill(opacity = 0.5).set_stroke(opacity=0.5) for i in phase_portarit_arrows]
             ))
 
         x,y = X
         graph = axes.plot_line_graph(*X, add_vertex_dots=False)
-        self.add(graph)
+        # self.play(Create(graph))
+
+        # self.wait()
 
         time = ValueTracker(0)
         
-        allcurves = VGroup(
-            *[axes.plot_line_graph(*curves[i][:][:450], add_vertex_dots=False) for i in curves.keys()]
-        )
-        allcurves.set_stroke(color=BLUE, width=2)
-
-        self.play(AnimationGroup(*[Create(_) for _ in allcurves],lag_ratio=0.1, run_time=3))
-        self.add(allcurves)
-
         axes2 = Axes(
             x_range=[0,tmax,1e6],
             y_range=[0,60,1e6],
@@ -268,6 +281,17 @@ class PhasePortrait(Scene):
         
         self.wait()
 
+        allcurves = VGroup(
+            *[axes.plot_line_graph(*curves[i][:][:450], add_vertex_dots=False) for i in curves.keys()]
+        )
+        allcurves.set_stroke(color=BLUE, width=2)
+
+        self.play(Create(graph))
+        self.play(AnimationGroup(*[Create(_) for _ in allcurves],lag_ratio=0.1, run_time=3))
+        self.add(stationary_point)
+
+        self.wait()
+
         self.play(AnimationGroup(
             *[FadeOut(_) for _ in [*axes2, labels2, *report, fox_img_watches, 
                                     bunny_img_watches, 
@@ -300,9 +324,21 @@ class PhasePortrait(Scene):
         ).arrange(DOWN, aligned_edge=LEFT)
         equations3.move_to(equations2)
 
+        equations3a = VGroup(
+            MathTex(r"-a","{}={}","-by"),
+            MathTex(r"0","{}={}","-c+dx")
+        ).arrange(DOWN, aligned_edge=LEFT)
+        equations3a.move_to(equations2)
+
+        equations3aa = VGroup(
+            MathTex(r"a","{}={}","by"),
+            MathTex(r"c","{}={}","dx")
+        ).arrange(DOWN, aligned_edge=LEFT)
+        equations3aa.move_to(equations2)
+
         equations3b = VGroup(
             MathTex(r"by","{}={}","a"),
-            MathTex(r"c","{}={}","dx")
+            MathTex(r"dx","{}={}","c")
         ).arrange(DOWN, aligned_edge=LEFT)
         equations3b.move_to(equations2)
 
@@ -323,13 +359,24 @@ class PhasePortrait(Scene):
             lag_ratio=1
         ))
         
+        self.wait()
+
         self.play(AnimationGroup(
             *[TransformMatchingShapes(_,__) for _,__ in zip(equations2,equations3)],
             lag_ratio=1
         ))
 
         self.play(AnimationGroup(
-            *[TransformMatchingShapes(_,__) for _,__ in zip(equations3,equations3b)],
+            *[TransformMatchingShapes(_,__, path_arc=PI/2, run_time=3) for _,__ in zip(equations3,equations3a)],
+            lag_ratio=1
+        ))
+
+        self.play(AnimationGroup(
+            *[TransformMatchingShapes(_,__, path_arc=PI/2, run_time=3) for _,__ in zip(equations3a,equations3aa)],
+            lag_ratio=1
+        ))
+        self.play(AnimationGroup(
+            *[TransformMatchingShapes(_,__, path_arc=PI/2, run_time=3) for _,__ in zip(equations3aa,equations3b)],
             lag_ratio=1
         ))
 
@@ -354,6 +401,15 @@ class PhasePortrait(Scene):
             FadeToColor(equations4[1][2],RED)),
             lag_ratio=1
         ))
+
+
+        self.wait()
+        for i in range(5):
+            self.play(Indicate(equations[1][2], scale_factor=2.5), Indicate(label_x, scale_factor=3))
+        self.wait()
+        for i in range(5):
+            self.play(Indicate(equations[0][2], scale_factor=2.5), Indicate(label_y, scale_factor=3))
+        
 
         self.wait()
 
@@ -385,5 +441,49 @@ class PhasePortrait(Scene):
 
         self.wait()
 
-    
-                  
+komentar = """
+
+Dobrý den, vítejte u videa, ve kterém si ukážeme, jak umíme modelovat vzájemné
+působení dvou populací a jak například umíme vysvětlit existenci cyklů v
+přírodě.
+
+Představíme se klasický model dravce a kořisti, který dnes nazýváme Lotkův
+Volterrův model. Ten je založen na představě dvou interagujících populací.
+Populace kořisti, mysleme si například králíky, se může rozmnožovat.
+
+Předpokládejme dostatek místa v životním prostředí a tedy růst úměrný velikosti
+populace. To je přirozený předpoklad, protože například dvojnásobně velká
+populace má dvojnásobný počet potomoků a množi se dvojnásobnou rychlostí.
+
+Přítomnost dravce růst populace kořisti zpomalí. Toto zpomalení souvisí s
+počtem predátorů, protože více lišek uloví více zajíců. Souvisí také s
+množstvím kořisti, protože každé lišce se lépe loví v revíru přeplněném zajíci
+než tam, kde o zajíce sotva zavadí. Přirozené je použít do základního modelu
+nejjednodušší funkční závislost, přímou úměrnost vzhledem k oběma populacím.
+
+Velikost, s jakou klesá populace predátora, je úměrná velikosti této populace.
+To je opět přirozený předpoklad, protože dvojnásobek hladových lišek znamená
+dvojnásobek lišek, které zemřou na nedostatek potravy. V přítomnosti potravy se
+však pokles zastaví a při dostatku potravy dokonce změní v růst. Opět tento
+efekt roste jak s počtem lišek, tak s počtem zajíců. Opět je nepřirozenější pro
+tento efekt použít nejjednodušší rostoucí funkci, přímou úměrnost vzhledem
+ke každé z populací. 
+
+Takto jsme sestavili soustavu dvou rovnic. Nenámými jsou funkce popisující
+velikost populace lišek a králíků. Rovnice vyjadřují, jak se aktuální počet
+lišek a králíků projeví na tom, zda jejich populace rostou či vymírají a jak
+rychle.
+
+Pravé strany neobsahují čas. Jsou stejné v úterý jako ve čtvrtek, letos stejně
+jako předloni. Tím je situace velice zjednodušená a dynamiku populací je možné
+prozkoumat jednoduchými grafickými metodami. 
+
+=========================
+
+Uspořádaná dvojice , že počet
+králíků a počet lišek
+
+
+
+
+"""                    
