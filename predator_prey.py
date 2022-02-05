@@ -9,7 +9,8 @@ from sqlalchemy import null
 from common_definitions import *
 import os
 from scipy.integrate import solve_ivp  # řešení diferenciálních rovnic
-
+np.random.seed(0)
+random.seed(0)
 
 # https://scipy-cookbook.readthedocs.io/items/LoktaVolterraTutorial.html
 # Definition of parameters
@@ -54,6 +55,8 @@ bunny = os.path.join("icons","bunny_black")
 fox = os.path.join("icons","fox-sitting")
 myaxis_config={'tips':False}
 
+my_wait_time = 10
+
 class Intro(Scene):
 
     def construct(self):
@@ -84,7 +87,7 @@ class Odvozeni(Scene):
                 r"Rychlost s jakou přístup ke kořisti posiluje populaci dravce je úměrná velikosti obou populací.",
             ]]
         ).arrange(DOWN, aligned_edge=LEFT).to_edge(UP)
-        self.wait()
+        self.wait(my_wait_time)
 
         equations = VGroup(
             MathTex(r"\displaystyle\frac{\mathrm dx}{\mathrm dt}","{}=ax","{}-bxy"),
@@ -100,7 +103,7 @@ class Odvozeni(Scene):
         ).arrange(DOWN,buff=0.5)
         imgs.next_to(equations,LEFT, buff=1)
 
-        self.add(imgs)
+        self.play(FadeIn(imgs[0]))
 
         count = 0
         for i,j in [
@@ -109,6 +112,8 @@ class Odvozeni(Scene):
             [assumptions[2],equations[1][:2]],
             [assumptions[3],equations[1][2]],
             ]:
+            if count == 1:
+                self.play(FadeIn(imgs[1]))
             self.play(FadeIn(i,j))
             r1 = SurroundingRectangle(i)
             r2 = SurroundingRectangle(j)
@@ -119,22 +124,25 @@ class Odvozeni(Scene):
                     lag_ratio=.2
                 ), run_time=2
             ) 
-            self.wait()
+            self.wait(my_wait_time)
             self.play(
                 AnimationGroup(
                     FadeOut(r1),FadeOut(r2),
                     lag_ratio=.2
                 ), run_time=2
             ) 
-            self.wait()
+            self.wait(my_wait_time)
+
+        self.wait(5)
 
 class PhasePortrait(Scene):
     def construct(self):
 
         equations = VGroup(
             MathTex(r"\displaystyle\frac{\mathrm dx}{\mathrm dt}","{}={}","ax-bxy"),
-            MathTex(r"\displaystyle\frac{\mathrm dy}{\mathrm dt}{}","{}={}","-cy+dxy").set_color(RED)
-        ).arrange(DOWN, aligned_edge=LEFT)
+            MathTex(r"\displaystyle\frac{\mathrm dy}{\mathrm dt}{}","{}={}","-cy+dxy",             
+               background_stroke_width=2).set_color(RED)
+        ).arrange(DOWN, aligned_edge=LEFT).set_z_index(10)
         equations.to_corner(UL)
         self.play(AnimationGroup(*[GrowFromCenter(_) for _ in equations], lag_ratio=0.7))
         rh_sides = VGroup(equations[0][2], equations[1][2])
@@ -155,17 +163,17 @@ class PhasePortrait(Scene):
 
         fox_img = ImageMobject(fox)
         fox_img.scale_to_fit_width(1.5).set_color(RED).next_to(axes.y_axis, LEFT, aligned_edge=UP)
-        fox_img.set_z_index(-1)
+        fox_img.set_z_index(-10)
         bunny_img = ImageMobject(bunny)
         bunny_img.scale_to_fit_width(1).set_color(WHITE).next_to(axes.x_axis,RIGHT)
-        bunny_img.set_z_index(-1)
+        bunny_img.set_z_index(-10)
         phase_portarit.add(fox_img,bunny_img)
         phase_portarit.to_corner(DL)
         #self.add(phase_portarit)
-        self.play(Create(axes.x_axis), FadeIn(bunny_img))
-        self.wait()
-        self.play(Create(axes.y_axis), FadeIn(fox_img))
-        self.wait()
+        self.play(Create(axes.x_axis), SpinInFromNothing(bunny_img, angle=4 * PI))
+        self.wait(my_wait_time)
+        self.play(Create(axes.y_axis), SpinInFromNothing(fox_img, angle=4 * PI))
+        self.wait(my_wait_time)
 
         phase_portarit_arrows = VGroup()
         delka = 3
@@ -195,33 +203,54 @@ class PhasePortrait(Scene):
                 )
             )
 
-        sipka = phase_portarit_arrows[80]
-        bod = Dot().move_to(sipka)
-        self.add(bod)
-        self.wait()
+        x,y = X
+
+        ini = 30
+        bod = Dot(axes.coords_to_point(x[ini], y[ini]))
+        bod.set_color(YELLOW)
+        scale = 0.3
+        zacatek = np.array([x[ini],y[ini]])
+        rhs = dX_dt(zacatek)
+        norma = np.sqrt(rhs[0]**2+rhs[1]**2)
+        posun = rhs/norma*delka
+        konec = zacatek + posun
+        sipka = Arrow(
+                    start=axes.c2p(*zacatek,0), 
+                    end=axes.c2p(*konec,0), 
+                    buff=0, 
+                    max_stroke_width_to_length_ratio = 20, 
+                    max_tip_length_to_length_ratio = 0.4,
+                    color = temperature_to_color(norma*5, min_temp=0, max_temp=maximum),
+                    stroke_width=10,
+                )
+
+        self.play(FadeIn(bod))
+        self.wait(my_wait_time)
         rectangle = SurroundingRectangle(rh_sides)
         self.play(FadeIn(rectangle))
-        self.play(FadeIn(sipka), FadeOut(bod))
-        self.wait()
-        self.remove(sipka)
-        self.wait()
+        self.wait(my_wait_time)
+        self.play(ReplacementTransform(bod,sipka))
+        self.wait(my_wait_time)
+
         phase_portarit_arrows.shuffle_submobjects()
-        self.play(AnimationGroup(*[FadeIn(_) for _ in phase_portarit_arrows], lag_ratio=0.1), run_time=4)
-        self.wait()
+        self.play(AnimationGroup(*[
+            Create(_) for _ in phase_portarit_arrows
+            ], lag_ratio=0.05), run_time=4)
+        self.wait(my_wait_time)
         self.play(FadeOut(rectangle))
-        self.wait()
+        self.wait(my_wait_time)
         
         self.play(AnimationGroup(
-            *[i.animate.set_fill(opacity = 0.5).set_stroke(opacity=0.5) for i in phase_portarit_arrows]
+            *[i.animate.set_fill(opacity = 0.5).set_stroke(opacity=0.5) for i in VGroup(*phase_portarit_arrows,sipka)]
             ))
 
-        x,y = X
         graph = axes.plot_line_graph(*X, add_vertex_dots=False)
+        graph.set_stroke(width=3)
         # self.play(Create(graph))
 
-        # self.wait()
+        # self.wait(my_wait_time)
 
-        time = ValueTracker(0)
+        time = ValueTracker(ini)
         
         axes2 = Axes(
             x_range=[0,tmax,1e6],
@@ -233,7 +262,7 @@ class PhasePortrait(Scene):
         labels2 = VGroup(Tex(r"$t$").next_to(axes2.x_axis))
         graph2 = VGroup(axes2,labels2)
         graph2.to_corner(UR)
-        self.add(graph2)
+        self.play(GrowFromEdge(graph2, RIGHT))
 
         graph_foxes = axes2.plot_line_graph(
             x_values=t, 
@@ -245,12 +274,16 @@ class PhasePortrait(Scene):
             y_values=X[0], 
             add_vertex_dots=False
         ).set_color(WHITE)
-        self.add(graph_foxes,graph_bunnies)
+        self.play(AnimationGroup(*[
+            Create(_) for _ in  [graph_foxes,graph_bunnies]
+        ]))
 
         kwds = {
                 'value_max' : 60, 
                 'values' : [0,10,20,30,40,50,60]
                 }
+
+        draw_dot = True
         def draw_for_animation(t_index):
             watches = VGroup(
                 analog_indicator(x[t_index],**kwds),
@@ -266,43 +299,60 @@ class PhasePortrait(Scene):
             )
             line_marker[1].set_color(GRAY)
             line_marker[1].set_z_index(-1)
-            dot_in_phase_space = Dot(axes.coords_to_point(x[t_index], y[t_index]))
-            dot_in_phase_space.set_color(YELLOW)
-            return(VGroup(line_marker,watches,dot_in_phase_space))
+            if draw_dot:
+                dot_in_phase_space = Dot(axes.coords_to_point(x[t_index], y[t_index]))
+                dot_in_phase_space.set_color(YELLOW)
+            else:
+                dot_in_phase_space = VGroup()
+            return(VGroup(line_marker,dot_in_phase_space,watches))
 
         report = always_redraw(lambda: draw_for_animation(int(time.get_value())) )
-        fox_img_watches = ImageMobject(fox).scale_to_fit_width(0.65).set_color(RED).next_to(report[1][1],DOWN)
-        bunny_img_watches = ImageMobject(bunny).scale_to_fit_width(.3).set_color(WHITE).next_to(report[1][0],DOWN)
-        self.add(report, fox_img_watches, bunny_img_watches)
+        fox_img_watches = ImageMobject(fox).scale_to_fit_width(0.65).set_color(RED).next_to(report[-1][1],DOWN)
+        bunny_img_watches = ImageMobject(bunny).scale_to_fit_width(.3).set_color(WHITE).next_to(report[-1][0],DOWN)
+
+        temp = draw_for_animation(int(time.get_value()))
+        self.play(AnimationGroup(*[SpinInFromNothing(_) for _ in temp[-1]], lag_ratio=0.05))
+        temp.set_color(BLACK).set_z_index(-10)
+        self.add(report)
+        #self.wait(my_wait_time)
+        self.play(AnimationGroup(
+            *[SpinInFromNothing(_,angle=3*PI) for _ in [fox_img_watches, bunny_img_watches]]
+            ),lag_ratio=0.3
+            )
+        self.wait(my_wait_time)
 
         for i in range(5):
             self.play(time.animate.set_value(tnumber-1), run_time=5, rate_func=linear)
             time.set_value(0)
         
-        self.wait()
+        self.wait(my_wait_time)
 
         allcurves = VGroup(
             *[axes.plot_line_graph(*curves[i][:][:450], add_vertex_dots=False) for i in curves.keys()]
         )
-        allcurves.set_stroke(color=BLUE, width=2)
+        allcurves.set_stroke(color=BLUE, width=3)
 
+        draw_dot = False
+        self.wait(0.1)
         self.play(Create(graph))
+        self.wait(my_wait_time)
+
         self.play(AnimationGroup(*[Create(_) for _ in allcurves],lag_ratio=0.1, run_time=3))
         self.add(stationary_point)
 
-        self.wait()
+        self.wait(my_wait_time)
 
         self.play(AnimationGroup(
             *[FadeOut(_) for _ in [*axes2, labels2, *report, fox_img_watches, 
                                     bunny_img_watches, 
-                                    graph_foxes,graph_bunnies, phase_portarit_arrows]
+                                    graph_foxes,graph_bunnies, phase_portarit_arrows, sipka]
             ],
             Group(
                 allcurves, phase_portarit, graph, 
             ).animate.scale(1.2).to_corner(UR, buff=.1),
             lag_ratio=0.05)
         )
-        self.play(fox_img.animate.next_to(axes.y_axis, RIGHT, aligned_edge=UP))
+        # self.play(fox_img.animate.next_to(axes.y_axis, RIGHT, aligned_edge=UP))
 
         # stability_conditions=VGroup(
         #     MathTex(r"\displaystyle\frac{\mathrm dx}{\mathrm dt}=0 \implies y=\frac ba"),
@@ -359,7 +409,7 @@ class PhasePortrait(Scene):
             lag_ratio=1
         ))
         
-        self.wait()
+        self.wait(my_wait_time)
 
         self.play(AnimationGroup(
             *[TransformMatchingShapes(_,__) for _,__ in zip(equations2,equations3)],
@@ -367,16 +417,16 @@ class PhasePortrait(Scene):
         ))
 
         self.play(AnimationGroup(
-            *[TransformMatchingShapes(_,__, path_arc=PI/2, run_time=3) for _,__ in zip(equations3,equations3a)],
+            *[TransformMatchingShapes(_,__, path_arc=PI/2, run_time=1) for _,__ in zip(equations3,equations3a)],
             lag_ratio=1
         ))
 
         self.play(AnimationGroup(
-            *[TransformMatchingShapes(_,__, path_arc=PI/2, run_time=3) for _,__ in zip(equations3a,equations3aa)],
+            *[TransformMatchingShapes(_,__, path_arc=PI/2, run_time=1) for _,__ in zip(equations3a,equations3aa)],
             lag_ratio=1
         ))
         self.play(AnimationGroup(
-            *[TransformMatchingShapes(_,__, path_arc=PI/2, run_time=3) for _,__ in zip(equations3aa,equations3b)],
+            *[TransformMatchingShapes(_,__, path_arc=PI/2, run_time=1) for _,__ in zip(equations3aa,equations3b)],
             lag_ratio=1
         ))
 
@@ -385,7 +435,7 @@ class PhasePortrait(Scene):
             lag_ratio=1
         ))
 
-        self.wait()
+        self.wait(my_wait_time)
 
         line_x = axes.get_vertical_line(stationary_point.get_center())
         line_y = axes.get_horizontal_line(stationary_point.get_center())
@@ -403,15 +453,30 @@ class PhasePortrait(Scene):
         ))
 
 
-        self.wait()
-        for i in range(5):
-            self.play(Indicate(equations[1][2], scale_factor=2.5), Indicate(label_x, scale_factor=3))
-        self.wait()
-        for i in range(5):
+        self.wait(my_wait_time)
+        for i in range(3):
             self.play(Indicate(equations[0][2], scale_factor=2.5), Indicate(label_y, scale_factor=3))
+        self.wait(my_wait_time)
+        for i in range(3):
+            self.play(Indicate(equations[1][2], scale_factor=2.5), Indicate(label_x, scale_factor=3))
         
 
-        self.wait()
+        self.wait(my_wait_time)
+
+        dravec = os.path.join("icons","drava_ryba")
+        korist = os.path.join("icons","ryba")
+
+        dravec_img = ImageMobject(dravec)
+        korist_img = ImageMobject(korist)
+        dravec_img.set_color(RED).scale_to_fit_width(2)
+        dravec_img.move_to(fox_img, aligned_edge=UP).set_z_index(-2)
+        korist_img.set_color(WHITE).scale_to_fit_width(.9)
+        korist_img.move_to(bunny_img, aligned_edge=LEFT).set_z_index(-2)
+
+        self.play(FadeOut(fox_img),SpinInFromNothing(dravec_img, angle=8 * PI), runtime=3)
+        self.wait(my_wait_time)
+        self.play(FadeOut(bunny_img),SpinInFromNothing(korist_img, angle=8 * PI), runtime=3)
+        self.wait(my_wait_time)
 
         graph_higher_a = axes.plot_line_graph(*X_higher_a, add_vertex_dots=False)
         allcurves_higher_a = VGroup(
@@ -420,8 +485,8 @@ class PhasePortrait(Scene):
         allcurves_higher_a.set_stroke(color=PURPLE, width=2)
         stationary_point_higher_a = Dot(axes.c2p(*X_f1_higher_a)).set_z_index(2)
         
-        allcurves.set_stroke(color=BLUE, width=4)
-        allcurves_higher_a.set_stroke(color=BLUE, width=4)
+        allcurves.set_stroke(color=BLUE, width=3)
+        allcurves_higher_a.set_stroke(color=BLUE, width=3)
 
         self.play(
             AnimationGroup(
@@ -433,13 +498,13 @@ class PhasePortrait(Scene):
                         [*allcurves_higher_a[:4], graph_higher_a, *allcurves_higher_a[4:]] 
                         )
                 ],
-                lag_ratio=1,
+                lag_ratio=.1,
                 run_time=5
             )
         )
 
 
-        self.wait()
+        self.wait(my_wait_time)
 
 komentar = """
 
@@ -447,19 +512,20 @@ Dobrý den, vítejte u videa, ve kterém si ukážeme, jak umíme modelovat vzá
 působení dvou populací a jak například umíme vysvětlit existenci cyklů v
 přírodě.
 
-Představíme se klasický model dravce a kořisti, který dnes nazýváme Lotkův
-Volterrův model. Ten je založen na představě dvou interagujících populací.
-Populace kořisti, mysleme si například králíky, se může rozmnožovat.
+Představíme si klasický model dravce a kořisti, který je založen na představě
+dvou interagujících populací.
 
+Populace kořisti, mysleme si například králíky, se může rozmnožovat.
 Předpokládejme dostatek místa v životním prostředí a tedy růst úměrný velikosti
 populace. To je přirozený předpoklad, protože například dvojnásobně velká
-populace má dvojnásobný počet potomoků a množi se dvojnásobnou rychlostí.
+populace má dvojnásobný počet potomků a množí se proto dvojnásobnou rychlostí.
 
-Přítomnost dravce růst populace kořisti zpomalí. Toto zpomalení souvisí s
-počtem predátorů, protože více lišek uloví více zajíců. Souvisí také s
-množstvím kořisti, protože každé lišce se lépe loví v revíru přeplněném zajíci
-než tam, kde o zajíce sotva zavadí. Přirozené je použít do základního modelu
-nejjednodušší funkční závislost, přímou úměrnost vzhledem k oběma populacím.
+Přítomnost dravce, třeba lišek, růst populace kořisti zpomalí. Toto zpomalení
+souvisí s počtem predátorů, protože více lišek uloví více zajíců. Souvisí také
+s množstvím kořisti, protože každé lišce se lépe loví v revíru přeplněném
+zajíci než tam, kde o zajíce sotva zavadí. Přirozené je použít do základního
+modelu nejjednodušší funkční závislost, přímou úměrnost vzhledem k oběma
+populacím.
 
 Velikost, s jakou klesá populace predátora, je úměrná velikosti této populace.
 To je opět přirozený předpoklad, protože dvojnásobek hladových lišek znamená
@@ -469,7 +535,7 @@ efekt roste jak s počtem lišek, tak s počtem zajíců. Opět je nepřirozeně
 tento efekt použít nejjednodušší rostoucí funkci, přímou úměrnost vzhledem
 ke každé z populací. 
 
-Takto jsme sestavili soustavu dvou rovnic. Nenámými jsou funkce popisující
+Takto jsme sestavili soustavu dvou rovnic. Neznámými jsou funkce popisující
 velikost populace lišek a králíků. Rovnice vyjadřují, jak se aktuální počet
 lišek a králíků projeví na tom, zda jejich populace rostou či vymírají a jak
 rychle.
@@ -480,10 +546,89 @@ prozkoumat jednoduchými grafickými metodami.
 
 =========================
 
-Uspořádaná dvojice , že počet
-králíků a počet lišek
+Dvojice čísel, jako třeba počet králíků a lišek definuje bod v rovině. Pojďme
+do takové roviny kreslit. Vodorovně je množství králíků, svisle lišek.
+ 
+Bod definuje stav s určitým počtem králíků a lišek. Pravé strany rovnic ukážou,
+jak se tento stav projeví na dalším vývoji. Například teď máme bod celkem
+nahoře, tedy hodně lišek. Ty hodně uloví, v první rovnici dominuje člen bxy a
+počet králíků bude klesat. Zatím je však králíků pořád relativně dost na to,
+aby se lišky uživily a počet lišek roste. Proto si v tomto bodě nakreslíme
+šipku doleva nahoru. Podobnou úvahu můžeme provést v dalších bodech
+roviny a dostaneme tak směrové pole systému. Aby směrové pole vypadalo
+přehledně, zkrátíme všechny šipky na stejnou délku a informaci o jejich původní
+délce zachytíme barvou šipky.
 
+Pokud vyjdeme z počátečního stavu, šipky ukazují, jak se budou hodnoty populací
+měnit. Kterým směrem a jak rychle. Ve směrovém poli budeme sledovat, jak se bod
+popisující stav systému pohybuje podle šipek. 
 
+Není to jediná možnost vizualizace. Vpravo nahoře budeme sledovat grafy
+ukazující velikosti populací v závislosti na čase, nebo o něco níže jenom
+jednoduché indikátory velikosti obou populací. Všimněte si, že děj je
+periodický a stále se opakuje maximum kořisti, následované maximem dravce. Toto
+maximum dravce ale velmi rychle zdecimuje populaci kořisti a následně vymírá i
+populace dravce. Tím se uvolní prostor pro nový nárůst. V tuto chvíli jsou
+velikosti populací na nízké úrovni a proto jsou pravé strany diferenciální
+rovnice numericky blízké nule a rychlost růstu obou populací je malá. Takové
+cykly v přírodě opravdu pozorujeme a k jedné historce s tím související se
+vrátíme na konci videa.
+
+Ještě si ale pojďme probrat další způsoby vizualizace. Kulička létající ve
+fázovém prostoru není vhodná pro statické obrázky. Proto raději kreslíme křivku
+spojující jednotlivé polohy této kuličky při pohybu fázovým prostorem.
+Fyzikálně se taková křivka při pohybu těles nazývá trajektorie a stejná
+terminologie se přenáší i do světa autonomních systémů. V obrázku je žlutě
+vyznačena trajektorie pro naši výchozí počáteční podmínku a modře jsou některé
+trajektorie další. Všimněte si, že v tomto případě jsou všechny trajektorie
+cyklické. Pouze uprostřed je jedna trajektorie, která zdegenerovala do jediného
+bílého bodu. To je stacionární bod, kdy jsou velikosti obou populací
+konstantní, protože pravé strany rovnice jsou nulové. Tím pádem jsou nulové i
+levé strany, derivace podle času, což znamená, že řešení jsou konstantní v
+čase.
+
+Souřadnice stacionárního stavu, okolo kterého trajektorie obíhají, nalezneme
+řešením příslušné soustavy rovnic, kdy derivace podle času nahradíme nulou.
+Soustava je poměrně jednoduchá, protože první rovnici můžeme vydělit hodnotou x
+a druhou rovnici hodnotou y, čímž soustava přejde na dvě samostatné rovnice. 
+
+Nadmíru zajímavé je to, že první rovnice, definující hodnotu okolo které kmitá
+hodnota y, obsahuje jenom koeficienty a,b. Tedy hodnota, okolo které kmitá
+populace dravce souvisí s parametry modelujícími vývoj populace kořisti. A
+podobně, druhá rovnice, rovnice pro rovnovážnou polohu populace kořisti,
+obsahuje výlučně parametry populace dravce.
+
+To je překvapivé. Hodnota, okolo které kolísá velikost populace lišek souvisí
+ne s porodností lišek, ale s porodností králíků. A tady už jsme slíbené
+historky. Je to příběh, který stál za zrodem nové oblasti matematiky, za zrodem
+matematické biologie.
+
+Hlavními aktéry v příběhu byli mořstí predátoři, tedy dravé ryby, a jejich
+kořist, sardinky. Během první světové války se snížil rybolov. Očekávatelným
+efektem by bylo, že sardinek bude více. K velkému překvapení se však přemnožily
+dravé ryby.
+
+V našem modelu vidíme proč. Omezení rybolovu je možné interpretovat tak, že se
+podpořil růst populace sardinek. Přesněji, ubylo na intenzitě umělé omezování
+populace sradinek rybolovem, ale matematicky to je jedno. Prostě se navýšila
+konstanta a. To znamená, že se navýšil i podíl a/b a rovnovážný stav i všechny
+trajektorie se posunou směrem nahoru. Velikost populace sardinek kolísá kolem
+původní hodnoty, ale velikost populace dravých ryb okolo hodnoty vyšší. Pro
+vnějšího pozorovatele to znamená, že zatímco sardinek je stejně jako předtím,
+dravé ryby se přemnožily. Na první i druhý pohled záhada. My však víme, že
+matematický rozbor tento zdánlivý rozpor vysvětluje jako přirozené chování
+modelu, popisujícího interakce mezi populacemi. Tento rozbor provedl v roce
+1926 italský matematik a fyzik Vito Volterra. Popudem byl výzkum jeho
+pozdějšího zetě, mořského biologa Umberta d'Ancony. Ten si všiml,že ve
+válečných letech se zvýšilo procento dravých ryb v rybářských sítích.
+Volterrova práce tento jev vysvětlila. Jinou cestou již dříve ke stejným
+rovnicím dospěl Alfred Lotka a proto se model dnes nazývá Lotkův Volterrův
+model. Model je velmi flexibilní, dokáže se přizpůsobit mnoha situacím, kdy
+například predátoři mají omezenou žravost, nebo kdy hraje roli nosná kapacita
+prostředí.
 
 
 """                    
+
+# drava ryba: https://freesvg.org/trout-silhouette-vector-image
+# mala ryba: https://freesvg.org/
