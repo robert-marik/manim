@@ -63,7 +63,7 @@ def analog_indicator(value, **kwargs):
     options.update(kwargs)
     
     output = VGroup()
-    output.add(Arc(radius=options['radius'], start_angle=20*DEGREES, angle=140*DEGREES))
+    output.add(Arc(radius=options['radius'], start_angle=20*DEGREES, angle=140*DEGREES, fill_color=BLACK))
     output.marks = VGroup()
     interval = options['value_max'] - options['value_min']
     for i in options['values']:
