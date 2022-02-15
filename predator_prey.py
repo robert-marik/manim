@@ -60,7 +60,6 @@ myaxis_config={'tips':False}
 my_wait_time = 5
 
 class Intro(Scene):
-
     def construct(self):
         title = Title(r"Model dravce a kořisti")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
