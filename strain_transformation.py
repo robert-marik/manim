@@ -1,4 +1,6 @@
 from manim import *
+from manim_editor import PresentationSectionType
+
 import numpy as np
 
 AnimationRuntime = 1
@@ -7,10 +9,12 @@ WaitTime = 2
 class Deformation(ThreeDScene):
     def construct(self):
 
+        self.next_section("Tenzor deformace")        
+
         title = Title(r"Tenzor deformace a jeho transformace")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(AnimationGroup(GrowFromCenter(title),GrowFromCenter(autor[0]),GrowFromCenter(autor[1]),lag_ratio=0.2))
-        self.wait(45)
+        self.wait(5)
 
         self.play(FadeOut(title),FadeOut(autor))
 
@@ -71,27 +75,27 @@ class Deformation(ThreeDScene):
         temp = VGroup(osy)
 
         self.play(FadeIn(temp))
-        self.wait(duration=5*WaitTime)
+        self.wait(duration=WaitTime)
 
 
         self.play(FadeIn(osyr))
-        self.wait(duration=5*WaitTime)
+        self.wait(duration=WaitTime)
 
 
         self.play(ReplacementTransform(tvg2,rct))
 
         self.play(FadeIn(tenzor1["O"]))
-        self.wait(duration=2*WaitTime)
+        self.wait(duration=WaitTime)
 
         self.play(FadeIn(tenzor2["O"]))
-        self.wait(duration=2*WaitTime)
+        self.wait(duration=WaitTime)
         
         vg = VGroup()
         vg.add(rct,squareL, squareR, squareC)
 
         self.wait(WaitTime)
         self.play(FadeIn(square))
-        self.wait(duration=4*WaitTime)
+        self.wait(duration=2*WaitTime)
 
         self.play(
             ReplacementTransform(square, squareL),
@@ -99,6 +103,8 @@ class Deformation(ThreeDScene):
             ReplacementTransform(square.copy(), squareC)
         )
         self.wait(duration=4*WaitTime)
+
+        self.next_section("Soustavy souradnic")        
 
         b1 = VGroup(Brace(squareL, color=YELLOW),Brace(squareR, color=YELLOW))
         b2 = VGroup(Brace(squareL, direction=LEFT, color=YELLOW),Brace(squareR, direction=LEFT, color=YELLOW))
@@ -278,9 +284,10 @@ class Transformace(Scene):
     
     def construct(self):
 
+        self.next_section("Rovnice")        
         title = Title(r"Odvození rovnice pro transformaci tenzorů").to_edge(UP)
         self.play(FadeIn(title))
-        self.wait(5*WaitTime)         
+        self.wait(WaitTime)         
         lines = MathTex(
             r"{{V}} &= {{A}} {{U}}\\",
             r"{{RV'}} &= {{A}} {{R U'}}\\",
@@ -304,16 +311,17 @@ class Transformace(Scene):
                 groups[i+1], 
                 path_arc=90 * DEGREES)
             ),
-            self.wait(5*WaitTime)           
+            self.wait(WaitTime)           
 
-        self.wait(5*WaitTime)         
+        self.wait(WaitTime)         
 
         svorka = Brace(lines[-3], direction=DOWN)
         popisek = svorka.get_text("Tenzor v čárkované soustavě souřadnic")
         lines[-3].set_color(YELLOW)
         self.play(FadeIn(svorka), FadeIn(popisek), run_time=AnimationRuntime)
-        self.wait(WaitTime*5)
+        self.wait(WaitTime)
 
+        self.next_section("Matice transformace")        
         self.clear()
 
         # nalezeni matice transformace
@@ -349,7 +357,7 @@ class Transformace(Scene):
             Create(circ),
             ReplacementTransform(e12,e12_r),
             lag_ratio=0.4, run_time=AnimationRuntime))
-        self.wait(2*WaitTime)
+        self.wait(WaitTime)
 
         h_buf = 2
         v_buf = 1.5
@@ -389,9 +397,11 @@ class Transformace(Scene):
         self.play(ReplacementTransform(R_theta.copy(),R0), run_time=3*AnimationRuntime)
         self.wait(WaitTime)
         self.play(ReplacementTransform(R0,R), run_time=3*AnimationRuntime)
-        self.wait(4*WaitTime)
+        self.wait(WaitTime)
+        self.next_section("Nasobeni matic")        
         
         self.play(AnimationGroup(*[FadeOut(_) for _ in self.mobjects],lag_ratio=0.05))
+
         # Nasobeni matic
 
         R = VGroup(MathTex("R","=",r"\frac{\sqrt 2}{2}"), Matrix([[r"1", r"-1"], [r"1",r"1"]])).arrange(RIGHT).to_corner(UL)
@@ -423,7 +433,8 @@ class Transformace(Scene):
         elementy = R[1].get_entries()
         e = Rinv[1].get_entries()
 
-        self.wait(6*WaitTime)
+        self.wait()
+        self.next_section("Nasobeni matic 2")        
         
         self.play(*[ReplacementTransform(what.copy(),where) for what,where in zip(
             [R[0][0],R[0][1],R[0][2],elementy[0],elementy[3],R[1].get_brackets()],
@@ -467,10 +478,13 @@ class Transformace(Scene):
                 [*vypocet2[0],vypocet2[2]]
                 )],run_time=AnimationRuntime
             ,lag_ratio=0.05))
-        self.wait(3*WaitTime)    
+        self.wait(WaitTime)    
+        self.next_section("Nasobeni matic 3")        
 
         self.MatrixProduct(vypocet[1],vypocet[2],vypocet2[1])
         self.wait(WaitTime)
+
+        self.next_section("Nasobeni matic 4")        
         self.play(FadeIn(vypocet2[3]))
         self.MatrixProduct(vypocet2[1],vypocet2[2],vypocet2[4])
 
