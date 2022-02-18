@@ -7,6 +7,8 @@ import colorsys
 from common_definitions import *
 import os
 
+from manim_editor import PresentationSectionType
+
 animation_runtime = 15
 wait_time = 5
 
@@ -53,6 +55,7 @@ class Flow(MovingCameraScene):
 
     def construct(self):
 
+        self.next_section("Titulek")        
         title = Title(r"Gradient a tok ve dřevě (v ortotropním materiálu)")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(GrowFromCenter(title))
@@ -67,10 +70,11 @@ class Flow(MovingCameraScene):
                 "stroke_width": 1, 
                 "stroke_opacity": 0.1,}
             )
+
+        self.next_section("Termosnimek")        
+
         self.play(FadeOut(VGroup(title,autor)))
-
         wood_obj = ImageMobject(wood_img)
-
         vertices=[[7,4],[7,-4],[-7,4],[-7,-4]]
         values = [function(x,y) for x,y in vertices]
         dolni_mez = np.min(values)
@@ -104,12 +108,16 @@ class Flow(MovingCameraScene):
         )
 
         self.play(GrowFromEdge(function_colors, LEFT), run_time = 5)
-        self.wait(wait_time*7)
+        self.wait()
+
+        self.next_section("Vrstevnice")        
         self.add(contours)
         self.play(AnimationGroup(
             FadeOut(function_colors),
         ), run_time=5)
-        self.wait(wait_time*7)
+        self.wait()
+
+        self.next_section("Gradienty")        
 
         vectors_unscaled_opposite = ArrowVectorField(lambda p:-gradient(*p)[0]*RIGHT-gradient(*p)[1]*UP,
             x_range=[-7,7,1],
@@ -147,20 +155,26 @@ class Flow(MovingCameraScene):
         funkce.arrange(DOWN,aligned_edge=LEFT).to_corner(UL).add_background_rectangle(opacity=0.9, buff=0.5).set_z_index(10)
 
         self.play(AnimationGroup(*[GrowArrow(_) for _ in vectors_unscaled_opposite], lag_ratio=0.05, run_time=2))
-        self.wait(5*wait_time)
+        self.wait()
+
+        self.next_section("Zaporne vzate gradienty")        
         self.play(ReplacementTransform(vectors_unscaled_opposite,vectors_unscaled))
+        self.wait()
 
-        self.wait(3*wait_time)
+
+        self.next_section("Vektorove pole")        
         self.play(ReplacementTransform(vectors_unscaled,vectors))
-        self.wait(3*wait_time)
+        self.wait()
         self.play(FadeIn(funkce))
-        self.wait(3*wait_time)
-        self.play(FadeOut(funkce), FadeIn(curves))
-        self.wait(3*wait_time)
+        self.wait()
 
+        self.next_section("Izotropni tok")        
+        self.play(FadeOut(funkce), FadeIn(curves))
+        self.wait()
+
+        self.next_section("Ortotropni tok")        
         vlastni_vektory=VGroup(*[vectors[3+9*i] for i in range(14)])
         surroundingRectangle= SurroundingRectangle(vlastni_vektory[1:-1],color=YELLOW, buff=0.15)
-
         roh2 = vlastni_vektory[0].get_corner(UR)
         roh1 = vlastni_vektory[0].get_corner(DL)
         rozmery = roh2-roh1
@@ -210,12 +224,12 @@ class Flow(MovingCameraScene):
 
 
         self.play(FadeIn(matice_D), FadeOut(curves))
-        self.wait(5*wait_time)
+        self.wait()
         self.add(obrazek)
-        self.wait(2*wait_time)
+        self.wait()
         self.play(AnimationGroup(*[Wiggle(_) for _ in vlastni_vektory],Create(surroundingRectangle),lag_ratio=.05))
+        self.wait()
 
-        self.wait(2*wait_time)
         self.play(FadeIn(curves_with_D),ReplacementTransform(vectors.copy(),vectors_with_D),FadeToColor(vectors.set_opacity(.5),GRAY))
         komentar = VGroup(
             Tex(r"šedá ${}={}$ spád teploty"), 
@@ -224,26 +238,30 @@ class Flow(MovingCameraScene):
                 matice_D, DOWN).add_background_rectangle(
                     buff=0.5).set_z_index(10)
         self.play(FadeIn(komentar))
-        self.wait(2*wait_time)
+        self.wait()
 
+        self.next_section("Detail ve vlastnim smeru")        
         first_time = True
+        i=0
         # Moving camera from https://www.youtube.com/watch?v=QTlZp8tiql4
         for detail in [vectors_with_D[12*9+3], vectors_with_D[19] , vectors_with_D[60] ]:
             self.camera.frame.save_state()
             detail_frame = SurroundingRectangle(detail, color=PURE_RED, buff=.5)
             self.play(Create(detail_frame))
-            self.wait(wait_time)
+            self.wait()
             self.play(self.camera.frame.animate.set(width=detail_frame.width*2).move_to(detail), running_time = 2)
             if first_time:
                 self.play(FadeOut(detail))
-                self.wait()
+                self.wait(2)
                 self.play(FadeIn(detail))
                 first_time = False
-            self.wait(2*wait_time)
+            self.wait()
+            i=i+1
+            self.next_section("Detail "+str(i))        
             self.play(Restore(self.camera.frame),FadeOut(detail_frame), running_time = 2)   
             self.wait()     
 
-        self.wait(5*wait_time)
+        self.wait()
 
 komentar = """
 

@@ -15,9 +15,10 @@ class Deformation(ThreeDScene):
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(AnimationGroup(GrowFromCenter(title),GrowFromCenter(autor[0]),GrowFromCenter(autor[1]),lag_ratio=0.2))
         self.wait(5)
+        
+        self.next_section("Popis ulohy")        
 
         self.play(FadeOut(title),FadeOut(autor))
-
         rct = Rectangle(color=GREEN, width=6, height=2, fill_opacity=0.5 ) 
         square = Square(color=BLUE, side_length=1, fill_opacity=1)
         squareL = square.copy().set_color(WHITE).shift(LEFT*2)
@@ -70,6 +71,9 @@ class Deformation(ThreeDScene):
         self.wait(WaitTime)
         self.play(ReplacementTransform(tvg1, tvg2), run_time=3*AnimationRuntime)
         self.wait(WaitTime)
+
+        self.next_section("Zavedeni souradnic")        
+
         self.play(FadeOut(popis), FadeOut(title))
 
         temp = VGroup(osy)
@@ -95,16 +99,16 @@ class Deformation(ThreeDScene):
 
         self.wait(WaitTime)
         self.play(FadeIn(square))
-        self.wait(duration=2*WaitTime)
+        self.wait(duration=WaitTime)
 
         self.play(
             ReplacementTransform(square, squareL),
             ReplacementTransform(square.copy(), squareR),
             ReplacementTransform(square.copy(), squareC)
         )
-        self.wait(duration=4*WaitTime)
+        self.wait(duration=WaitTime)
 
-        self.next_section("Soustavy souradnic")        
+        self.next_section("Komponenty tenzoru 1")        
 
         b1 = VGroup(Brace(squareL, color=YELLOW),Brace(squareR, color=YELLOW))
         b2 = VGroup(Brace(squareL, direction=LEFT, color=YELLOW),Brace(squareR, direction=LEFT, color=YELLOW))
@@ -133,18 +137,23 @@ class Deformation(ThreeDScene):
             return(temp1)
 
         t = explain_element(tenzor1["O"],[0],marker=[b1])
-        self.wait(duration=4*WaitTime)
+        self.wait(duration=WaitTime)
+
+        self.next_section("Komponenty tenzoru 2")        
         self.play(FadeOut(t))
         t = explain_element(tenzor1["O"],[3],marker=[b2])
-        self.wait(duration=4*WaitTime)
-        self.play(FadeOut(t))
+        self.wait(duration=WaitTime)
 
+        self.next_section("Komponenty tenzoru 3")        
+        self.play(FadeOut(t))
         t = explain_element(tenzor1["O"],[1,2],marker=[angle1])
-        self.wait(duration=6*WaitTime)
+        self.wait(duration=WaitTime)
+
+        self.next_section("Komponenty tenzoru 4")        
         # This rotates the 2D scene to 3D and back
         angle11= VGroup(*[angle1[0].copy().flip(RIGHT).set_color(BLUE).move_to(_,aligned_edge=UL) for _ in [squareL,squareR] ])
         self.play(FadeIn(angle11))
-        self.wait(5*WaitTime)
+        self.wait(WaitTime)
         rotation_axis = DashedLine(start=[-4,0,0], end = [4,0,0], color=YELLOW)
         self.play(FadeIn(rotation_axis))
         self.wait(WaitTime)
@@ -168,14 +177,16 @@ class Deformation(ThreeDScene):
         )
         self.wait(3*WaitTime)
         # end of 3D stuff
+
+        self.next_section("Komponenty tenzoru 4b")        
         self.play(FadeOut(t), FadeOut(angle11), FadeOut(rotation_axis))
 
         t = explain_element(tenzor2["O"],[0,3],marker=[b3,b4], extracolor=BLUE)
-        self.wait(duration=6*WaitTime)
+        self.wait(duration=WaitTime)
 
         rotation_axis = DashedLine(start=[0,-2,0], end = [0,2,0], color=YELLOW)
         self.play(FadeIn(rotation_axis))
-        self.wait(duration=2*WaitTime)
+        self.wait(duration=WaitTime)
         
         # This rotates the 2D scene to 3D and back
         self.move_camera(
@@ -195,16 +206,17 @@ class Deformation(ThreeDScene):
             phi=0 * DEGREES,
             theta=-90 * DEGREES
         )
-        self.wait(3*WaitTime)
+        self.wait(WaitTime)
         # end of 3D stuff        
 
+        self.next_section("Komponenty tenzoru 5")        
+
         self.play(FadeOut(t), FadeOut(rotation_axis))
-
-        self.wait(duration=WaitTime)
         t = explain_element(tenzor2["O"],[1,2],marker=[angle2])
-        self.wait(duration=5*WaitTime)
-        self.play(FadeOut(t))
+        self.wait(duration=WaitTime)
 
+        self.next_section("Vlastni deformace")        
+        self.play(FadeOut(t))
 
         vg2 = vg.copy()
         vg1 = vg.copy()
@@ -218,13 +230,14 @@ class Deformation(ThreeDScene):
         )
 
         self.play(ReplacementTransform(vg, vg1))
-        self.wait(duration=3*WaitTime)
+
+        self.wait(WaitTime)
 
         self.play(ReplacementTransform(vg1,vg2), \
             ReplacementTransform(tenzor1["N"], tenzor1["D"]), \
             ReplacementTransform(tenzor2["N"], tenzor2["D"]), 
             run_time=AnimationRuntime)
-        self.wait(10*WaitTime)    
+        self.wait(WaitTime)    
 
         #self.clear()
 

@@ -4,6 +4,9 @@ from telnetlib import DO
 from tkinter import CENTER
 from manim import *
 from common_definitions import *
+from manim_editor import PresentationSectionType
+config.max_files_cached = 400
+
 
 T = np.loadtxt('solution_heat_1D.txt')
 n = 101
@@ -16,17 +19,18 @@ x_interval = np.linspace(xmin,xmax,n)
 class Intro(Scene):
     def construct(self):
 
+        self.next_section("Titulek")
         title = Title(r"Rovnice vedení tepla v jedné dimenzi")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(GrowFromCenter(title))
         self.play(GrowFromCenter(autor[0]))
         self.play(GrowFromCenter(autor[1]))
-        self.wait(10)
-
-
+        self.wait()
 
 class HeatTransfer(Scene):
     def construct(self):
+
+        self.next_section("Uvod")
 
         ax2 = Axes(x_range=[0,1,2],y_range=[-1,1,2], y_length=1, x_length=12)
 
@@ -101,13 +105,6 @@ class HeatTransfer(Scene):
             scene.add(MathTex("t="+timetext).to_corner(UL))
             return scene
 
-        # rod = VGroup()
-        # rod = plot_rod(ax2, x_interval, T, t=0, numbers=True)
-
-        # self.play(FadeIn(rod[:2]))  # rod
-        # self.play(FadeIn(rod[4]))  # time value
-        # self.wait()
-
         # self.remove(*self.mobjects)
         numbers = True
         kwds = {}
@@ -133,8 +130,9 @@ class HeatTransfer(Scene):
 
         self.play(FadeIn(rod[:2]))  # rod
         self.play(FadeIn(rod[4]))  # time value
-        self.wait(10)
-        
+        self.wait()
+
+        self.next_section("Simulace vedeni tepla")
         for i in range(1,len(all_rods)):
             self.remove(*self.mobjects)
             curr_rod = all_rods[i]
@@ -142,7 +140,9 @@ class HeatTransfer(Scene):
             self.add(curr_rod[:2], curr_rod[4])
             self.wait(0.2)
 
-        self.wait(10)
+        self.wait()
+
+        self.next_section("Teplotni profil")
         self.remove(*self.mobjects)
 
         for i in all_rods:
@@ -154,9 +154,9 @@ class HeatTransfer(Scene):
         self.play(FadeIn(rod[2][0:2])) # Temperature graph
         self.wait()
         self.play(FadeIn(rod[2][2:]))  # heat flow
-        self.wait(5)
+        self.wait()
         self.play(FadeIn(rod[3]))  # heat flow min/max
-        self.wait(5)
+        self.wait()
 
         rct = VGroup(
                 Rectangle(height=6, width=0.5).move_to(ax2.c2p(0.055,0,0)),
@@ -165,45 +165,47 @@ class HeatTransfer(Scene):
                 Rectangle(height=6, width=0.5).move_to(ax2.c2p(0.645,0,0)),
         ).set_color(GRAY)
 
+        self.next_section("Vysoky gradient")
         for j in range(3):
             self.play(
                 AnimationGroup(*[Indicate(i) for i in [rct[2],rct[3]]],lag_ratio=0.05) 
             )
-        self.wait(10)
+        self.wait()
+
+        self.next_section("Nizky gradient")
         self.play(
                 AnimationGroup(*[FadeOut(i) for i in [rct[2],rct[3]]],lag_ratio=0.05) 
             )
-
         for j in range(3):
             self.play(
                 AnimationGroup(*[Indicate(i) for i in [rct[0],rct[1]]],lag_ratio=0.05) 
             )
+        self.wait()
 
-        self.wait(10)
+        self.next_section("Animace s profilem a tokem")
         self.play(
                 AnimationGroup(*[FadeOut(i) for i in [rct[0],rct[1]]],lag_ratio=0.05) 
             )        
-        #self.remove(*self.mobjects)
 
-        #self.add(rod)
         newrod = rod
         for i in range(1,len(all_rods)):
             prevrod = newrod
             newrod = all_rods[i]
-            self.play(FadeIn(newrod),FadeOut(prevrod), run_time=0.5)
-            self.wait(0.5)
+            self.play(FadeIn(newrod),FadeOut(prevrod), run_time=0.2)
+            self.wait(0.8)
             #if t<5:
             #    self.wait()
             #else:
             #    numbers = False
             #    self.wait(.5)
         
-        self.wait(20)
+        self.next_section("Vystup simulace ve 2D", type=PresentationSectionType.SKIP)
         self.play(*[FadeOut(i) for i in self.mobjects])
 
 class Graphs2D(Scene):
     def construct(self):
 
+        self.next_section("Vystup simulace ve 2D")
         ###### 2D graph T(t) for various x
         graphs_t = VGroup()
         tmax=200 
@@ -221,8 +223,9 @@ class Graphs2D(Scene):
         labels_tt.arrange_in_grid(rows=2,cell_alignment=LEFT)
         labels_t=VGroup(labels_tn, labels_tt).arrange(DOWN, aligned_edge=LEFT).add_background_rectangle().to_corner(UR)
         self.add(ax_t,graphs_t,labels_t,l_t) 
+        self.wait()        
 
-        self.wait(10)        
+        self.next_section("Vystup simulace ve 2D")
         self.play(*[FadeOut(i) for i in self.mobjects])
 
         ### 2D graph T(x) for various t
@@ -242,13 +245,15 @@ class Graphs2D(Scene):
         l=ax.get_axis_labels(x_label='x', y_label='T(x)')
         #labels.arrange(DOWN, aligned_edge=LEFT).to_corner(UR)
         self.add(ax,graphs,labels,l)
+        self.wait()
 
-        self.wait(10)
+        self.next_section("Vystup simulace ve 3D", type=PresentationSectionType.SKIP)
         self.play(*[FadeOut(i) for i in self.mobjects])
 
 class Graphs3D(ThreeDScene):
     def construct(self):
         
+        self.next_section("Vystup simulace ve 3D")
         ### 2D graph T(x) for various t
         graphs = VGroup()
         ax = ThreeDAxes(
@@ -294,11 +299,16 @@ class Graphs3D(ThreeDScene):
             lag_ratio=.8
             ), run_time=15
         )
-        self.wait(20)
+        self.wait()
+
+        self.next_section("3D vystup", type=PresentationSectionType.SKIP)
+
         self.play(*[FadeOut(i) for i in self.mobjects])
 
 class Table(Scene):
     def construct(self):
+
+        self.next_section("Vystup jako tabulka")
 
         ##### Table
         trange = [0,30,60,120,240,500,1000]
@@ -322,19 +332,21 @@ class Table(Scene):
             ),
             run_time = 5
             )
-        self.wait(10)
-      
+        self.wait()
+     
 class Equation(Scene):
 
 
     def construct(self):
         
+        self.next_section("Fyzikalni principy")
+
         def MyTex(s):
             return Tex(r"$\bullet$\quad \begin{minipage}[t]{10cm}\rightskip 0 pt plus 1 fill "+s+r"\end{minipage}")
 
         title = Title(r"Odvození matematického tvaru rovnice vedení tepla").to_edge(UP)
         self.play(GrowFromCenter(title))        
-        self.wait(5)
+        self.wait()
 
         statements = Group(
             MyTex(r"Teplota ($T$) řídí tok tepla ($q$). Teplo teče do míst s~menší teplotou.").scale(0.8),
@@ -342,7 +354,8 @@ class Equation(Scene):
         ).arrange(DOWN, aligned_edge=LEFT).next_to(title, DOWN)
 
         self.play(FadeIn(statements))
-        self.wait(10)
+        self.wait()
+        self.next_section("Kvadranty 1")
 
         self.play(FadeOut(statements[1],title))
         self.play(statements[0].animate.to_edge(UP))
@@ -361,7 +374,7 @@ class Equation(Scene):
                     MathTex(r"q").scale(1), 
                 )
         self.play(FadeIn(ax,labels))
-        self.wait(10)
+        self.wait()
 
         Tr = Tex(r"Teplota doprava roste")    
         Tk = Tex(r"Teplota doprava klesá")    
@@ -383,38 +396,41 @@ class Equation(Scene):
         self.wait()
         self.add(Kvadranty[2][1],Kvadranty[1][1])
         self.wait()
+
+        self.next_section("Kvadranty 1 realisticke")
         for i in [0,2]:
             Kvadranty[i].set_color(RED)
-        self.wait(3)
+        self.wait()
         self.play(FadeOut(*[Kvadranty[i] for  i in [0,2]]))
-        self.wait(5)
+        self.wait()
         center = Dot(ax.c2p(0,0,0), radius=0.1)
         graf = ax.plot(lambda x:-np.arctan(x*5)/2, x_range=[-1,1,0.1])
         self.add(center)
-        self.wait(5)
+        self.wait()
         self.play(ReplacementTransform(
             VGroup(Kvadranty[1],Kvadranty[3],center),
             graf)
             )
-        self.wait(10)
+        self.wait()
 
+        self.next_section("Kvadranty 1 linearizace")
         lingraf = ax.plot(lambda x:-(x*5)/2, x_range=[-.2,.2,0.1]).set_color(YELLOW)
         self.play(FadeIn (lingraf))
         self.play(FadeOut(graf))
-        self.wait(10)
+        self.wait()
 
         FourierI = MathTex(r" = - k").next_to(labels[1]).shift(0.1*UP)
         FourierIa = MathTex(r"\frac{\partial T}{\partial x}").next_to(FourierI)
         self.play(FadeIn(FourierI))
         kopie = labels[1].copy()
         self.play(ReplacementTransform(labels[0].copy(),FourierIa))
-        self.wait(10)
+        self.wait()
+
+        self.next_section("Tok")
         self.play(*[FadeOut(i) for i in self.mobjects])
-
-
         statements[1].to_edge(UP)
         self.play(FadeIn(statements[1]))
-        self.wait(5)
+        self.wait()
 
         def trubka(vlevo=2, vpravo=7, scale=.2):
             output = VGroup()
@@ -445,34 +461,35 @@ class Equation(Scene):
         col2 = [t1,t3]
 
         self.add(tbl,text[0],text[1])
-        self.wait(5)
+        self.wait()
 
+        self.next_section("Tok2")
         row1 = [t1,t2,text[0]]
         row2 = [t3,t4,text[1]]
 
         for i in range(3):
             self.play(*[Indicate(i) for i in row1])
-        self.wait(5)
+        self.wait()
         for i in range(3):
             self.play(*[Indicate(i) for i in [row2[0],row2[2]]])
         self.wait()            
         for i in range(3):
             self.play(*[Indicate(i) for i in [row2[1],row2[2]]])
-        self.wait(5)
+        self.wait()
         self.play(*[Indicate(i) for i in col2])
-        self.wait(10)
+        self.wait()
         for i in col2:
             i.set_color(BLUE)
         self.play(FadeIn(text[2]))
-        self.wait(10)
+        self.wait()
         self.play(*[Indicate(i) for i in col1])
-        self.wait(10)
+        self.wait()
         for i in col1:
             i.set_color(RED)
         self.play(FadeIn(text[3]))
-        self.wait(20)
+        self.wait()
 
-
+        self.next_section("Tok graf")
         self.play(FadeOut(tbl,*text))
 
         ax2 = Axes(
@@ -507,18 +524,18 @@ class Equation(Scene):
             VGroup(Tr.copy(),Qk.copy()).scale(0.8).arrange(DOWN).move_to(ax2.c2p(-0.5,0.5,0)),
             ]
 
-        self.wait(3)
+        self.wait()
         self.add(Kvadranty[0][0],Kvadranty[3][0])
-        self.wait(3)
+        self.wait()
         self.add(Kvadranty[2][0],Kvadranty[1][0])
-        self.wait(3)
+        self.wait()
         self.add(Kvadranty[0][1],Kvadranty[1][1])
-        self.wait(3)
+        self.wait()
         self.add(Kvadranty[2][1],Kvadranty[3][1])
-        self.wait(3)
+        self.wait()
         for i in [0,2]:
             Kvadranty[i].set_color(RED)
-        self.wait(3)
+        self.wait()
         self.play(FadeOut(*[Kvadranty[i] for  i in [0,2]]))
         self.wait()
         graf = ax2.plot(lambda x:-np.arctan(x*5)/2, x_range=[-1,1,0.1])
@@ -528,6 +545,7 @@ class Equation(Scene):
             )
         self.wait()
 
+        self.next_section("Tok linearizace")
         lingraf = ax2.plot(lambda x:-(x*5)/2, x_range=[-.2,.2,0.1]).set_color(YELLOW)
         self.play(FadeIn (lingraf))
         self.play(FadeOut(graf))
@@ -537,13 +555,16 @@ class Equation(Scene):
         FourierIIc = MathTex(r"\frac{\partial q}{\partial x}").next_to(FourierIIb)
         self.play(FadeIn(FourierIIb),FadeIn(FourierIIa))
         self.play(ReplacementTransform(labels2[0].copy(), FourierIIc))
-        self.wait(20)
+        self.wait()
+
+        self.next_section("Konec sekce", type=PresentationSectionType.SKIP)
         self.play(*[FadeOut(i) for i in self.mobjects])
         self.wait()
 
 class Sestaveni(Scene):
     def construct(self):
 
+        self.next_section("Sestaveni rovnice")
         title = Title(r"Rovnice vedení tepla").to_edge(UP)
         self.play(GrowFromCenter(title))        
         self.wait(.5)        
@@ -557,12 +578,12 @@ class Sestaveni(Scene):
 
         self.add(Rce1,Rce2)
         # self.add(indices1,indices2)
+        self.wait()
 
-        self.wait(5)
         self.play(Rce1.animate.move_to([-1,0,0]))
         self.play(Rce1[6].animate.next_to(Rce1[2]).shift(1.5*RIGHT))
 
-        self.wait(5)
+        self.wait()
         dif = MathTex(r"\left(-k\frac{\partial T}{\partial x}\right)").move_to(Rce1[6])
         self.play(Rce2[2:].animate.move_to(dif), FadeOut(Rce1[6]), FadeOut(Rce2[:2]))
         self.play(FadeOut(Rce2[2:]),FadeIn(dif))
@@ -582,10 +603,9 @@ class Sestaveni(Scene):
             ).next_to(final,DOWN)
 
         self.play(FadeIn(final))
-        self.wait(5)
+        self.wait()
         self.play(FadeIn(final2))
-
-        self.wait(20)
+        self.wait()
 
 komentar = """
 
