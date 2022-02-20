@@ -2,6 +2,7 @@ from manim import *
 import numpy as np
 import os
 import common_definitions
+from manim_editor import PresentationSectionType
 
 animation_runtime = 15
 config.max_files_cached = 400
@@ -26,16 +27,16 @@ class Eigenvectors(ThreeDScene):
 
     def construct(self):
 
+        self.next_section("Nadpis")
         title = Title(r"Anatomické směry dřeva a vlastní směry matice")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(GrowFromCenter(title))
         self.play(GrowFromCenter(autor[0]))
         self.play(GrowFromCenter(autor[1]))
-        self.wait(6)
+        self.wait()
+
+        self.next_section("Izotropni versus anizotropni")
         self.play(FadeOut(title),FadeOut(autor))
-
-        self.next_section()
-
         matrix_u = Matrix([[2],[-1]])
         matrix_v_kov = Matrix([[10],[-5]])
         lambda_matrix = Matrix([[3,1],[1,2]])
@@ -77,10 +78,12 @@ class Eigenvectors(ThreeDScene):
         self.wait()
         texty[4].shift(RIGHT)
         self.play(FadeIn(texty[4]))
-        self.wait(wait_time)
-        self.play(*[FadeOut(_) for _ in self.mobjects])
-        self.wait(wait_time)
+        # self.wait()
+        # self.play(*[FadeOut(_) for _ in self.mobjects])
+        # self.wait()
 
+        self.next_section("Symetrie vylucuje nektere odezvy")
+        self.remove(*[_ for _ in self.mobjects])
         wood_obj = ImageMobject(wood_img).scale_to_fit_width(1)
         wood_longitudal_obj = ImageMobject(wood_longitudal).scale_to_fit_width(1)
 
@@ -147,7 +150,9 @@ class Eigenvectors(ThreeDScene):
         frown = Text(r"☹", color=RED).scale(3).next_to(board['temperature'],UP)
         smile = Text(r"☺", color=GREEN).scale(3).next_to(board['temperature'],UP)
         self.add(frown)
-        self.wait(wait_time)
+        self.wait()
+
+        self.next_section("Symetrie implikuje nektere odezvy 1")
         self.play(
             ReplacementTransform(board['arrow_declined'].copy(),board['arrow']),
             ReplacementTransform(board_copy['arrow_declined'].copy(),board_copy['arrow']),
@@ -155,27 +160,32 @@ class Eigenvectors(ThreeDScene):
             FadeOut(board_copy['arrow_declined']),
             ReplacementTransform(frown,smile)
         )
-        self.wait(wait_time)
+        self.wait()
+
+        self.next_section("Symetrie implikuje nektere odezvy 2")
         self.play(
             ReplacementTransform(board['img'],board['img_perp']),
             ReplacementTransform(board_copy['img'],board_copy['img_perp']),
             ReplacementTransform(board['arrow'],board['arrow_short']),
             ReplacementTransform(board_copy['arrow'],board_copy['arrow_short']),
         )
-        self.wait(wait_time)
+        self.wait()
+
+        self.next_section("Symetrie implikuje nektere odezvy 3")
         self.play(
             ReplacementTransform(board['arrow_short'],board['arrow_declined']),
             ReplacementTransform(board_copy['arrow_short'],board_copy['arrow_declined']),
             ReplacementTransform(board['img_perp'],board['img_slanted']),
             ReplacementTransform(board_copy['img_perp'],board_copy['img_slanted']),
         )
-        self.wait(wait_time)
+        self.wait()
 
-        self.next_section()
-        self.play(*[FadeOut(_) for _ in self.mobjects])
-        self.wait(wait_time)
+        # self.play(*[FadeOut(_) for _ in self.mobjects])
+        # self.wait(wait_time)
 
-        self.next_section()
+        self.next_section("Zobrazeni pomoci matice")
+        self.remove(*[_ for _ in self.mobjects])
+
         varianty = [
         [1,1,0.5,1],
         [1,1.5,0.5,-1.2],
@@ -233,16 +243,16 @@ class Eigenvectors(ThreeDScene):
             else: 
                 uhly = [0,uhly_limit]   
 
-            self.wait(wait_time)
-            if first:
-                first = False
-                self.wait()
+            self.wait()
+            # if first:
+            #     first = False
+            #     self.wait()
             for i in range(len(uhly)-1):
                 self.play(UHEL.animate.set_value(uhly[i+1]), run_time = animation_runtime*(uhly[i+1]-uhly[i])/uhly_limit, rate_func=linear)
                 self.wait()
-            self.wait(wait_time)
+            self.wait()
+            self.next_section("Vlastni smery")
             self.remove(komentar_mobj,matice_mobj,img)
-            self.next_section()
 
         self.add(obrazky[-1])    
 

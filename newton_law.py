@@ -4,12 +4,12 @@ import colorsys
 import random
 from common_definitions import *
 import os
-
+from manim_editor import PresentationSectionType
 config.max_files_cached = 400
 random.seed(10)
 
 AnimationRuntime = 1.5
-WaitTime = 2
+WaitTime = 1
 obrazek = os.path.join('icons', 'mug')
 
 def value2hex(value):
@@ -27,6 +27,8 @@ def value2hex(value):
 class Intro(Scene):
 
     def construct(self):
+
+        self.next_section("Nadpis")
         title = Title(r"Derivace, konečné diference a Newtonův zákon ochlazování")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(GrowFromCenter(title))
@@ -34,26 +36,29 @@ class Intro(Scene):
         self.play(GrowFromCenter(autor[1]))
         self.wait(1)
 
-        func = lambda pos: (-(pos[1]))  * UP + RIGHT
-        stream_lines = StreamLines(func, stroke_width=3, max_anchors_per_line=30, 
-            y_range=[-1,1.6,.5],
-            x_range=[-3,3,1], 
-            padding=1,
-            opacity=1).shift(DOWN)
+        # func = lambda pos: (-(pos[1]))  * UP + RIGHT
+        # stream_lines = StreamLines(func, stroke_width=3, max_anchors_per_line=30, 
+        #     y_range=[-1,1.6,.5],
+        #     x_range=[-3,3,1], 
+        #     padding=1,
+        #     opacity=1).shift(DOWN)
 
-        self.add(stream_lines)
-        stream_lines.start_animation(warm_up=True, flow_speed=1.5)
-        self.wait(stream_lines.virtual_time / stream_lines.flow_speed*15)
+        # self.add(stream_lines)
+        # stream_lines.start_animation(warm_up=True, flow_speed=1.5)
+        # self.wait(stream_lines.virtual_time / stream_lines.flow_speed*15)
 
-        stream_lines.add_to_back()
-        self.wait(4*WaitTime)
-        self.remove(stream_lines)
+        # stream_lines.add_to_back()
+        # self.wait(4*WaitTime)
+        # self.remove(stream_lines)
+        self.next_section("Konec sekce", type=PresentationSectionType.SKIP)
         self.play(
             *[FadeOut(mob)for mob in self.mobjects]
         )
 
 class Diference(MovingCameraScene):
     def construct(self):
+
+        self.next_section("Linearni rust")
         title = Title(r"Rychlost růstu a konečné diference").to_edge(UP)
         self.play(GrowFromCenter(title))        
         self.wait(.5)
@@ -128,9 +133,9 @@ class Diference(MovingCameraScene):
 
         self.play(poloha.animate.set_value(0), run_time=5, rate_func=linear)
         self.play(poloha.animate.set_value(0.5), run_time=5, rate_func=linear)
-        self.wait(3*WaitTime)
+        self.wait(WaitTime)
 
-
+        self.next_section("Linearni rust 2")
         delka_dx = ValueTracker(0.5)
         slopes2 = always_redraw(lambda : ax.get_secant_slope_group(
             x=poloha.get_value(),
@@ -150,10 +155,12 @@ class Diference(MovingCameraScene):
         self.play(AnimationGroup(FadeOut(slopes),FadeOut(komentar),FadeIn(slopes2),FadeIn(komentar2)))
         self.play(delka_dx.animate.set_value(1.5), run_time=5, rate_func=linear)
         self.play(delka_dx.animate.set_value(0.5), run_time=5, rate_func=linear)
-        self.wait(4*WaitTime)
+        self.wait(WaitTime)
+
+        self.next_section("Nelinearni rust")
         self.remove(slopes2,delka_dx,komentar2,gr_primka)
-        self.add(graf)
-        self.wait(3*WaitTime)
+        self.play(Create(graf))
+        self.wait(WaitTime)
         poloha = ValueTracker(1)
         tangent = always_redraw(lambda:
             ax.plot(lambda x: a*np.exp(-a*(poloha.get_value())+b)*(x-poloha.get_value())+1000-np.exp(-a*(poloha.get_value()) + b),
@@ -163,7 +170,7 @@ class Diference(MovingCameraScene):
         popis = r"rychlost růstu je derivace $\displaystyle\frac{\mathrm dy}{\mathrm dx}$"
         komentar = Tex(popis).move_to(ax,aligned_edge=DR).add_background_rectangle()
         self.play(AnimationGroup(FadeIn(tangent),FadeIn(komentar),lag_ratio=1), run_time=2)
-        self.wait(6*WaitTime)
+        self.wait(WaitTime)
         self.play(poloha.animate.set_value(2), run_time=1, rate_func=linear)
         self.play(poloha.animate.set_value(0), run_time=3, rate_func=linear)
         self.play(poloha.animate.set_value(1), run_time=2, rate_func=linear)
@@ -171,16 +178,15 @@ class Diference(MovingCameraScene):
 
     ########################################################################
     #######################################
+        self.next_section("Diskretni funkce")
         self.play(FadeIn(dots[2]))
-        self.wait(5*WaitTime)
-
+        self.wait(WaitTime)
         dopredna = ax.plot(lambda x:(Y[reddot+1]-Y[reddot])/(X[reddot+1]-X[reddot])*(x-X[reddot])+Y[reddot], 
             x_range=[X[reddot]-2*h,X[reddot]+2*h,h/10]).set_color(GREEN)
         zpetna = ax.plot(lambda x:(Y[reddot-1]-Y[reddot])/(X[reddot-1]-X[reddot])*(x-X[reddot])+Y[reddot], 
             x_range=[X[reddot]-2*h,X[reddot]+2*h,h/10]).set_color(WHITE)
         centralni = ax.plot(lambda x:(Y[reddot-1]-Y[reddot+1])/(X[reddot-1]-X[reddot+1])*(x-X[reddot-1])+Y[reddot-1], 
             x_range=[X[reddot]-2*h,X[reddot]+2*h,h/10]).set_color(PINK)
-
         self.play(AnimationGroup(*[FadeIn(_) for _ in dots], lag_ratio=.6, run_time=5))
         self.wait(WaitTime)
 
@@ -205,12 +211,12 @@ class Diference(MovingCameraScene):
         self.play(AnimationGroup(*[Create(_) for _ in vlines_all],*[Create(_) for _ in distanc_all], lag_ratio=0.2))
         self.add(dots)
         self.wait(WaitTime)
-        self.play(AnimationGroup(*[FadeOut(_) for _ in distanc_all],*[FadeOut(_) for _ in vlines_all], lag_ratio=0.2))
-        
 
+        self.next_section("Diference funkce")
+        self.play(AnimationGroup(*[FadeOut(_) for _ in distanc_all],*[FadeOut(_) for _ in vlines_all], lag_ratio=0.2))
         self.play(FadeOut(komentar))
-        self.wait(5*WaitTime)
-        def cycle_lines(delka=4):
+        #self.wait(WaitTime)
+        def cycle_lines(delka=1):
             self.play(AnimationGroup(
                 FadeIn(tangent),                
             ))
@@ -232,19 +238,21 @@ class Diference(MovingCameraScene):
             self.wait(delka)
             self.play(FadeOut(centralni))
 
+
         cycle_lines()
         detail=VGroup(dots[reddot],dots[reddot-1],dots[reddot+1])
 
+        self.next_section("Diference funkce detail")
         # Moving camera from https://www.youtube.com/watch?v=QTlZp8tiql4
         self.camera.frame.save_state()
         self.play(self.camera.frame.animate.set(width=detail.width*2).move_to(detail))
-        self.wait(3*WaitTime)
-        cycle_lines(3)
-        self.wait(WaitTime)
+        self.wait()
+        cycle_lines()
+        self.wait()
         self.play(Restore(self.camera.frame))
+        self.wait()
 
-        self.wait(WaitTime)
-
+        self.next_section("Diference funkce vzorce")
         vsechno = VGroup(ax,graf,*dots,tangent)
         vsechno.generate_target()
         vsechno.target.shift(RIGHT*7)
@@ -258,7 +266,7 @@ class Diference(MovingCameraScene):
         centralni = ax.plot(lambda x:(Y[reddot-1]-Y[reddot+1])/(X[reddot-1]-X[reddot+1])*(x-X[reddot-1])+Y[reddot-1], 
             x_range=[X[reddot]-2*h,X[reddot]+2*h,h/10]).set_color(PINK)
 
-        self.wait(3*WaitTime)
+        self.wait()
 
         temp = DoubleArrow(start = ax.c2p(X[reddot-1],0,0), end = ax.c2p(X[reddot+1],0,0), color=YELLOW, buff=0, tip_length=0.2).shift(1.5*UP)
         distanc.add(VGroup(temp,Tex(r"$2h$").set_color(YELLOW).next_to(temp,UP)))
@@ -283,26 +291,26 @@ class Diference(MovingCameraScene):
 
         def predstav(jmeno,vzorec,hd,vd,primka):
             self.play(AnimationGroup(FadeIn(jmeno),FadeIn(primka),FadeIn(vd),FadeIn(hd),FadeIn(vzorec),ApplyWave(vzorec),lag_ratio=0.5), run_time=5)
-            self.wait(5*WaitTime)
+            self.wait()
             self.play(AnimationGroup(*[FadeOut(_) for _ in [primka,vd,hd]], lag_ratio=.5))
 
-        self.wait(8*WaitTime)
+        self.wait()
         predstav(diference[0],diference[1],distanc[1],vdistanc[0],dopredna)
         predstav(diference[2],diference[3],distanc[0],vdistanc[1],zpetna)
         predstav(diference[4],diference[5],distanc[2],vdistanc[2],centralni)
         # self.wait(WaitTime)        
 
-        self.wait(25*WaitTime)
-        self.play(
-            *[FadeOut(mob)for mob in self.mobjects]
-        )
+        self.wait()
+        # self.play(
+        #     *[FadeOut(mob)for mob in self.mobjects]
+        # )
 
 class Odvozeni(Scene):
 
     def construct(self):
 
+        self.next_section("Zakon ochlazovani")
         title = Title(r"Newtonův zákon ochlazování").to_edge(UP)
-
         definice = VGroup(
             Tex(r"$\bullet$\quad  Teplotu označíme ",r"$T$",". ",r"Teplota okolí je ",r"$T_0$","."),
             Tex(r"$\bullet$\quad Rychlost ochlazování je úměrná\\rozdílu teploty tělesa a okolí."),
@@ -318,12 +326,13 @@ class Odvozeni(Scene):
 
         self.play(GrowFromCenter(title)) 
         self.play(FadeIn(mug))
-        self.wait(6*WaitTime)
+        self.wait()
 
         for i in definice:
             self.play(FadeIn(i))
-            self.wait(3*WaitTime)
+            self.wait()
 
+        self.next_section("Rovnice ochlazovani")
         # rovnice.set_color(YELLOW)
         a1 = Tex(r"$\displaystyle-\frac{\mathrm dT}{\mathrm dt}$").move_to(rovnice[0])
         a2 = Tex(r"$(T-T_0)$").move_to(rovnice[2])
@@ -337,15 +346,15 @@ class Odvozeni(Scene):
              TransformMatchingShapes(rovnice_clean.copy(),rovnice_final)
         ]:
             self.play(i, run_time = 3) 
-            self.wait(2*WaitTime)
+            self.wait()
+        self.wait()
 
-        self.wait(6*WaitTime)
-
+        self.next_section("Numericky model 1")
         self.play(*[FadeOut(_) for _ in [title,rovnice_clean,definice]])
 
         title = Title(r"Transformace pro numerický model").to_edge(UP)
         self.play(FadeIn(title))
-        self.wait(4*WaitTime)
+        self.wait()
 
         odvozeni = VGroup(
             MathTex(r"\displaystyle \frac {\mathrm dT}{\mathrm dt}=-k(T-T_0)"),
@@ -361,11 +370,12 @@ class Odvozeni(Scene):
                 b = Brace(odvozeni[1][0], direction=DOWN, color=YELLOW)
                 t = Tex(r"dopředná diference\\s krokem $h$").next_to(b,DOWN)
                 self.play(GrowFromCenter(VGroup(b,t)))
-                self.wait(3*WaitTime)
+                self.wait()
+                self.next_section("Numericky model 2")
                 self.play(FadeOut(VGroup(b,t)))
-            self.wait(2*WaitTime)
+            self.wait()
 
-        self.wait(3*WaitTime)
+        self.wait()
         r = VGroup(*[odvozeni[-1][_] for _ in [0,2,4]])
         b = VGroup(*[Brace(_, direction=DOWN, color=YELLOW) for _ in r])
         t = VGroup(Tex(r"teplota\\za okamžik $h$\\od současnosti"),Tex(r"současná\\teplota"),Tex(r"snížení teploty\\za čas $h$"))
@@ -373,16 +383,18 @@ class Odvozeni(Scene):
         for _ in [1,2,0]:
             t[_].next_to(b[_],DOWN).scale(0.7).shift(0.3*UP).set_color(cs[_])
             self.play(GrowFromCenter(VGroup(t[_],b[_])),FadeToColor(r[_], color=cs[_]))
-            self.wait(2*WaitTime)
+            self.wait()
 
-        self.wait(6*WaitTime)
-        self.play(
-            *[FadeOut(mob)for mob in self.mobjects]
-        )
+        # self.wait()
+        # self.play(
+        #     *[FadeOut(mob)for mob in self.mobjects]
+        # )
 
 class Simulace(Scene):
 
     def construct(self):
+
+        self.next_section("Simulace")
 
         tmin = 0
         tmax = 10
@@ -454,14 +466,14 @@ class Simulace(Scene):
             *[FadeIn(_) for _ in model],lag_ratio=1
             ))
 
-        self.wait(WaitTime)
+        self.wait()
         
         self.play(AnimationGroup(
             *[FadeIn(_) for _ in simulace], lag_ratio=.2
             ),run_time=3)
 
         self.play(FadeToColor(simulace[0],RED))
-        self.wait(5*WaitTime)
+        self.wait()
 
         curr = 0
         prev = 3
@@ -483,6 +495,8 @@ class Simulace(Scene):
 
         self.wait(WaitTime)
 
+
+        self.next_section("Graficka simulace 1")
         self.play(simulace.animate.scale(0.7).next_to(title,DOWN).to_edge(RIGHT))
         self.wait(WaitTime)
 
@@ -535,12 +549,13 @@ class Simulace(Scene):
 
         stop_index = np.argwhere(np.array(y)<51)[0][0]
         self.play(poloha.animate.set_value(stop_index), run_time=10, rate_func=linear)
+        self.wait()        
 
-        self.wait(5*WaitTime)        
+        self.next_section("Graficka simulace 2")
         self.play(poloha.animate.set_value(len(x)-1), run_time=10, rate_func=linear)
+        self.wait()
 
-        self.wait(10*WaitTime)
-
+        self.next_section("Graficka simulace 3", type=PresentationSectionType.COMPLETE_LOOP)
         axRIGHT,axUP,_ = ax.c2p(1,1) - ax.c2p(0,0)
         scaling = 1
         func = lambda pos: -r*(ax.p2c(pos)[1]-T0)*axUP*UP*scaling + axRIGHT*RIGHT*scaling
@@ -548,15 +563,13 @@ class Simulace(Scene):
             y_range=[ax.c2p(0,0)[1],ax.c2p(0,110)[1],.5],
             x_range=[ax.c2p(0,0)[0],ax.c2p(10,0)[0],1], 
             padding=.1,
-            opacity=.7
+            virtual_time=10
             )
 
         self.add(stream_lines)
-        self.wait(2*WaitTime)
         stream_lines.start_animation(warm_up=True, flow_speed=1.5)
-        self.wait(4*WaitTime)
-        stream_lines.end_animation()
-        self.wait(5*WaitTime)
+        self.wait(stream_lines.virtual_time / stream_lines.flow_speed)        
+        self.play(stream_lines.end_animation())        
 
 komentar = """ 
 

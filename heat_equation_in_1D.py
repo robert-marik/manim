@@ -397,7 +397,6 @@ class Equation(Scene):
         self.add(Kvadranty[2][1],Kvadranty[1][1])
         self.wait()
 
-        self.next_section("Kvadranty 1 realisticke")
         for i in [0,2]:
             Kvadranty[i].set_color(RED)
         self.wait()
