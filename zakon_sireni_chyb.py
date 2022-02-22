@@ -63,6 +63,16 @@ class Grafy(Scene):
             ).set_color(RED)
         delta_gx.set_stroke(width=8).shift(0.05*RIGHT)
 
+        texty = VGroup(
+                Tex(r"Rozptyl na výstupu:"),
+                Tex(r"pomalu se měnící funkce (malá derivace)"),
+                Tex(r"rychle se měnící funkce (velká derivace)")
+        ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL)
+        texty[1].shift(RIGHT)
+        texty[2].shift(RIGHT)
+
+        self.add(texty)
+
         lines_2 = linka([1,1,0]).set_color(GRAY)
         lines_2b = linka([1.1,(1.1)**2,0]).set_color(GRAY)
         lines_2a = linka([0.9,(0.9)**2,0]).set_color(GRAY)
