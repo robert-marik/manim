@@ -3,6 +3,7 @@ from scipy.integrate import solve_ivp  # řešení diferenciálních rovnic
 import colorsys
 import random
 import os
+from manim_editor import PresentationSectionType
 
 config.max_files_cached = 200
 random.seed(10)
@@ -28,12 +29,15 @@ def value2hex(value):
 class Intro(Scene):
 
     def construct(self):
+
+        self.next_section("Nadpis")
+
         title = Title(r"Modelování populací logistickou rovnicí")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(GrowFromCenter(title))
         self.play(GrowFromCenter(autor[0]))
         self.play(GrowFromCenter(autor[1]))
-        self.wait(10)
+        self.wait()
 
         # func = lambda pos: ((pos[1]+1)*(2-(pos[1]+1)) )  * UP + RIGHT
         # stream_lines = StreamLines(func, stroke_width=1, max_anchors_per_line=30, 
@@ -53,6 +57,8 @@ class Odvozeni(Scene):
 
     def construct(self):
 
+        self.next_section("Odvozeni logisticke rovnice")
+
         title = Title(r"Odvození logistické rovnice").to_edge(UP)
 
         definice = VGroup(
@@ -71,8 +77,9 @@ class Odvozeni(Scene):
 
         for i in definice:
             self.play(FadeIn(i))
-            self.wait(duration=2)
+            self.wait()
 
+        self.next_section("")
         rovnice.set_color(YELLOW)
         a1 = Tex(r"$\frac yK$").move_to(definice[2][4])
         a2 = Tex(r"$1$").move_to(definice[2][2])
@@ -97,20 +104,26 @@ class Odvozeni(Scene):
             ReplacementTransform(definice[3][1].copy(),a5[1])
         ]:
             self.play(i, run_time = 3) 
-            self.wait(2)
-        self.wait(10)
+            self.wait()
+        self.wait()
 
 class Simulace(Scene):
 
     def construct(self):
-        self.portrety(wait_duration=3)
-        self.wait(10)
+
+        self.next_section("Bez lovu")
+        self.portrety()
+        self.wait()
+
+        self.next_section("Opatrny lov")
         self.clear()
-        self.portrety(h=0.19, IC=0.35)
-        self.wait(10)
+        self.portrety(h=0.19, IC=0.35, wait_duration=0.5)
+        self.wait()
+
+        self.next_section("Intenzivni lov")
         self.clear()
         self.portrety(h=0.3, IC=0.4, max_step_IC=0.01, wait_duration=0.5)
-        self.wait(10)
+        self.wait()
 
     def portrety(self, h=0, IC=0.1, max_step_IC=0.05, wait_duration=1):
 
@@ -181,9 +194,10 @@ class Simulace(Scene):
         )
 
         self.add(axt2,*labels2)
-        self.wait(wait_duration)
+        self.wait()
         self.add(rust)
-        self.wait(wait_duration)
+        self.wait()
+        self.next_section("")
         self.play(VGroup(axt2,*labels2,rust).animate.scale(0.5).to_corner(UR))
 
         sp = ax.plot_line_graph([tmin,tmax],[K,K],add_vertex_dots=False).set_color(GREEN)
@@ -217,17 +231,12 @@ class Simulace(Scene):
                 .set_color(RED)
                 .shift(0.1*UP))
 
-
-
-        #self.add(portrait_arrows)
-
         transforms1 = [
             ReplacementTransform(rust[0].copy(),decrease[0]),
             ReplacementTransform(rust[1].copy(),increase[0]),
             ReplacementTransform(rust[2].copy(),decrease[2]),
             FadeIn(portrait_arrows)
         ]
-
 
         transforms2 = [
             ReplacementTransform(decrease[0],decrease[1]),
@@ -237,8 +246,9 @@ class Simulace(Scene):
 
         self.play(AnimationGroup(*transforms1, lag_ratio=0.2))
         self.play(AnimationGroup(*transforms2, lag_ratio=0.2))
-        self.wait(wait_duration)
+        self.wait()
 
+        self.next_section("")
         # Solve IVP
         def event(x, y):
             return y
@@ -269,7 +279,8 @@ class Simulace(Scene):
         self.play(AnimationGroup(
             *[Create(_) for _ in p],
         lag_ratio=0.2))
-        
+
+        self.next_section("")
         mouse= ImageMobject(obrazek).scale_to_fit_width(.8).set_color(WHITE).to_corner(DL)
 
         ax3xmax=24.5
@@ -307,50 +318,7 @@ class Simulace(Scene):
             return(barva)
 
         mouss = [mouse.copy().scale(0.6).move_to(ax3.c2p(i,j,0)).set_color(RED) for i in range(25) for j in range(6)]
-        #self.add(*mouss)
-
-        # print (len(mouss))
-        # a = {}
-        # index = 0
-        # for _ in mouss:
-        #     index = index + 1
-        #     #print ("Pridavam")
-        #     a[index] = always_redraw(lambda : _.set_color(value2hex(y[int(np.round(poloha.get_value()))]/K)))
-        #     self.add(a[index])
-        # a = {}
-        # #a[60]=always_redraw(lambda : mouss[60].set_color(barva(y[int(np.round(poloha.get_value()))]/K,60)))
-        # for i in range(250):
-        #     prikaz = "a[%s]=always_redraw(lambda : mouss[%s].set_color(barva(y[int(np.round(poloha.get_value()))]/K,%s)))"%(i,i,i) 
-        #     print (prikaz)
-        #     exec (prikaz)
-
-        # for _ in a.keys():
-        #     self.add(a[_])
-
-        #all_mouses = [always_redraw(lambda : mouse.copy().scale(0.6).move_to(ax3.c2p(i,j,0))
-        #   .set_color(barva(y[int(np.round(poloha.get_value()))]/K,i,j))) for i in range(25) for j in range(6)]
-        #self.add(*all_mouses)
-
-        # JEDNA MYS MENICI BARVU
-        # Mouse= always_redraw(lambda:ImageMobject(obrazek).set_color(value2hex(y[int(np.round(poloha.get_value()))]/K)))
-        # self.add(Mouse)
-
-
-        #update_mouses = always_redraw(get_mouses)    
-        #random.shuffle(all_mouses)
-
-        # def draw_mouses(percent_of_capacity):
-        #     number_of_mouses = len(all_mouses)
-        #     index_mouses = int(number_of_mouses*percent_of_capacity)
-        #     print("\naaaa", percent_of_capacity)
-        #     for i in range(number_of_mouses):
-        #         if i<index_mouses:
-        #             all_mouses[i].set_color("#FFA500")
-        #         else:    
-        #             all_mouses[i].set_color(GRAY)
-         
-        # self.play(AnimationGroup(*[FadeIn(i) for i in all_mouses],lag_ratio=0.01),run_time=4)
-        #self.add(all_mouses)
+        
         self.add(poloha)
 
         H = 1.5
@@ -380,18 +348,12 @@ class Simulace(Scene):
         mouse_phase = always_redraw(lambda: mouse.copy().scale(0.5).set_color("#FFA500")
             .move_to(ax2.c2p(y[int(np.round(poloha.get_value()))],rustova_funkce(y[int(np.round(poloha.get_value()))]),0)))
             
-        # graph_mouses = always_redraw(lambda: draw_mouses(y[int(np.round(poloha.get_value()))]/K))
-        #graph_mouses = [always_redraw(lambda: i.set_color("#FFA500")) for i in all_mouses]
-        #print(len(all_mouses))
-        #print(len(graph_mouses))
-        #graph_mouses.add_updater( lambda:  draw_mouses(.2/K) )
-        # ax3.add_updater(
-        #     lambda : print("updater")
-        # )
         self.add(mouse_curve,mouse_phase,pIC)
-        #draw_mouses(0.5)
-        self.wait(wait_duration)
+        self.wait()
+
+        self.next_section("")
         self.play(poloha.animate.set_value(len(x)-1), run_time=6, rate_func=linear)
+        self.wait()
 
 komentar = """
 

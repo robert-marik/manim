@@ -4,7 +4,7 @@ from manim_editor import PresentationSectionType
 import numpy as np
 
 AnimationRuntime = 1
-WaitTime = 2
+WaitTime = 1
 
 class Deformation(ThreeDScene):
     def construct(self):
@@ -14,11 +14,11 @@ class Deformation(ThreeDScene):
         title = Title(r"Tenzor deformace a jeho transformace")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(AnimationGroup(GrowFromCenter(title),GrowFromCenter(autor[0]),GrowFromCenter(autor[1]),lag_ratio=0.2))
-        self.wait(5)
+        self.wait()
         
         self.next_section("Popis ulohy")        
 
-        self.play(FadeOut(title),FadeOut(autor))
+        self.clear()
         rct = Rectangle(color=GREEN, width=6, height=2, fill_opacity=0.5 ) 
         square = Square(color=BLUE, side_length=1, fill_opacity=1)
         squareL = square.copy().set_color(WHITE).shift(LEFT*2)
@@ -68,9 +68,9 @@ class Deformation(ThreeDScene):
         ).arrange(DOWN,aligned_edge=LEFT).next_to(title,DOWN)
         self.play(FadeIn(tvg),FadeIn(popis))
         self.play(ReplacementTransform(tvg, tvg1), run_time=3*AnimationRuntime)
-        self.wait(WaitTime)
+        self.wait()
         self.play(ReplacementTransform(tvg1, tvg2), run_time=3*AnimationRuntime)
-        self.wait(WaitTime)
+        self.wait()
 
         self.next_section("Zavedeni souradnic")        
 
@@ -79,27 +79,27 @@ class Deformation(ThreeDScene):
         temp = VGroup(osy)
 
         self.play(FadeIn(temp))
-        self.wait(duration=WaitTime)
+        self.wait(duration=1)
 
 
         self.play(FadeIn(osyr))
-        self.wait(duration=WaitTime)
+        self.wait(duration=1)
 
 
         self.play(ReplacementTransform(tvg2,rct))
 
         self.play(FadeIn(tenzor1["O"]))
-        self.wait(duration=WaitTime)
+        self.wait(duration=1)
 
         self.play(FadeIn(tenzor2["O"]))
-        self.wait(duration=WaitTime)
+        self.wait(duration=1)
         
         vg = VGroup()
         vg.add(rct,squareL, squareR, squareC)
 
-        self.wait(WaitTime)
+        self.wait(1)
         self.play(FadeIn(square))
-        self.wait(duration=WaitTime)
+        self.wait(duration=1)
 
         self.play(
             ReplacementTransform(square, squareL),
@@ -175,7 +175,7 @@ class Deformation(ThreeDScene):
             phi=0 * DEGREES,
             theta=-90 * DEGREES
         )
-        self.wait(3*WaitTime)
+        self.wait()
         # end of 3D stuff
 
         self.next_section("Komponenty tenzoru 4b")        

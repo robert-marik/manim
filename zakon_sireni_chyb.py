@@ -12,7 +12,6 @@ random.seed(10)
 class Intro(Scene):
 
     def construct(self):
-
         self.next_section("Nadpis")
         title = Title(r"Zákon šíření chyb")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
@@ -22,7 +21,6 @@ class Intro(Scene):
         self.wait()
 
 class Grafy(Scene):
-
     def construct(self):
         axes = Axes( 
             x_range=[0, 2, 10], 
@@ -102,17 +100,60 @@ class Grafy(Scene):
     
         self.wait()     
 
-class Zakon(Scene):
-    
-    def construct(self):
+class Zakon1(Scene):
 
+    def construct(self):
+        self.font_size = 10
+
+        self.next_section("Zakon sireni chyb")
+        title = Title(r"Zákon šíření chyb pro funkci $y=f(x)$ jedné proměnné $x$")
         texty=VGroup()
-        texty.add(
-            Tex(r"Funkce $y=f(x)$ jedné proměnné $x$:"),
+        texty.add(            
             Tex(r"$\bullet$ Z měření máme $x=\overline x\pm\Delta x.$"),
-            Tex(r"$\bullet$ Výpočtem stanovíme $\overline y=f(\overline x)$ a $\displaystyle\Delta y = \left|\frac{\mathrm dy}{\mathrm dx}(\overline x)\right|\Delta x$."),
+            Tex(r"""
+                $\bullet$ Výpočtem stanovíme $\overline y=f(\overline x)$ 
+                a $\displaystyle\Delta y = 
+                \left|\frac{\mathrm df}{\mathrm dx}(\overline x)\right|\Delta x$."""),
             Tex(r"$\bullet$ Hodnota veličiny $y$ je $y=\overline y\pm \Delta y$.")            
             )
-        texty.arrange(DOWN, aligned_edge=LEFT)
+        texty.arrange(DOWN, aligned_edge=LEFT).next_to(title,DOWN)
+
+        self.play(GrowFromCenter(title))
+        self.add(texty)
+        self.wait()
+
+class Zakon2(Scene):
+
+    def construct(self):
+        self.font_size = 10
+
+        self.next_section("Zakon sireni chyb 2")
+        title = Title(r"Zákon šíření chyb pro funkci $y=f(x_1,x_2)$\\  dvou proměnných $x_1$ a $x_2$")
+        texty=VGroup()
+        texty.add(            
+            Tex(r"""
+                $\bullet$ Z měření máme $x_1=\overline x\pm\Delta x_1$ a 
+                $x_2=\overline x\pm\Delta x_2$."""),
+            Tex(r"""
+                $\bullet$ Vypočteme $\overline y=f(\overline x_1,\overline x_2)$ a
+                $\displaystyle\Delta y_i = 
+                \left|\frac{\partial f}{\partial x_i}(\overline x_1,\overline x_2)
+                \right|\Delta x_i$.
+                """),
+            Tex(r"""$\bullet$ Celková chyba se vypočte 
+            pomocí Eklidovské metriky 
+            $$ \Delta y = \sqrt{ 
+                \left(\frac{\partial f}{\partial x_1}(\overline x_1,\overline x_2) \Delta x_1
+                \right)^2
+                +
+                \left(\frac{\partial f}{\partial x_2}(\overline x_1,\overline x_2) \Delta x_2
+                \right)^2.
+             }$$
+            """),
+            Tex(r"$\bullet$ Hodnota veličiny $y$ je $y=\overline y\pm \Delta y$.")            
+            )
+        texty.arrange(DOWN, aligned_edge=LEFT).next_to(title,DOWN)
+
+        self.play(GrowFromCenter(title))
         self.add(texty)
         self.wait()
