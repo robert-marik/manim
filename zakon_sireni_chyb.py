@@ -70,6 +70,8 @@ class Grafy(Scene):
         ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL)
         texty[1].shift(RIGHT)
         texty[2].shift(RIGHT)
+        for i in range(3):
+            texty[i].add_background_rectangle()
 
         self.add(texty)
 
@@ -89,6 +91,7 @@ class Grafy(Scene):
         self.play(Create(lines_2a),Create(lines_2b)) 
         self.play(Create(delta_gx))
 
-
+        self.play(delta_fx.copy().animate.rotate(PI/2).next_to(texty[1],LEFT))
+        self.play(delta_gx.copy().animate.rotate(PI/2).next_to(texty[2],LEFT))
     
         self.wait()     
