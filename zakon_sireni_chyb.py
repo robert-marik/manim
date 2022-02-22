@@ -31,7 +31,7 @@ class Grafy(Scene):
             y_length=4,
             tips = False,
         ).shift(UP) 
-        self.add(axes)
+        self.play(Create(axes))
         graph = axes.plot_parametric_curve(lambda t: np.array([t**2,t]), t_range=[0,np.sqrt(2)], color=BLUE) 
         graph2 = axes.plot(lambda x: x**2, x_range=[0,np.sqrt(2),0.01] , color=RED) 
 
@@ -42,10 +42,11 @@ class Grafy(Scene):
             return linky
 
         delta_x = Line(axes.c2p(0.9,0,0),axes.c2p(1.1,0,0)).set_stroke(width=8)
-        self.play(FadeIn(delta_x))
+        self.play(GrowFromCenter(delta_x))
+
         b1 = Brace(delta_x,DOWN)
         b1.add(Tex(r"Rozptyl\\na vstupu").scale(0.7).next_to(b1,DOWN))
-        self.play(FadeIn(b1))
+        self.play(Create(b1))
         lines_1 = linka([1,1,0]).set_color(GRAY)
         lines_1b = linka([1.1,np.sqrt(1.1),0]).set_color(GRAY)
         lines_1a = linka([0.9,np.sqrt(0.9),0]).set_color(GRAY)
@@ -67,31 +68,51 @@ class Grafy(Scene):
                 Tex(r"Rozptyl na výstupu:"),
                 Tex(r"pomalu se měnící funkce (malá derivace)"),
                 Tex(r"rychle se měnící funkce (velká derivace)")
-        ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL)
+        ).scale(0.7).arrange(DOWN, aligned_edge=LEFT).to_corner(UL).set_z_index(2)
         texty[1].shift(RIGHT)
         texty[2].shift(RIGHT)
         for i in range(3):
             texty[i].add_background_rectangle()
 
-        self.add(texty)
 
         lines_2 = linka([1,1,0]).set_color(GRAY)
         lines_2b = linka([1.1,(1.1)**2,0]).set_color(GRAY)
         lines_2a = linka([0.9,(0.9)**2,0]).set_color(GRAY)
 
-        self.add(graph)
+        self.play(Create(graph))
         self.play(Create(lines_1)) 
         self.play(Create(lines_1a),Create(lines_1b)) 
-        self.play(Create(delta_fx))
+        self.play(GrowFromCenter(delta_fx))
+        self.play(
+            delta_fx.copy().animate.rotate(PI/2).next_to(texty[1],LEFT),
+            FadeIn(texty[:2])
+            )
 
         self.play(FadeOut(lines_1b,lines_1a,lines_1))
 
-        self.add(graph2)
+        self.play(Create(graph2))
         self.play(Create(lines_2)) 
         self.play(Create(lines_2a),Create(lines_2b)) 
-        self.play(Create(delta_gx))
+        self.play(GrowFromCenter(delta_gx))
 
-        self.play(delta_fx.copy().animate.rotate(PI/2).next_to(texty[1],LEFT))
-        self.play(delta_gx.copy().animate.rotate(PI/2).next_to(texty[2],LEFT))
+        self.play(
+            delta_gx.copy().animate.rotate(PI/2).next_to(texty[2],LEFT),
+            FadeIn(texty[ 2])
+        )
     
         self.wait()     
+
+class Zakon(Scene):
+    
+    def construct(self):
+
+        texty=VGroup()
+        texty.add(
+            Tex(r"Funkce $y=f(x)$ jedné proměnné $x$:"),
+            Tex(r"$\bullet$ Z měření máme $x=\overline x\pm\Delta x.$"),
+            Tex(r"$\bullet$ Výpočtem stanovíme $\overline y=f(\overline x)$ a $\displaystyle\Delta y = \left|\frac{\mathrm dy}{\mathrm dx}(\overline x)\right|\Delta x$."),
+            Tex(r"$\bullet$ Hodnota veličiny $y$ je $y=\overline y\pm \Delta y$.")            
+            )
+        texty.arrange(DOWN, aligned_edge=LEFT)
+        self.add(texty)
+        self.wait()
