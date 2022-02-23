@@ -105,7 +105,7 @@ class Zakon1(Scene):
     def construct(self):
         self.font_size = 10
 
-        self.next_section("Zakon sireni chyb")
+        self.next_section("Zakon sireni chyb 1")
         title = Title(r"Zákon šíření chyb pro funkci $y=f(x)$ jedné proměnné $x$")
         texty=VGroup()
         texty.add(            
@@ -119,7 +119,8 @@ class Zakon1(Scene):
         texty.arrange(DOWN, aligned_edge=LEFT).next_to(title,DOWN)
 
         self.play(GrowFromCenter(title))
-        self.add(texty)
+        for i in texty:
+            self.play(GrowFromCenter(i))
         self.wait()
 
 class Zakon2(Scene):
@@ -155,5 +156,8 @@ class Zakon2(Scene):
         texty.arrange(DOWN, aligned_edge=LEFT).next_to(title,DOWN)
 
         self.play(GrowFromCenter(title))
-        self.add(texty)
+        for i in texty:
+            self.play(GrowFromCenter(i))
+        self.wait()
+
         self.wait()
