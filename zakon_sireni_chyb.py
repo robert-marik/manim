@@ -86,6 +86,7 @@ class Grafy(Scene):
             FadeIn(texty[:2])
             )
 
+        self.next_section("Rychle se menici funkce")
         self.play(FadeOut(lines_1b,lines_1a,lines_1))
 
         self.play(Create(graph2))
@@ -133,8 +134,8 @@ class Zakon2(Scene):
         texty=VGroup()
         texty.add(            
             Tex(r"""
-                $\bullet$ Z měření máme $x_1=\overline x\pm\Delta x_1$ a 
-                $x_2=\overline x\pm\Delta x_2$."""),
+                $\bullet$ Z měření máme $x_1=\overline x_1\pm\Delta x_1$ a 
+                $x_2=\overline x_2\pm\Delta x_2$."""),
             Tex(r"""
                 $\bullet$ Vypočteme $\overline y=f(\overline x_1,\overline x_2)$ a
                 $\displaystyle\Delta y_i = 
