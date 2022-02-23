@@ -8,6 +8,8 @@ import random
 random.seed(0)
 np.random.seed(0)
 
+from manim_editor import PresentationSectionType
+
 config.max_files_cached = 300
 
 wait_time = 2
@@ -74,11 +76,13 @@ class VektorovePole(MovingCameraScene):
         a = [_ for _ in vectors]
         random.shuffle(a)
 
+        self.next_section("Tok pomoci vektoru")        
         title = Title(r"Vektorové pole a jeho divergence").add_background_rectangle(buff=0.5).set_z_index(10)
         self.play(GrowFromCenter(title))
         self.play(AnimationGroup(*[FadeIn(_) for _ in a], lag_ratio=0.1),run_time=14)
+
+        self.next_section("Tok pomoci proudnic")        
         self.play(FadeOut(title))
-        self.wait()
 
         draw_streamlines = False
         draw_streamlines = True
@@ -126,7 +130,7 @@ class VektorovePole(MovingCameraScene):
             FadeIn(stream_lines2), 
             )            
 
-        self.wait(2*wait_time)
+        self.wait()
         #return False
         #self.add(NumberPlane())
         circles = {}
@@ -145,6 +149,7 @@ class VektorovePole(MovingCameraScene):
                 [-6,1.6,0,[r"Převaha toku ven,",r"na opačnou stranu než v předchozím případě."]],
                 [-6,3.3,0,[r"Naprostá dominance toku dovnitř."]]
                 ]):
+            self.next_section("Detail")        
             circle = Circle(color=WHITE, radius=0.2).set_stroke(width=1)
             #circle.add(Dot(circle.get_center(), radius=0.02))
             point = point_and_text[:3]
@@ -206,8 +211,9 @@ class VektorovePole(MovingCameraScene):
                 FadeIn(arrows),
                 FadeIn(comment),
                 lag_ratio=0.1))
-            self.wait(4*wait_time)
+            self.wait()
 
+            self.next_section("Celkovy pohled")
             self.play(Restore(self.camera.frame),FadeOut(detail_frame), run_time = 2)   
             self.play(FadeIn(hodnota))
             self.wait()
@@ -253,7 +259,7 @@ class DivergenceKartezske(MovingCameraScene):
         sipky['x'].set_color(GREEN)
         sipky['y'].set_color(GREEN)
 
-
+        self.next_section("Kartezske souradnice")        
         title = Title(r"Divergence v kartézských souřadnicích")
         self.play(GrowFromCenter(title))
 
@@ -277,8 +283,9 @@ class DivergenceKartezske(MovingCameraScene):
         bod = [*body[i_center],0] 
         hodnota_derivace = derivace(F2,bod)
         hodnota_divergence = divergence(F2,bod)
-        stred = Circle(radius=0.75,color=YELLOW).move_to(bod).set_z_index(-1).set_stroke(width=10)
 
+        self.next_section("Kartezske souradnice detail")        
+        stred = Circle(radius=0.75,color=YELLOW).move_to(bod).set_z_index(-1).set_stroke(width=10)
         self.play(FadeIn(stred))
         self.camera.frame.save_state()
         self.play(self.camera.frame.animate.set(width=3.5).move_to(bod), run_time = 2)        
@@ -313,7 +320,9 @@ class DivergenceKartezske(MovingCameraScene):
         self.play(FadeIn(stream_lines))
         self.wait()
         self.play(FadeIn(arrows))
-        self.wait(wait_time)
+        self.wait()
+
+        self.next_section("Kartezske souradnice :(")        
         oci = VGroup(Dot(),Dot(0.6*RIGHT))        
         oci.set_color(YELLOW).move_to(stred).shift(0.25*UP).set_z_index(-5)
         uhel = PI/4
@@ -331,22 +340,25 @@ class DivergenceKartezske(MovingCameraScene):
         self.play(FadeIn(oci),FadeIn(zamraceni))
         self.play(FadeIn(popis))
 
-        self.wait(3*wait_time)
+        self.next_section("Kartezske souradnice :)")        
+        self.wait()
         sipky["kopie1"] = sipky["both"].copy()    
         sipky["kopie2"] = sipky["both"].copy()    
         self.play(
             *[Transform(i,j) for i,j in zip (sipky['kopie1'], sipky["x"])],
             *[Transform(i,j) for i,j in zip (sipky['kopie2'], sipky["y"])]
             )
-        self.wait(wait_time)
+        self.wait()
         self.play(
             ReplacementTransform(zamraceni, usmev),
             ReplacementTransform(popis, popis2),
         )
         self.play(FadeOut(sipky['both']))
         self.wait()
+
+        self.next_section("Kartezske souradnice unfocus")        
         self.play(Restore(self.camera.frame), run_time = 2)   
-        self.wait(wait_time)
+        self.wait()
 
         radky = VGroup(
             MathTex(r"\vec q = (P,Q)"),
@@ -385,10 +397,9 @@ class DivergenceKartezske(MovingCameraScene):
             ),
             run_time=10, 
             )   
-        #self.add(vypocet_derivaci)
-        #self.add(NumberPlane())
         self.wait()
 
+        self.next_section("Divergence pomoci derivace")        
         vypocet_derivaci = VGroup(
             MathTex(r"\frac{\partial P}{\partial x}="+str(round(hodnota_derivace[0],3))),
             MathTex(r"\frac{\partial Q}{\partial y}="+str(round(hodnota_derivace[1],3)))
@@ -396,32 +407,34 @@ class DivergenceKartezske(MovingCameraScene):
 
         vypocet_derivaci[0].next_to(P,DOWN,aligned_edge=LEFT)
         self.play(FadeIn(vypocet_derivaci[0]))     
-        self.wait(wait_time)
+        self.wait()
 
         vypocet_derivaci[1].next_to(Q,DOWN,aligned_edge=LEFT)
         self.play(FadeIn(vypocet_derivaci[1]))     
-        self.wait(wait_time)
+        self.wait()
         br = Brace(VGroup(P,Q,vypocet_derivaci), direction=RIGHT).shift(0.5*RIGHT)
         self.play(FadeIn(br))
 
         div.next_to(br, buff=1)
         self.play(Create(div))     
-        self.wait(15)
+        self.wait()
 
 class Intro(Scene):
     def construct(self):
+
+        self.next_section("Nadpis")        
         title = Title(r"Divergence a rovnice kontinuity")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(GrowFromCenter(title))
         self.play(GrowFromCenter(autor[0]))
         self.play(GrowFromCenter(autor[1]))
-        self.wait(2)
+        self.wait()
         aplikace = VGroup(*[Tex(_) for _ in ["vedení tepla", "difuze", "sušení dřeva",  "proudění podzemní vody"]]).arrange(DOWN).next_to(autor,DOWN, buff=2)
         for i,c in enumerate([RED,BLUE,ORANGE,YELLOW]):
             aplikace[i].set_color(c)
         self.play(AnimationGroup(*[GrowFromCenter(_) for _ in aplikace], lag_ratio=0.95), run_time=5)
 
-        self.wait(10)
+        self.wait()
 
 class Motivace(Scene):
     def construct(self):
@@ -452,12 +465,14 @@ class Motivace(Scene):
             Tex(r"Zesílení toku")
         ).arrange(DOWN, aligned_edge=LEFT).next_to(bilance3,DOWN, aligned_edge=LEFT)
  
+        self.next_section("Bilance 1")        
         bilance[0].shift(LEFT)
         bilance[2].set_color(RED)
         bilance[4].set_color(RED)
         self.play(AnimationGroup(*[FadeIn(_) for _ in bilance],lag_ratio=0.8), run_time=6)
         self.wait()
 
+        self.next_section("Bilance 2")        
         bilance2[0].shift(LEFT)
         self.play(FadeIn(bilance2[0]))
         self.play(ReplacementTransform(
@@ -466,6 +481,7 @@ class Motivace(Scene):
             VGroup(bilance[3].copy(),bilance[4].copy()), bilance2[2]))
         self.wait()   
 
+        self.next_section("Bilance 3")        
         bilance3[0].shift(LEFT)
         self.play(FadeIn(bilance3[0]))
         self.play(ReplacementTransform(
@@ -474,6 +490,7 @@ class Motivace(Scene):
             bilance2[2].copy(), bilance3[2]))        
         self.wait()   
 
+        self.next_section("Bilance 4")        
         self.play(
             VGroup(
                 bilance,bilance2,bilance3
@@ -503,7 +520,7 @@ class Motivace(Scene):
         self.play(ReplacementTransform(bilance4[2].copy(),VGroup(rovnice[3],rovnice[4])),run_time=4)
 
         self.play(FadeIn(cleny))
-        self.wait(5)
+        self.wait()
         
 
 komentar = """
