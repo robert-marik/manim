@@ -71,7 +71,6 @@ class Model(ZoomedScene):
                 ).set_color(YELLOW).set_stroke(width=2))
             zmeny_znamenka = np.diff(eq_rhs<0)
             indexy_zmen = [i for i,j in enumerate(zmeny_znamenka) if j]
-            print (indexy_zmen)
             for i in indexy_zmen:
                 vystup.add(Circle(radius=0.1).move_to(axes.c2p(t[i],t[i]**2/(1+t[i]**2),0)).set_color(YELLOW).set_stroke(width=2))
             vystup.set_z_index(12)
@@ -115,15 +114,15 @@ class Model(ZoomedScene):
         self.wait()
         self.remove(temp)
 
-        self.play(K.animate.set_value(7.5),frame.animate.shift(1 * DOWN + 1.4*LEFT), run_time=3)
-        temp = komentar(r"Dva stacionární body\\brzy zaniknou.\\Zůstane stabilní hodnota,\\která je násobně větší.")
+        self.play(K.animate.set_value(8.5),frame.animate.shift(1 * DOWN + 1.4*LEFT), run_time=3)
+        temp = komentar(r"Dva stacionární body\\brzy zaniknou.\\Zůstane jediná stabilní hodnota,\\která je násobně větší.")
         self.wait()
         self.remove(temp)
 
         self.play(K.animate.set_value(9), run_time=3)
-        temp = komentar(r"Zůstává jenom jeden\\stacionární bod odpovídající\\řádově větší populaci.")
-        self.remove(temp)
+        temp = komentar(r"V levé části grafu průsečíky nejsou.\\Zůstává jenom jeden\\stacionární bod vpravo,\\odpovídající řádově větší populaci.")
         self.wait()
+        self.remove(temp)
 
         self.play(FadeOut(frame), FadeOut(zoomed_display), FadeOut(zoomed_display_frame))
         self.play(K.animate.set_value(13), run_time=5)
