@@ -6,6 +6,129 @@ from manim_editor import PresentationSectionType
 config.max_files_cached = 400
 
 insect = os.path.join("icons","motyl.png")
+bird = os.path.join("icons","ptacek.png")
+
+
+class Intro(Scene):
+    def construct(self):
+
+        self.next_section("Nadpis")        
+        title = Title(r"Periodické přemnožování obaleče")
+        autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
+        self.play(GrowFromCenter(title))
+        self.play(GrowFromCenter(autor[0]))
+        self.play(GrowFromCenter(autor[1]))
+        self.wait()
+
+class Popis(Scene):
+    def construct(self):
+
+        template = TexTemplate(preamble=r'\usepackage{url}\usepackage[czech]{babel}\usepackage{amsmath}\usepackage{amssymb}')
+        texty = [
+            r"""
+            D. Ludwig, D. D. Jones, C. S. Holling: Qualitative Analysis of Insect Outbreak Systems: 
+            The Spruce Budworm and Forest, \textit{The Journal of Animal Ecology}, Vol. 47, 
+            No. 1. (Feb., 1978), pp. 315-332 (1978).
+            """,
+            r"""
+            Model navržen pro vysvětlení periodického přemnožování obaleče (\textit{Choristoneura 
+            fumiferana}) v kanadských lesích každých cca 30 až 40 let. Jeden
+            z posledních od roku 2006 v Quebecu, do 2019 zasaženo cca 9.6 milionů
+            hektarů (zdroj: \url{www.nrcan.gc.ca}, rozloha ČR je 7.8 milionů hektarů).
+            """,
+            r"""
+            Dosavadní model obsahoval Canadian Forestry Service 30 654 proměnných
+            a omezil se na popis, nedokázal podchytit příčinu.
+            """,
+            r"""
+            Nový model sleduje populaci obaleče v prostředí s omezenou nosnou kapacitou. 
+            V rostoucím lese roste nosná kapacita prostředí pro populaci obaleče roste 
+            (větší les uživí více obaleče). Obsahuje působení predátorů (ptáků) a vysvětluje i příčiny 
+            periodických přemnožení obaleče.
+            """,
+            r"""
+            Model realisticky zachycuje, jak působení predátorů zpomaluje růst populace obaleče. 
+            Pokud je obaleče málo, predátoři konzumují jinou potravu. Pokud je obaleče hodně, predátoři 
+            konzumují jenom do své saturace.
+            """,
+            r"""Model předpokládá, že dynamika obaleče je rychlá ve srovnání s dynamikou lesa, protože les roste pomalu.""",
+            r"""Dynamika predátorů je nezávislá na populaci obaleče, protože predátoři mají alternativní potravu.""",
+            r"""
+            V důsledku rychlé dynamiky populace obaleče v porovnání s dynamikou růstu lesa je velikost 
+            populace obaleče v podstatě stále v rovnovážném stavu, který odpovídá podmínkám prostředí.
+            """
+        ]
+        legenda = VGroup(*[Tex(r"$\bullet$ \begin{minipage}[t]{10cm}"+i+r"\end{minipage}", tex_template=template).scale(0.8) for i in texty])
+        legenda.arrange(DOWN, aligned_edge=LEFT).to_edge(UP).set_color(BLACK)
+        for i in range(len(texty)):
+            spodek = legenda[i].get_edge_center(DOWN)[1]
+            print(spodek)
+            if spodek < -2.5:
+                self.play(legenda.animate.shift(UP*(-2.5-spodek)))
+            self.play(FadeToColor(legenda[i],WHITE))
+            self.wait()
+
+        self.wait()
+
+class PopisMat(MovingCameraScene):
+    def construct(self):
+
+        rovnice = MathTex(r"{{\frac{\mathrm dx}{\mathrm dt}}} = {{f(x)}} - {{g(x)}}")
+        rovnice.to_edge(UP)
+        rovnice[0].set_color(YELLOW)
+        rovnice[2].set_color(BLUE)
+        rovnice[4].set_color(RED)
+        self.play(Create(rovnice))
+
+        insect_mob = ImageMobject(insect).scale_to_fit_width(1.5).set_color(BLUE)        
+        bird_mob = ImageMobject(bird).scale_to_fit_width(2.5).set_color(RED)
+
+        ax1 = Axes (x_range=[0,1.1,2], y_range=[0,0.5,1], tips=False)
+        ax1.scale(0.4).to_edge(LEFT)
+        f1 = ax1.plot(lambda x:x*(1-x)).set_color(BLUE)
+
+        texty = [r"""Populace obaleče roste podle logistické rovnice.""",
+        r"""Je-li málo obaleče, predátoři konzumují jinou potravu.""",
+        r"""Je-li obalečů víc, predátoři konzumují úměrně množství.""",
+        r"""Predátoři konzumují jenom do svého nasyceni."""
+        ]
+        template = TexTemplate(preamble=r'\usepackage{url}\usepackage[czech]{babel}\usepackage{amsmath}\usepackage{amssymb}')
+        legenda = VGroup(*[Tex(r"$\bullet$ \begin{minipage}[t]{10cm}"+i+r"\end{minipage}", tex_template=template).scale(0.8) for i in texty])
+        legenda.arrange(DOWN, aligned_edge=LEFT, buff=0.05)
+        legenda.to_edge(DOWN)        
+        legenda.set_color(RED)
+        legenda[0].set_color(BLUE)
+
+
+        ax2 = Axes (x_range=[0,8,20], y_range=[0,1,6], tips=False)
+        ax2.scale(0.4).to_edge(RIGHT)
+        f2s = VGroup(*[ax2.plot(lambda x:x**3/(1+x**3), x_range=[*i,0.01]) for i in [[0,0.4],[0.4,1],[1,8]]])
+        f2s.set_color(RED)
+
+        insect_mob.next_to(ax1,UP)
+        bird_mob.next_to(ax2,UP)
+
+        self.play(FadeIn(insect_mob))
+        self.play(Create(ax1),Create(f1), FadeIn(legenda[0]))
+
+        self.play(FadeIn(bird_mob))
+        self.play(Create(ax2),Create(f2s[0]),FadeIn(legenda[1]))
+
+        detail = f2s[0]
+        self.camera.frame.save_state()
+        detail_frame = SurroundingRectangle(detail, color=GRAY, buff=.2)
+        
+        self.play(self.camera.frame.animate.set(width=detail_frame.width*2).move_to(detail), FadeIn(detail_frame), running_time = 2)
+        self.wait()
+
+        self.play(Restore(self.camera.frame),FadeOut(detail_frame), running_time = 2)   
+        self.wait()
+
+        self.play(Create(f2s[1]),FadeIn(legenda[2]))
+        self.wait()
+
+        self.play(Create(f2s[2]),FadeIn(legenda[3]))
+        self.wait()
 
 class Model(ZoomedScene):
 
@@ -85,8 +208,8 @@ class Model(ZoomedScene):
 
         def komentar(text):
             nadpis = Tex(text)
-            nadpis.scale(0.7).to_corner(UL).set_color(YELLOW)
-            nadpis.add_background_rectangle(buff=0.2).set_z_index(10)
+            nadpis.scale(0.7).to_corner(UL).set_color(BLACK)
+            nadpis.add_background_rectangle(buff=0.2, color=YELLOW).set_z_index(10)
             self.play(GrowFromCenter(nadpis))
             self.wait()
             return nadpis 

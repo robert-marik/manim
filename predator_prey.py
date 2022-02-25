@@ -7,12 +7,14 @@ import random
 config.max_files_cached = 200
 
 import numpy as np
-from sqlalchemy import null
 from common_definitions import *
 import os
 from scipy.integrate import solve_ivp  # řešení diferenciálních rovnic
 np.random.seed(0)
 random.seed(0)
+
+from manim_editor import PresentationSectionType
+
 
 # https://scipy-cookbook.readthedocs.io/items/LoktaVolterraTutorial.html
 # Definition of parameters
@@ -57,16 +59,18 @@ bunny = os.path.join("icons","bunny_black")
 fox = os.path.join("icons","fox-sitting")
 myaxis_config={'tips':False}
 
-my_wait_time = 5
+my_wait_time = 1
 
 class Intro(Scene):
     def construct(self):
+
+        self.next_section("Nadpis")        
         title = Title(r"Model dravce a kořisti")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
         self.play(GrowFromCenter(title))
         self.play(GrowFromCenter(autor[0]))
         self.play(GrowFromCenter(autor[1]))
-        self.wait(4)
+        #self.wait()
 
         fox_img = ImageMobject(fox)
         bunny_img = ImageMobject(bunny)
@@ -74,8 +78,8 @@ class Intro(Scene):
             fox_img.scale_to_fit_width(1.5).set_color(RED),
             bunny_img.scale_to_fit_width(1).set_color(WHITE)
         ).arrange(buff=1)
-        self.play(FadeIn(imgs), run_time=10)
-        self.wait(10)
+        self.play(FadeIn(imgs), run_time=1)
+        self.wait()
 
 class Odvozeni(Scene):
 
@@ -103,6 +107,7 @@ class Odvozeni(Scene):
         ).arrange(DOWN,buff=0.5)
         imgs.next_to(equations,LEFT, buff=1)
 
+        self.next_section()        
         self.play(FadeIn(imgs[0]))
 
         count = 0
@@ -124,20 +129,21 @@ class Odvozeni(Scene):
                     lag_ratio=.2
                 ), run_time=2
             ) 
-            self.wait(my_wait_time)
+            self.wait()
+            self.next_section()        
             self.play(
                 AnimationGroup(
                     FadeOut(r1),FadeOut(r2),
                     lag_ratio=.2
                 ), run_time=2
             ) 
-            self.wait(my_wait_time)
 
-        self.wait(5)
+        self.wait()
 
 class PhasePortrait(Scene):
     def construct(self):
 
+        self.next_section("Fazovy portret")        
         equations = VGroup(
             MathTex(r"\displaystyle\frac{\mathrm dx}{\mathrm dt}","{}={}","ax-bxy"),
             MathTex(r"\displaystyle\frac{\mathrm dy}{\mathrm dt}{}","{}={}","-cy+dxy",             
@@ -173,11 +179,8 @@ class PhasePortrait(Scene):
         phase_portarit.scale(1.5)
         phase_portarit.to_corner(DR)
 
-        #self.add(phase_portarit)
         self.play(Create(axes.x_axis), SpinInFromNothing(bunny_img, angle=4 * PI))
-        self.wait(my_wait_time)
         self.play(Create(axes.y_axis), SpinInFromNothing(fox_img, angle=4 * PI))
-        self.wait(my_wait_time)
 
         phase_portarit_arrows = VGroup()
         delka = 3
@@ -229,21 +232,20 @@ class PhasePortrait(Scene):
                 )
 
         self.play(FadeIn(bod))
-        self.wait(my_wait_time)
         rectangle = SurroundingRectangle(rh_sides)
         self.play(FadeIn(rectangle))
-        self.wait(my_wait_time)
         self.play(FadeIn(sipka))
-        self.wait(my_wait_time)
+        self.wait()
 
+        self.next_section("Fazovy portret")     
         phase_portarit_arrows.shuffle_submobjects()
         self.play(AnimationGroup(*[
             Create(_) for _ in phase_portarit_arrows
             ], lag_ratio=0.05), run_time=4)
-        self.wait(my_wait_time)
         self.play(FadeOut(rectangle))
-        self.wait(my_wait_time)
-        
+        self.wait()
+
+        self.next_section("Fazovy portret")        
         self.play(AnimationGroup(
             *[i.animate.set_fill(opacity = 0.5).set_stroke(opacity=0.5) for i in VGroup(*phase_portarit_arrows,sipka)]
             ))
@@ -322,9 +324,8 @@ class PhasePortrait(Scene):
         self.play(time.animate.set_value(tnumber-1), run_time=5, rate_func=linear)
         time.set_value(0)
 
-        self.wait(my_wait_time)
+        self.next_section("Fazovy portret")        
         self.play(Create(graph))
-        self.wait(my_wait_time)
         self.play(Group(
             phase_portarit,graph,phase_portarit_arrows,sipka
             ).animate.scale(1/1.5).to_edge(DL))
@@ -333,6 +334,8 @@ class PhasePortrait(Scene):
         self.play(AnimationGroup(*[
             Create(_) for _ in  [graph_foxes,graph_bunnies]
         ]))
+
+        self.next_section("Simulace")        
 
         only_dot = False
 
@@ -373,6 +376,7 @@ class PhasePortrait(Scene):
 
         self.wait(my_wait_time)
 
+        self.next_section("")        
         self.play(AnimationGroup(
             *[FadeOut(_) for _ in [*axes2, labels2, *report, fox_img_watches, 
                                     bunny_img_watches, 
@@ -383,15 +387,10 @@ class PhasePortrait(Scene):
             ).animate.scale(1.2).to_corner(UR, buff=.1),
             lag_ratio=0.05)
         )
+
         self.play(fox_img.animate.next_to(axes.y_axis, LEFT, aligned_edge=UP))
 
-        # stability_conditions=VGroup(
-        #     MathTex(r"\displaystyle\frac{\mathrm dx}{\mathrm dt}=0 \implies y=\frac ba"),
-        #     MathTex(r"\displaystyle\frac{\mathrm dy}{\mathrm dt}=0 \implies x=\frac cd"),
-        # ).arrange(DOWN).to_corner(UR)
-
-        # stability_derivation = equations.copy()
-        # self.play(stability_derivation.animate.next_to(stability_conditions,DOWN).set_color(WHITE))
+        self.next_section("")        
 
         equations2 = VGroup(
             MathTex(r"0","{}={}","ax-bxy"),
@@ -440,7 +439,7 @@ class PhasePortrait(Scene):
             lag_ratio=1
         ))
         
-        self.wait(my_wait_time)
+        self.wait()
 
         self.play(AnimationGroup(
             *[TransformMatchingShapes(_,__) for _,__ in zip(equations2,equations3)],
@@ -467,7 +466,8 @@ class PhasePortrait(Scene):
         ))
 
         self.wait(my_wait_time)
-
+        self.next_section("")        
+       
         line_x = axes.get_vertical_line(stationary_point.get_center())
         line_y = axes.get_horizontal_line(stationary_point.get_center())
         label_x = MathTex("c/d").scale(.7).next_to(line_x,DOWN).set_color(RED)
@@ -494,7 +494,9 @@ class PhasePortrait(Scene):
             self.play(Indicate(equations4[1]))
         
 
-        self.wait(my_wait_time)
+        self.wait()
+        self.next_section("Sardinky a drave ryby")        
+
 
         dravec = os.path.join("icons","drava_ryba")
         korist = os.path.join("icons","ryba")
@@ -507,9 +509,7 @@ class PhasePortrait(Scene):
         korist_img.move_to(bunny_img, aligned_edge=LEFT).set_z_index(-2)
 
         self.play(FadeOut(fox_img),SpinInFromNothing(dravec_img, angle=8 * PI), runtime=3)
-        self.wait(my_wait_time)
         self.play(FadeOut(bunny_img),SpinInFromNothing(korist_img, angle=8 * PI), runtime=3)
-        self.wait(my_wait_time)
 
         graph_higher_a = axes.plot_line_graph(*X_higher_a, add_vertex_dots=False)
         allcurves_higher_a = VGroup(
