@@ -61,18 +61,17 @@ class Popis(Scene):
         legenda = VGroup(*[Tex(r"$\bullet$ \begin{minipage}[t]{10cm}"+i+r"\end{minipage}", tex_template=template).scale(0.8) for i in texty])
         legenda.arrange(DOWN, aligned_edge=LEFT).to_edge(UP).set_color(BLACK)
         for i in range(len(texty)):
+            self.next_section()        
             spodek = legenda[i].get_edge_center(DOWN)[1]
-            print(spodek)
             if spodek < -2.5:
                 self.play(legenda.animate.shift(UP*(-2.5-spodek)))
             self.play(FadeToColor(legenda[i],WHITE))
             self.wait()
 
-        self.wait()
-
 class PopisMat(MovingCameraScene):
     def construct(self):
 
+        self.next_section()        
         rovnice = MathTex(r"{{\frac{\mathrm dx}{\mathrm dt}}} = {{f(x)}} - {{g(x)}}")
         rovnice.to_edge(UP)
         rovnice[0].set_color(YELLOW)
@@ -80,11 +79,38 @@ class PopisMat(MovingCameraScene):
         rovnice[4].set_color(RED)
         self.play(Create(rovnice))
 
+        komentar = [
+            r"Rychlost růstu populace obaleče",
+            r"Růst bez přítomnosti predátorů",
+            r"Zpomalení růstu působením predátorů"]
+        
+        legenda1 = VGroup(*[VGroup(rovnice[i].copy()) for i in [0,2,4]]).arrange(DOWN, aligned_edge=RIGHT, buff=0.5)
+        for i,j in enumerate(komentar):
+            legenda1[i].add(Tex(j).next_to(legenda1[i], buff=2))
+
+        legenda1.next_to(rovnice,DOWN,buff=1)
+        self.play(Create(legenda1))
+        self.wait()
+
+        self.next_section()        
+        self.remove(legenda1)
         insect_mob = ImageMobject(insect).scale_to_fit_width(1.5).set_color(BLUE)        
         bird_mob = ImageMobject(bird).scale_to_fit_width(2.5).set_color(RED)
 
         ax1 = Axes (x_range=[0,1.1,2], y_range=[0,0.5,1], tips=False)
         ax1.scale(0.4).to_edge(LEFT)
+
+        popisky1 = VGroup(
+            ax1.get_x_axis_label(
+            label = Tex(r"velikost populace obaleče").scale(0.6),
+            edge=DOWN, 
+            direction=DOWN),
+            Tex(r"""
+            rychlost růstu populace obaleče\\bez přítomnosti predátorů\\{}
+            """).scale(0.6).move_to(ax1, aligned_edge=UP).set_color(BLUE),
+            VGroup()
+            )
+        ax1.add(popisky1)
         f1 = ax1.plot(lambda x:x*(1-x)).set_color(BLUE)
 
         texty = [r"""Populace obaleče roste podle logistické rovnice.""",
@@ -102,6 +128,16 @@ class PopisMat(MovingCameraScene):
 
         ax2 = Axes (x_range=[0,8,20], y_range=[0,1,6], tips=False)
         ax2.scale(0.4).to_edge(RIGHT)
+        popisky2 = VGroup(
+            ax2.get_x_axis_label(
+            label = Tex(r"velikost populace obaleče").scale(0.6),
+            edge=DOWN, 
+            direction=DOWN),
+            Tex(r"""
+            rychlost s jakou predátoři\\likvidují populaci obaleče
+            """).scale(0.6).move_to(ax2).set_color(RED)
+            )
+        ax2.add(popisky2)        
         f2s = VGroup(*[ax2.plot(lambda x:x**3/(1+x**3), x_range=[*i,0.01]) for i in [[0,0.4],[0.4,1],[1,8]]])
         f2s.set_color(RED)
 
@@ -109,24 +145,25 @@ class PopisMat(MovingCameraScene):
         bird_mob.next_to(ax2,UP)
 
         self.play(FadeIn(insect_mob))
-        self.play(Create(ax1),Create(f1), FadeIn(legenda[0]))
+        self.play(Create(ax1),Create(f1),FadeIn(legenda[0]))
+        self.wait()
 
+        self.next_section("Predation 1/3")        
         self.play(FadeIn(bird_mob))
         self.play(Create(ax2),Create(f2s[0]),FadeIn(legenda[1]))
 
         detail = f2s[0]
         self.camera.frame.save_state()
         detail_frame = SurroundingRectangle(detail, color=GRAY, buff=.2)
-        
         self.play(self.camera.frame.animate.set(width=detail_frame.width*2).move_to(detail), FadeIn(detail_frame), running_time = 2)
         self.wait()
 
+        self.next_section("Predation 2/3")        
         self.play(Restore(self.camera.frame),FadeOut(detail_frame), running_time = 2)   
-        self.wait()
-
         self.play(Create(f2s[1]),FadeIn(legenda[2]))
         self.wait()
 
+        self.next_section("Predation 3/3")        
         self.play(Create(f2s[2]),FadeIn(legenda[3]))
         self.wait()
 
@@ -156,10 +193,10 @@ class Model(ZoomedScene):
             y_range=[0,1.75,1e6],
             tips = False)
 
-        popisek_x = Tex(r"velikost populace škůdce").scale(0.7)
+        popisek_x = Tex(r"velikost populace obaleče").scale(0.7)
         popisek_x.next_to(axes.get_x_axis(), DOWN)
 
-        popisek_y = Tex(r"dynamika populace škůdce").scale(0.7).rotate(PI/2)
+        popisek_y = Tex(r"dynamika populace obaleče").scale(0.7).rotate(PI/2)
         popisek_y.next_to(axes.get_y_axis(), LEFT)
 
         t = np.linspace(0,12.5,5000)
@@ -174,6 +211,7 @@ class Model(ZoomedScene):
             return vystup
         c_logisticky_rust =  always_redraw(lambda : kresli_parabolu())
 
+        self.next_section("Simulace rustu")
         self.play(Create(axes))
         self.play(FadeIn(popisek_x,popisek_y))
         self.play(Create(c_logisticky_rust))
@@ -215,10 +253,12 @@ class Model(ZoomedScene):
             return nadpis 
 
 
-        temp = komentar(r"Jeden kladný stacionární bod.")
+        temp = komentar(r"Jeden kladný stacionární bod pro malý les.")
         self.wait()
-        self.remove(temp)
 
+
+        self.next_section("Simulace rustu 2")
+        self.remove(temp)
         zoomed_camera = self.zoomed_camera
         zoomed_display = self.zoomed_display
         frame = zoomed_camera.frame
@@ -227,7 +267,11 @@ class Model(ZoomedScene):
         zoomed_display.to_corner(DR)
 
         self.play(K.animate.set_value(6.35), run_time=5)
-        temp = komentar(r"Vznikají další\\stacionární body.")
+        temp = komentar(r"""
+        Jak les roste, roste jeho nosná kapacita a vznikají další stacionární body.\\
+        Stabilní stacionární bod vpravo je oddělen nestabilním stacionárním bodem.\\
+        Proto nás v tuto chvíli nemusí zajímat. Velikost populace je (zatím) malá.
+        """)
 
         self.play(Create(frame))
         zd_rect = BackgroundRectangle(zoomed_display, fill_opacity=0, buff=MED_SMALL_BUFF)        
@@ -235,20 +279,33 @@ class Model(ZoomedScene):
         unfold_camera = UpdateFromFunc(zd_rect, lambda rect: rect.replace(zoomed_display))
         self.play(self.get_zoomed_display_pop_out_animation(), unfold_camera)                
         self.wait()
-        self.remove(temp)
 
+        self.next_section("Simulace rustu 3")
+        self.remove(temp)
         self.play(K.animate.set_value(8.5),frame.animate.shift(1 * DOWN + 1.4*LEFT), run_time=3)
-        temp = komentar(r"Dva stacionární body\\brzy zaniknou.\\Zůstane jediná stabilní hodnota,\\která je násobně větší.")
+        temp = komentar(r"""
+        Dva stacionární body brzy zaniknou.\\
+        Zůstane jediný stabilní stacionární bod.\\
+        V něm je velikost populace násobek předchozího.""")
         self.wait()
-        self.remove(temp)
 
+        self.next_section("Simulace rustu 4")
+        self.remove(temp)
         self.play(K.animate.set_value(9), run_time=3)
-        temp = komentar(r"V levé části grafu průsečíky nejsou.\\Zůstává jenom jeden\\stacionární bod vpravo,\\odpovídající řádově větší populaci.")
+        temp = komentar(r"""
+        V levé části grafu už průsečíky nejsou. Zůstává jenom jeden\\
+        stacionární bod vpravo odpovídající řádově větší populaci.\\
+        Řešení doroste do stacionárního stavu odpovídajícího přemnožení.""")
         self.wait()
-        self.remove(temp)
 
+        self.next_section("Simulace rustu 4")
+        self.remove(temp)
         self.play(FadeOut(frame), FadeOut(zoomed_display), FadeOut(zoomed_display_frame))
         self.play(K.animate.set_value(13), run_time=5)
+        temp = komentar(r"""
+        Zůstal jeden stacionární bod zucela vpravo. \\
+        Populace obaleče je přemnožená a zdecimuje les.
+        """)
         self.wait()
 
 
