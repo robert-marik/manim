@@ -33,23 +33,24 @@ class Popis(Scene):
             r"""
             Model navržen pro vysvětlení periodického přemnožování obaleče (\textit{Choristoneura 
             fumiferana}) v kanadských lesích každých cca 30 až 40 let. Jeden
-            z posledních od roku 2006 v Quebecu, do 2019 zasaženo cca 9.6 milionů
+            z posledních masových výskytů byl od roku 2006 v Quebecu, kde do roku 2019 bylo zasaženo 
+            cca 9.6 milionů
             hektarů (zdroj: \url{www.nrcan.gc.ca}, rozloha ČR je 7.8 milionů hektarů).
             """,
             r"""
-            Dosavadní model obsahoval Canadian Forestry Service 30 654 proměnných
-            a omezil se na popis, nedokázal podchytit příčinu.
+            Předchozí model používaný Canadian Forestry Service pro sledování populace obaleče 
+            obsahoval 30 654 proměnných a omezil se na popis. Nedokázal podchytit příčinu.
             """,
             r"""
-            Nový model sleduje populaci obaleče v prostředí s omezenou nosnou kapacitou. 
-            V rostoucím lese roste nosná kapacita prostředí pro populaci obaleče roste 
-            (větší les uživí více obaleče). Obsahuje působení predátorů (ptáků) a vysvětluje i příčiny 
-            periodických přemnožení obaleče.
+            Nový model vysvětluje i příčiny 
+            periodických přemnožení obaleče. Model sleduje populaci obaleče v prostředí s omezenou nosnou kapacitou. 
+            Zahrnuje skutečnost, že v rostoucím lese nosná kapacita prostředí pro populaci obaleče roste 
+            (větší les uživí více obaleče) a obsahuje působení predátorů (ptáků).
             """,
             r"""
             Model realisticky zachycuje, jak působení predátorů zpomaluje růst populace obaleče. 
             Pokud je obaleče málo, predátoři konzumují jinou potravu. Pokud je obaleče hodně, predátoři 
-            konzumují jenom do své saturace.
+            konzumují jenom do své saturace a nestačí svým působením velikost populaci redukovat.
             """,
             r"""Model předpokládá, že dynamika obaleče je rychlá ve srovnání s dynamikou lesa, protože les roste pomalu.""",
             r"""Dynamika predátorů je nezávislá na populaci obaleče, protože predátoři mají alternativní potravu.""",
@@ -68,7 +69,21 @@ class Popis(Scene):
             self.play(FadeToColor(legenda[i],WHITE))
             self.wait()
 
-class PopisMat(MovingCameraScene):
+class PopisMat(ZoomedScene):
+
+    def __init__(self, **kwargs):
+        ZoomedScene.__init__(
+            self,
+            zoom_factor=0.1,
+            zoomed_display_height=5,
+            zoomed_display_width=5,
+            image_frame_stroke_width=20,
+            zoomed_camera_config={
+                "default_frame_stroke_width": 3,
+                },
+            **kwargs
+        )
+
     def construct(self):
 
         self.next_section()        
@@ -134,8 +149,8 @@ class PopisMat(MovingCameraScene):
             edge=DOWN, 
             direction=DOWN),
             Tex(r"""
-            rychlost s jakou predátoři\\likvidují populaci obaleče
-            """).scale(0.6).move_to(ax2).set_color(RED)
+            rychlost, s jakou predátoři\\likvidují populaci obaleče
+            """).scale(0.6).move_to(ax2).set_color(RED).shift(0.2*RIGHT)
             )
         ax2.add(popisky2)        
         f2s = VGroup(*[ax2.plot(lambda x:x**3/(1+x**3), x_range=[*i,0.01]) for i in [[0,0.4],[0.4,1],[1,8]]])
@@ -152,14 +167,27 @@ class PopisMat(MovingCameraScene):
         self.play(FadeIn(bird_mob))
         self.play(Create(ax2),Create(f2s[0]),FadeIn(legenda[1]))
 
-        detail = f2s[0]
-        self.camera.frame.save_state()
-        detail_frame = SurroundingRectangle(detail, color=GRAY, buff=.2)
-        self.play(self.camera.frame.animate.set(width=detail_frame.width*2).move_to(detail), FadeIn(detail_frame), running_time = 2)
+        zoomed_camera = self.zoomed_camera
+        zoomed_display = self.zoomed_display
+        frame = zoomed_camera.frame
+        zoomed_display_frame = zoomed_display.display_frame
+        frame.move_to(f2s[0])
+        zoomed_display.to_corner(UL)
+
+        self.play(Create(frame))
+        zd_rect = BackgroundRectangle(zoomed_display, fill_opacity=0, buff=MED_SMALL_BUFF)        
+        self.activate_zooming()        
+        unfold_camera = UpdateFromFunc(zd_rect, lambda rect: rect.replace(zoomed_display))
+        self.play(self.get_zoomed_display_pop_out_animation(), unfold_camera)                
         self.wait()
 
+        # detail = f2s[0]
+        # self.camera.frame.save_state()
+        # detail_frame = SurroundingRectangle(detail, color=GRAY, buff=.2)
+        # self.play(self.camera.frame.animate.set(width=detail_frame.width*2).move_to(detail), FadeIn(detail_frame), running_time = 2)
+        # self.wait()
         self.next_section("Predation 2/3")        
-        self.play(Restore(self.camera.frame),FadeOut(detail_frame), running_time = 2)   
+        self.remove(zoomed_display, frame)   
         self.play(Create(f2s[1]),FadeIn(legenda[2]))
         self.wait()
 
@@ -229,11 +257,14 @@ class Model(ZoomedScene):
             vystup.add(analog_indicator(t[equilibrium],**kwds).to_corner(UR))
             vystup.add(Line(start=axes.c2p(t[equilibrium],0,0),
                 end=axes.c2p(t[equilibrium],t[equilibrium]**2/(1+t[equilibrium]**2),0)
-                ).set_color(YELLOW).set_stroke(width=2))
+                ).set_color(YELLOW).set_stroke(width=2).set_z_index(-20))
             zmeny_znamenka = np.diff(eq_rhs<0)
             indexy_zmen = [i for i,j in enumerate(zmeny_znamenka) if j]
             for i in indexy_zmen:
-                vystup.add(Circle(radius=0.1).move_to(axes.c2p(t[i],t[i]**2/(1+t[i]**2),0)).set_color(YELLOW).set_stroke(width=2))
+                barva = YELLOW
+                if eq_rhs[i-1]<0:
+                    barva = ORANGE
+                vystup.add(Circle(radius=0.1).move_to(axes.c2p(t[i],t[i]**2/(1+t[i]**2),0)).set_color(barva).set_stroke(width=2))
             vystup.set_z_index(12)
             return vystup
 
@@ -253,7 +284,11 @@ class Model(ZoomedScene):
             return nadpis 
 
 
-        temp = komentar(r"Jeden kladný stacionární bod pro malý les.")
+        temp = komentar(r"""
+        Zpočátku je les malý a má malou nosnou kapacitu.\\
+        Parabola má nulové body blízko sebe a je nízko.\\
+        Systém má jeden stabilní stacionární bod.
+        """)
         self.wait()
 
 
@@ -268,9 +303,10 @@ class Model(ZoomedScene):
 
         self.play(K.animate.set_value(6.35), run_time=5)
         temp = komentar(r"""
-        Jak les roste, roste jeho nosná kapacita a vznikají další stacionární body.\\
-        Stabilní stacionární bod vpravo je oddělen nestabilním stacionárním bodem.\\
-        Proto nás v tuto chvíli nemusí zajímat. Velikost populace je (zatím) malá.
+        Jak les roste, roste jeho nosná kapacita a vznikají další\\
+        stacionární body. Stabilní stacionární body jsou odděleny\\
+        nestabilním stacionárním bodem. Proto populace zůstává\\
+        v nižším stacionárním bodě. Velikost populace je (zatím) malá.
         """)
 
         self.play(Create(frame))
@@ -285,7 +321,7 @@ class Model(ZoomedScene):
         self.play(K.animate.set_value(8.5),frame.animate.shift(1 * DOWN + 1.4*LEFT), run_time=3)
         temp = komentar(r"""
         Dva stacionární body brzy zaniknou.\\
-        Zůstane jediný stabilní stacionární bod.\\
+        Potom zůstane jediný stabilní stacionární bod.\\
         V něm je velikost populace násobek předchozího.""")
         self.wait()
 
@@ -303,7 +339,7 @@ class Model(ZoomedScene):
         self.play(FadeOut(frame), FadeOut(zoomed_display), FadeOut(zoomed_display_frame))
         self.play(K.animate.set_value(13), run_time=5)
         temp = komentar(r"""
-        Zůstal jeden stacionární bod zucela vpravo. \\
+        Zůstal jeden stacionární bod zcela vpravo. \\
         Populace obaleče je přemnožená a zdecimuje les.
         """)
         self.wait()
