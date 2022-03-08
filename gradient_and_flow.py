@@ -61,7 +61,7 @@ class Flow(MovingCameraScene):
         self.play(GrowFromCenter(title))
         self.play(GrowFromCenter(autor[0]))
         self.play(GrowFromCenter(autor[1]))
-        self.wait(wait_time*2)
+        self.wait()
 
 
         number_plane = NumberPlane(
@@ -73,7 +73,7 @@ class Flow(MovingCameraScene):
 
         self.next_section("Termosnimek")        
 
-        self.play(FadeOut(VGroup(title,autor)))
+        self.clear()
         wood_obj = ImageMobject(wood_img)
         vertices=[[7,4],[7,-4],[-7,4],[-7,-4]]
         values = [function(x,y) for x,y in vertices]
@@ -110,15 +110,18 @@ class Flow(MovingCameraScene):
         self.play(GrowFromEdge(function_colors, LEFT), run_time = 5)
         self.wait()
 
-        self.next_section("Vrstevnice")        
+        self.next_section("Vrstevnice")  
+        contours.set_z_index(2)      
         self.add(contours)
         self.play(AnimationGroup(
-            FadeOut(function_colors),
+            FadeToColor(function_colors,BLACK),
         ), run_time=5)
+        self.remove(function_colors)
         self.wait()
 
         self.next_section("Gradienty")        
 
+        contours.set_z_index(-1)      
         vectors_unscaled_opposite = ArrowVectorField(lambda p:-gradient(*p)[0]*RIGHT-gradient(*p)[1]*UP,
             x_range=[-7,7,1],
             y_range=[-4,4,1],
@@ -181,7 +184,7 @@ class Flow(MovingCameraScene):
         uhel = np.arctan(rozmery[1]/rozmery[0])/np.pi*180
 
         obrazek = wood_obj.copy().rotate(uhel*DEGREES).scale_to_fit_width(3)
-        obrazek.to_edge(RIGHT).shift(.7*DOWN).set_z_index(-1)
+        obrazek.to_edge(RIGHT).shift(.7*DOWN).set_z_index(-2)
 
         lambda1 = 3
         lambda2 = 1
@@ -214,7 +217,7 @@ class Flow(MovingCameraScene):
             stroke_width=3,
             dt=0.5,
             virtual_time=1.5, opacity=0.75
-            ).set_z_index(-1)
+            ).set_z_index(-2)
 
         matice_D = VGroup(
             VGroup(MathTex("D={}"),Matrix([[d11,d12],[d12,d22]])).arrange(RIGHT),
