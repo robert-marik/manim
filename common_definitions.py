@@ -79,7 +79,8 @@ def analog_indicator(value, **kwargs):
     output.pointer.set_color(options['color_pointer_func'](value))
     output.add(output.pointer)
     output.stretch(options['stretch'],1,about_point=ORIGIN)
-    output.add(Dot())
+    output.dot = Dot()
+    output.add(output.dot)
     if options['title'] is not None:
         output.title = Tex(options['title']).scale(options['title_scale']).next_to(output,UP)
         output.add(output.title)
