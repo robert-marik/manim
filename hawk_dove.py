@@ -23,14 +23,39 @@ class Intro(Scene):
 
         title = Title(r"Model soupeření jedinců jestřábí a holubičí povahy")
         autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
+        zdroj = Tex(r"Zpracováno podle knihy\\J. Kalas, Z. Pospíšil:\\Spojité modely v biologii,\\Masarykova univerzita (2001).").scale(0.75).next_to(autor,DOWN,buff=1)
         self.play(GrowFromCenter(title))
         self.play(GrowFromCenter(autor[0]))
         self.play(GrowFromCenter(autor[1]))
+        self.play(GrowFromCenter(zdroj))
         self.wait()
 
 
 def rhs(x,V,D):
     return (x*(1-x)*(V/2-x*D/2))
+
+def mujTex(text):
+    return Tex(r"$\bullet\quad $\begin{minipage}[t]{13cm} "+text+r" \end{minipage}").scale(0.7)
+
+
+class Formulace(Scene):
+
+    def construct(self):
+        
+
+        texty = VGroup(
+            mujTex(r"Souboj dvou protikladných povah v jedné populaci. Povaha holubice a jestřába."),
+            mujTex(r"Jedinci se snaží využít zdroj, který posílí jejich reprodukční schopnost (potrava nebo přístup k~hnízdění u živočichů, přístup ke světlu pro rostliny a podobně). Jejich povaha se projevuje v ochotě o tento zdroj bojovat."),
+            mujTex(r"Holubičí povaha nebojuje o zdroje. Pokud se u zdroje sejdou dvě holubice, jenom jedna zdroj zkonzumuje."),
+            mujTex(r"Jestřáb je bojovník. Sejde-li se u zdroje s jiným jestřábem, bojují spolu. Jenom vítěz získá zdroj."),
+            mujTex(r"Sejde-li se u zdroje holubice a jestřáb, holubice ustoupí a zdroj zkonzumuje jestřáb."),
+            mujTex(r"Šíření vzorce chování typu jestřáb či holubice dokážeme modelovat diferenciální rovnicí. Značí-li $x$ frekvenci jestřábů, $D$ náklady na boj a $V$ zisk ze zkonzumovaného zdroje (po vyhraném boji mezi dvěma jestřáby či bez boje v ostatních případech), je možné ukázat, že $x$ se řídí diferenciální rovnicí $$\frac{\mathrm dx}{\mathrm dt}=x(1-x)\left(\frac V2-\frac D2 x\right).$$")
+        )
+        texty.arrange(DOWN, aligned_edge=LEFT)
+        for i in texty:
+            self.play(FadeIn(i))
+        self.wait()
+
 
 class Simulace(Scene):
 
@@ -159,5 +184,22 @@ class Simulace(Scene):
         self.wait()
 
 komentar = """
+Dobrý den. Pokud přemýšlíte, jestli jsou nutné neustálé šarvátky a plýtvání energií na soupeření, ať již na úrovni států nebo jedinců, následující video přiblíží tuto problematiku z hlediska evoluce. Budeme v populaci jednoho druhu sledovat vývoj dvou vzorců chování. Ukážeme si, že určité procento agresivního vzorce chování bude vždy přítomno a za určitých okolností to dokonce bude jediný vzorec chování. 
+
+Uvažujme jednotlivce jednoho druhu se dvěma vzorci chování. Nebojovné chování budeme nazývat holubičí povahou a jejich nositele budeme označovat jako holubice. Tito jedinci nebojují o zdroje k přežití. Těmito zdroji může být například prostor k hnízdění nebo přístup k potravě. Holubičí povahy se vyhýbají konfliktu a místo boje raději hledají jiné zdroje. Kromě toho budou v populaci i takzvaní jestřábi, což jsou jedinci s bojovnou povahou. Sejde-li se u jednoho zdroje jestřáb a holubice, holubice ustoupí. Pokud se však u zdroje sejdou dva jestřábi, potom o tento zdroj bojují. Boj vyžaduje nějaké úsilí a to oslabí reprodukční zdatnost jedinců, kteří bojovali. 
+
+Je možné ukázat, že rozumné předpoklady o vývoji populace vedou k tomu, že procentuální zastoupení jestřábího chování v populaci je možné popsat diferenciální rovnicí, která je na obrazovce. V této rovnici figuruje procentuální zastoupení jestřábů x, náklady na boj mezi dvěma jestřáby vyjádřený parametrem D a zisk z konzumace zdroje označený parametrem V.
+
+Rovnice má tři stacionární body, nula, jedna a V/D. Je-li V/D mezi nulou a jedničkou, může být situace jako na obrázku. Rovnice má nestabilní stacionární body 0 a 1. Nestabilita těchto bodů znamená, že v populaci nebude dominovat žádný druh chování stoprocentně. Kromě toho má rovnice stabilní stacionární bod V/D. Na tomto procentu se usadí procentuální zastoupení jestřábů.
+
+Toto nastává, pokud jsou náklady na boj větší než velikost zdroje. Malý zisk z vítězného boje znamená, že se může vyplatit chovat se jako holubice a vyhýbat se boji. Samé holubice však v populaci být také nemohou, protože nula je také nestabilní stacionární bod. Opravdu, pokud do populace holubičích povah pronikne jedna jestřábí povaha, má tento jestřáb k dispozici veškeré zdroje, protože mu všichni ustupují. To znamená, že se jeho geny a jeho vzorec chování bode šířit rychleji než vzorec holubičího chování.
+
+Zkusme snižovat náklady na boj. Podíl V/D tedy bude růst. Vidíme, že stacionární bod se posunuje k větší frekvenci jestřábů a pro V=D bude stacionární bod roven jedné. To znamená, že populace bude složena jenom z jestřábů. Ani další snižování nákladů na boj situaci nemění. Jenom bude systém rychleji konvergovat do stacionárního bodu. 
+
+Jsou-li náklady na boj malé ve srovnání se ziskem při konzumaci zdroje, budou v populaci jenom samí jestřábi. To je případ například stromů v lese. Zdroj je sluneční svit a náklady na boj spočívají ve vybudování delšího kmene. Náklady na boj jsou relativně malé a proto jsou všechny stromy v lese vysoké. 
+
+Pokud ovšem náklady na boj budou růst a podíl V/D klesat pod jedničku, objeví se opět stacionární bod vyjadřující rovnováhu mezi holubičími a jestřábími povahami. Nikdy však populace jestřábů neklesne na nulu. Jak už bylo řešeno, pokud je jestřábů velmi málo, tak mají bez poje k dispozici všechny zdroje, u kterých se objeví, protože je nízká pravděpodobnost, že se u zdroje setkají s dalším jestřábem. 
+
+Je to špatná zpráva pro všechny mírumilovné povahy, ale když se nad tím zamyslíme, chodí to tak nějak i v lidské společnosti. Ať už na úrovni malých kolektivů, nebo na úrovni celých národů. Zkuste si sami rozmyslet, jestli znáte nějaký vhodný příklad. 
 
 """

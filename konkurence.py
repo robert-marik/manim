@@ -42,7 +42,7 @@ class Rovnice(Scene):
 
     def construct(self):
 
-        self.next_section("Nadpis")
+        self.next_section("Model")
 
         title = Title(r"Matematický model konkurence")
         self.play(GrowFromCenter(title))
@@ -53,7 +53,16 @@ class Rovnice(Scene):
         ).scale(0.7).arrange(DOWN,aligned_edge=LEFT)
         system.add_background_rectangle(buff=0.4).set_z_index(5)
         system.next_to(title, DOWN)
-        self.play(FadeIn(system))
+        komentar = Tex(r"""\begin{minipage}{12cm}\rightskip 0 pt plus 1 fill \raggedright
+        Model obsahuje dvě populace o velikostech $x$ a $y$. Každá populace se vyvíjí podle logistické rovnice 
+        s vlastním invazním parametrem $r_i$ a nosnou kapacitou $K_i$. Kromě toho je ve členu vyjadřujícím 
+        mezidruhovou konkurenci (v závorce) i zpomalení vlivem druhé populace. Pro jednoduchost volíme 
+        zpomalení úměrné velikosti konkurenční populace. Proto je v rovnici pro $x$ 
+        člen obsahující $y$ a naopak.
+        \end{minipage}
+        """).scale(0.75).next_to(system,DOWN)
+        self.play(FadeIn(system),FadeIn(komentar))
+
 
         self.wait()
 

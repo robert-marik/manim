@@ -345,3 +345,21 @@ class Model(ZoomedScene):
         self.wait()
 
 
+komentar = """
+Dobrý den, v tomto videu si ukážeme model populace motýla obaleče v kanadských lesích. Model navrhli v roce 1978 významní ekologové a matematici a vysvětlili pomocí něj, proč periodicky dochází v Kanadě k tomu, že se přemnoží lesní škůdce, který dokáže zdecimovat obrovské plochy lesa, velikostí srovnatelné s celou naší republikou. Vylepšili tím do té doby používaný model, který pracoval s tisíci proměnnými a omezoval se jenom na popis. Nebyl schopný identifikovat přičinu přemnožování. Nově navržený model je vlastně kombinace logistické rovnice pro populaci obaleče, ve které se nosná kapacita prosředí zvětšuje, tak jak roste les a postupně skýtá životní prostor pro více živočichů. Kromě toho je  populace ovlivněna ptáky, kteří jako predátoři brzdí růst, ale v případě malých výskytů housenek obaleče dají přednost lépe dostupné potravě a v případě přemnožení konzumují jenom do svého nasycení. 
+
+Rychlost růstu je derivace a pokud do členů f a g započteme přirozenou rychlost růstu bez predátorů a zpomalení působením predátorů, má matematický model tvar rovnice, kde derivace velikosti populace podle času je rozdílem f minus g.
+
+Jak bylo řečeno, pro přirozený růst populace použijeme logistickou rovnici. Funkce f je tedy kvadratická, otočená vrcholem nahoru, procházející počátkem a druhý kořen odpovídá nosné kapacitě prostředí. 
+
+Funkce udávající působení ptáků narůstá jenom pozvolna, protože i když housenky obaleče ptákům chutnají, pokud je těchto housenek málo, ptáci se spokojí s alternativní potravou. Při větších počtech už jsou housenky běžně dostupné a ptáci jich zkonzumují tím více, čím více housenek je v jejich okolí. Při opravdu vysokých počtech housenek ale ptáci konzumují jenom do své saturace. Ze švédského stolu v lese si berou jenom to, co opravdu sní. 
+
+Pokud nakreslíme pro mladý les obě křivky do jednoho obrázku, vidíme jeden průsečík a jeden stacionární bod. Tento bod je stabilní, což poznáme z toho, že nalevo je výše modrá křivka značící růst a napravo je výše červená křivka. Les roste, roste tedy i jeho nosná kapacita a pravý průsečík se posunuje doprava. Tím parabola roste. Stacionární bod se hýbe, ale ne moc. To znamená, že populace obaleče má vyšší hodnoty, ale tento růst není nijak dramatický. Dokonce můžou vzniknout další dva průsečíky, odpovídající nestabilnímu oranžovému a stabilnímu žlutému bodu. Teoreticky máme další možnost pro ustálení populace obaleče, ale mějme na paměti, že populace je menším stabilním bodě. Oba body jsou odděleny nestabilním stacionárním bodem a bariéra nutná k překonání oddělující hranice je zatím pořád velká.
+
+Nechme les dále růst. Stacionární body se pohybují a nestacionární bod se přiblíží k dolnímu stacionární bod, odpovídajícímu současné velikosti populace. Teď už je velká šance, že pokud budou například jeden rok příznivější podmínky než je obvyklé, může populace překonat vzdálenost mezi prvními dvěma stacionárními body a poté bude dorůstat ke stacionárnímu bodu napravo. Ale ani k tomu nemusí dojít. Pokud ještě zvětšíme nosnou kapacitu prostředí, tedy pokud les ještě poporoste, první dva stacionární body zaniknou a zůstane jenom jeden, ten napravo. 
+
+Dynamika růstu populace hmyzu je mnohem větší než dynamika růstu lesa, proto populace obaleče velmi rychle doroste do nového stacionárního bodu. Její velikost se tedy zvětší na několikanásobek. Další zvětšování nosné kapacity lesa má za následek rychlý posun stacionárního bodu doprava. Populace obaleče je jak utržená z řetězu, ptáci ji nezvládnou zastavit a les prohrál.
+
+Představený model má dvě zajímavé vlastnosti. Někdy i malá změna parametrů může mít dramatickou odezvu a mohou vznikat nebo zanikat stacionární body, což zcela mění chování rovnice. Takovém jevu se říká bifurkace. Kromě toho někdy obnovení vnějších podmínek nevede k obnovení stavu systému, jak vypadal v tomto stavu. Představme si, že ve stavu, ve kterém jsme skončili, budeme nosnou kapacitu lesa opět snižovat. Dokud nevzniknou další stacionární body. Při růstu od nuly toto odpovídalo situaci, kdy je obaleče málo. Počet odpovídal nejmenšímu stacionárnímu bodu. Po přemnožení ja však ve stejné situaci velikost populace ukotvena ve stacionárním bodě s vysokou hodnotou. 
+
+"""
