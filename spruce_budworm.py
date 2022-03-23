@@ -265,7 +265,24 @@ class Model(ZoomedScene):
                 if eq_rhs[i-1]<0:
                     barva = ORANGE
                 vystup.add(Circle(radius=0.1).move_to(axes.c2p(t[i],t[i]**2/(1+t[i]**2),0)).set_color(barva).set_stroke(width=2))
-            vystup.set_z_index(12)
+                vystup.add(Triangle().scale(0.08).move_to(axes.c2p(t[i],-0.05,0)).set_color(WHITE).set_fill(WHITE,opacity=1))
+            pocet = 50
+            body_pro_sipky = np.linspace(0,tmax,pocet)
+            delta_body = tmax/pocet*0.8
+            for i in body_pro_sipky:
+                smer = np.sign(r*i*(1-i/K.get_value()) - i**2/(1+i**2))
+                ii = i + delta_body*smer
+                smer2 = np.sign(r*ii*(1-ii/K.get_value()) - ii**2/(1+ii**2))
+                if smer == smer2:
+                    if smer > 0:
+                        barva = BLUE
+                    else:
+                        barva = RED
+                    vystup.add(Arrow(
+                        start = axes.c2p(i,0.03,0), end = axes.c2p(ii,0.03,0), buff = 0, color=barva,
+                        max_stroke_width_to_length_ratio=20, max_tip_length_to_length_ratio=0.5
+                        ).set_z_index(-50))
+            vystup.set_z_index(-12)
             return vystup
 
         _hodiny = draw_for_animation()
@@ -297,6 +314,7 @@ class Model(ZoomedScene):
         zoomed_camera = self.zoomed_camera
         zoomed_display = self.zoomed_display
         frame = zoomed_camera.frame
+        frame.set_z_index(50)
         zoomed_display_frame = zoomed_display.display_frame
         frame.move_to(axes.c2p(0,0,0)).shift(2.75*RIGHT+3*UP)
         zoomed_display.to_corner(DR)
