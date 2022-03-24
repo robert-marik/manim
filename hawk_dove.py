@@ -49,7 +49,7 @@ class Formulace(Scene):
             mujTex(r"Holubičí povaha nebojuje o zdroje. Pokud se u zdroje sejdou dvě holubice, jenom jedna zdroj zkonzumuje."),
             mujTex(r"Jestřáb je bojovník. Sejde-li se u zdroje s jiným jestřábem, bojují spolu. Jenom vítěz získá zdroj."),
             mujTex(r"Sejde-li se u zdroje holubice a jestřáb, holubice ustoupí a zdroj zkonzumuje jestřáb."),
-            mujTex(r"Šíření vzorce chování typu jestřáb či holubice dokážeme modelovat diferenciální rovnicí. Značí-li $x$ frekvenci jestřábů, $D$ náklady na boj a $V$ zisk ze zkonzumovaného zdroje (po vyhraném boji mezi dvěma jestřáby či bez boje v ostatních případech), je možné ukázat, že $x$ se řídí diferenciální rovnicí $$\frac{\mathrm dx}{\mathrm dt}=x(1-x)\left(\frac V2-\frac D2 x\right).$$")
+            mujTex(r"Šíření vzorce chování typu jestřáb či holubice dokážeme modelovat diferenciální rovnicí $$\frac{\mathrm dx}{\mathrm dt}=x(1-x)\left(\frac V2-\frac D2 x\right).$$ V této rovnici je $x$ frekvence jestřábů, $D$ jsou náklady na boj a $V$ zisk ze zkonzumovaného zdroje (po vyhraném boji mezi dvěma jestřáby či bez boje v ostatních případech).")
         )
         texty.arrange(DOWN, aligned_edge=LEFT)
         for i in texty:
