@@ -423,7 +423,12 @@ V následujícím si budeme všímat jenom vodorovné souřadnice kuličky. Jako
 
 Pokud si vývoj v čase zaznačíme šipkami, je snadné identifikovat stacionární body, protože tam se směr šipek mění. Pokud z obou stran směřují šipky ke stacionárnímu bodu, je tento bod stabilní. V opačném případě je nestabilní. 
 
-A diferenciální rovnice se chová úplně stejně. Pouze informaci o směru šipek nemáme z kuličkodráhy, ale z pravé strany diferenciální rovnice. Tam, kde je pravá strana kladná, graf funkce f je nad vodorovnou osou, tam jsou šipky doprava a x s časem roste. A tam, kde je graf pod osou x s časem klesá. Stacionární body jsou body, do kterých míří šipky z obou strana a nestacionární jsou body, ze kterých šipky vystupují. 
+A diferenciální rovnice se chová úplně stejně. Pouze informaci o směru šipek
+nemáme z kuličkodráhy, ale z pravé strany diferenciální rovnice. Tam, kde je
+pravá strana kladná, graf funkce f je nad vodorovnou osou, tam jsou šipky
+doprava a x s časem roste. A tam, kde je graf pod vodorovnou osou, tam x s časem
+klesá. Stabilní stacionární body jsou body, do kterých míří šipky z obou strana.
+Nestabilní stacionární jsou body, ze kterých šipky vystupují. 
 
 V praxi se setkáváme s tím, že pravá strana rovnice může záviset na nějakém parametru. Budeme sledovat jenom stabilní stacionární body. Ty má funkce dva, jsou označeny šipkami a jsou odděleny nestacionárním bodem. 
 
