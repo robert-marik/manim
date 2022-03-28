@@ -415,9 +415,9 @@ class Bifurkace(Scene):
 
 
 komentar = """
-Dobrý den, v tomto videu si ukážeme, jak snadno a spolehlivě najít stacionární body diferenciální rovnice nezávislé na čase a jak identifikovat jejich stabilitu. Je to snadné a problematiku pochopí každý, kdo chápe pohyb kuličky na kuličkodráze, jako je třeba na obrázku. 
+Dobrý den, v tomto videu si ukážeme, jak u diferenciální rovnice nezávislé na čase snadno a spolehlivě najít stacionární body a jak identifikovat jejich stabilitu. Je to snadné a problematiku pochopí každý, kdo chápe pohyb kuličky na kuličkodráze, jako je třeba na obrázku. 
 
-Kulička se skutálí do dolíku a tam zůstane bez pohybu. V dolíku je stacionární stav. Stacionární stav je i na vrcholku kopce. I tam může být kulička bez pohybu, ale malé šťouchnutí ji pošle z kopce dolů do nejbližšího dolíku. Na vrcholu kopce je stacionární stav, ale je nestabilní. Malý podnět způsobí, že kulička se odkutálí jinam. V dolíku je stacionární stav stabilní, malý podnět kuličku vychýlí, ale po odeznění se kulička vrací do původního stavu.
+Kulička se skutálí do dolíku a tam zůstane bez pohybu. V dolíku je stacionární stav. Stacionární stav je i na vrcholku kopce. I tam sice může být kulička bez pohybu, ale i malé šťouchnutí ji pošle z kopce dolů do nejbližšího dolíku. Na vrcholu kopce je stacionární stav, ale tento stav je nestabilní. Malý podnět způsobí, že kulička se odkutálí jinam. V dolíku je stacionární stav stabilní, malý podnět kuličku vychýlí, ale po odeznění se kulička vrací do původního stavu.
 
 V následujícím si budeme všímat jenom vodorovné souřadnice kuličky. Jako bychom scénu osvětlovali shora a dívali se, jak se stín kuličky pohybuje po ose x. Evidentně jsme schopni identifikovat části dráhy, na nichž se stín bude pohybovat doprava, v obrázku jsou označeny modře. Naopak na červených částech dráhy se stín pohybuje doleva.
 

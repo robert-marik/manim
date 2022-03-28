@@ -327,6 +327,31 @@ class TransformaceDerivace(MovingCameraScene):
             self.wait()
             self.next_section()        
 
+class Cile(Scene):
+
+    def construct(self):
+        text = [
+            r"Po transformaci obsahuje rovnice v nových veličinách menší množství parametrů.",
+            r"Nové veličiny jsou bez fyzikální jednotky a tudíž vhodné pro numerické simulace, kdy se zpravidla o jednotky nestaráme.",
+            r"Nové veličiny zpravidla nabývají hodnot řádově srovnatelných s~jedničkou. Nejedná se ani o tisíce ani o tisícíny."
+            ]
+        def MujTex(text):
+            return(Tex(r"$\bullet$ \quad \begin{minipage}[t]{10cm}"+text+"\end{minipage}", tex_template=template).scale(.9))
+        textTex = VGroup(
+            *[MujTex(_) for _ in text]
+        ).arrange(DOWN, buff=0.5)
+
+        self.next_section()        
+        title = Title(r"Výhody práce s transformovanými diferenciálními rovnicemi")
+        self.add(title)
+        textTex.next_to(title,DOWN, buff=1)
+        for i in textTex:
+            self.play(GrowFromCenter(i))
+            self.wait()
+            self.next_section()        
+
+
 
             
+        
 
