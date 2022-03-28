@@ -415,24 +415,58 @@ class Bifurkace(Scene):
 
 
 komentar = """
-Dobrý den, v tomto videu si ukážeme, jak u diferenciální rovnice nezávislé na čase snadno a spolehlivě najít stacionární body a jak identifikovat jejich stabilitu. Je to snadné a problematiku pochopí každý, kdo chápe pohyb kuličky na kuličkodráze, jako je třeba na obrázku. 
+Dobrý den, v tomto videu si ukážeme, jak u diferenciální rovnice nezávislé na
+čase snadno a spolehlivě najít stacionární body a jak identifikovat jejich
+stabilitu. Je to snadné a problematiku pochopí každý, kdo chápe pohyb kuličky na
+kuličkodráze, jako je třeba na obrázku. 
 
-Kulička se skutálí do dolíku a tam zůstane bez pohybu. V dolíku je stacionární stav. Stacionární stav je i na vrcholku kopce. I tam sice může být kulička bez pohybu, ale i malé šťouchnutí ji pošle z kopce dolů do nejbližšího dolíku. Na vrcholu kopce je stacionární stav, ale tento stav je nestabilní. Malý podnět způsobí, že kulička se odkutálí jinam. V dolíku je stacionární stav stabilní, malý podnět kuličku vychýlí, ale po odeznění se kulička vrací do původního stavu.
+Kulička se skutálí do dolíku a tam zůstane bez pohybu. V dolíku je stacionární
+stav. Stacionární stav je i na vrcholku kopce. I tam sice může být kulička bez
+pohybu, ale i malé šťouchnutí ji pošle z kopce dolů do nejbližšího dolíku. Na
+vrcholu kopce je stacionární stav, ale tento stav je nestabilní. Malý podnět
+způsobí, že kulička se odkutálí jinam. V dolíku je stacionární stav stabilní,
+malý podnět kuličku vychýlí, ale po odeznění se kulička vrací do původního
+stavu.
 
-V následujícím si budeme všímat jenom vodorovné souřadnice kuličky. Jako bychom scénu osvětlovali shora a dívali se, jak se stín kuličky pohybuje po ose x. Evidentně jsme schopni identifikovat části dráhy, na nichž se stín bude pohybovat doprava, v obrázku jsou označeny modře. Naopak na červených částech dráhy se stín pohybuje doleva.
+V následujícím si budeme všímat jenom vodorovné souřadnice kuličky. Jako bychom
+scénu osvětlovali shora a dívali se, jak se stín kuličky pohybuje po ose x.
+Evidentně jsme schopni identifikovat části dráhy, na nichž se stín bude
+pohybovat doprava, v obrázku jsou označeny modře. Naopak na červených částech
+dráhy se stín pohybuje doleva.
 
-Pokud si vývoj v čase zaznačíme šipkami, je snadné identifikovat stacionární body, protože tam se směr šipek mění. Pokud z obou stran směřují šipky ke stacionárnímu bodu, je tento bod stabilní. V opačném případě je nestabilní. 
+Pokud si vývoj v čase zaznačíme šipkami, je snadné identifikovat stacionární
+body, protože tam se směr šipek mění. Pokud z obou stran směřují šipky ke
+stacionárnímu bodu, je tento bod stabilní. V opačném případě je nestabilní. 
 
 A diferenciální rovnice se chová úplně stejně. Pouze informaci o směru šipek
 nemáme z kuličkodráhy, ale z pravé strany diferenciální rovnice. Tam, kde je
 pravá strana kladná, graf funkce f je nad vodorovnou osou, tam jsou šipky
-doprava a x s časem roste. A tam, kde je graf pod vodorovnou osou, tam x s časem
-klesá. Stabilní stacionární body jsou body, do kterých míří šipky z obou strana.
+doprava a x s časem roste. 
+
+Tam, kde je graf pod vodorovnou osou, tam x s časem klesá. 
+
+Stabilní stacionární body jsou body, do kterých míří šipky z obou stran.
+
 Nestabilní stacionární jsou body, ze kterých šipky vystupují. 
 
-V praxi se setkáváme s tím, že pravá strana rovnice může záviset na nějakém parametru. Budeme sledovat jenom stabilní stacionární body. Ty má funkce dva, jsou označeny šipkami a jsou odděleny nestacionárním bodem. 
+V praxi se setkáváme s tím, že pravá strana rovnice může záviset na nějakém
+parametru. Budeme sledovat jenom stabilní stacionární body. Ty má funkce dva,
+jsou označeny šipkami a jsou odděleny nestacionárním bodem.  
 
-Pokud budeme spojitě měnit parametr, bude se křivka naklánět a stacionární body se budou posunovat. V jistém okamžiku však dojde k dramatické změně. Při zanoření lokálního maxima pod osu x zanikne jeden stabilní a jeden nestabilní stacionární bod a zůstane už jenom jediný stacionární bod. Po této prudké změně, která se v matematice nazývá bifurkace, je obnovena spojitá závislost řešení na parametru. Další posunování parametru alfa má jenom malý vliv na dynamiku a spojitě posouvá stacionární bod po ose. 
+Pokud budeme spojitě měnit parametr, bude se křivka naklánět a stacionární body
+se budou posunovat. V jistém okamžiku však dojde k dramatické změně. Při
+zanoření lokálního maxima pod osu x zanikne jeden stabilní a jeden nestabilní
+stacionární bod a zůstane už jenom jediný stacionární bod. Po této prudké změně,
+která se v matematice nazývá bifurkace, je obnovena spojitá závislost řešení na
+parametru. Další posunování parametru alfa má jenom malý vliv na dynamiku a
+spojitě posouvá stacionární bod po ose.  
 
-Hodnota parametru při které se mění počet a vlastnosti stacionárních bodů se nazývá bifurkační hodnota. Mimo tuto hodnotu stacionární body spojitě závisí na parametrech. To znamená, že malá změna vstupních dat má malou odezvu a způsobí malou změnu chování systému. V okolí bifurkační hodnoty si však musíme dávat pozor. Může se stát, že malá změna má dalekosáhlé důsledky. Může zaniknout stacionární bod, což může vést například k přemnožení nežádoucího živočišného druhu, k přehřátí planety skleníkovým efektem, k rozkmitání a mechanickému selhání doposud fungujícího stroje a podobně. 
+Hodnota parametru při které se mění počet a vlastnosti stacionárních bodů se
+nazývá bifurkační hodnota. Mimo tuto hodnotu stacionární body spojitě závisí na
+parametrech. To znamená, že malá změna vstupních dat má malou odezvu a způsobí
+malou změnu chování systému. V okolí bifurkační hodnoty si však musíme dávat
+pozor. Může se stát, že malá změna má dalekosáhlé důsledky. Může zaniknout
+stacionární bod, což může vést například k přemnožení nežádoucího živočišného
+druhu, k přehřátí planety skleníkovým efektem, k rozkmitání a mechanickému
+selhání doposud fungujícího stroje a podobně.  
 """
