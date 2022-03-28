@@ -21,6 +21,24 @@ class Intro(Scene):
         self.play(GrowFromCenter(autor[0]))
         self.play(GrowFromCenter(autor[1]))
         self.wait()
+        self.play(FadeOut(autor))
+
+        def MujTex(text):
+            return(Tex(r"$\bullet$\quad\begin{minipage}[t]{10cm}"+text+"\end{minipage}", tex_template=template).scale(.9).set_color(BLUE))
+
+        k = VGroup(
+            #MujTex(r"Ujasníme si, jak se mění numerická hodnota fyzkální veličiny při změně jednotek."),
+            MujTex(r"Ukážeme si, že vhodnou volnou fyzikálních jednotek je možné zredukovat počet parametrů v matematickém modelu. Nejprve fyzikálně intuitivním způsobem."),
+            MujTex(r"Pro přesný matematický popis odvodíme formální vztahy udávající, jak se mění derivace a diferenicální rovnice při lineární transformaci veličin."),
+            MujTex(r"Uplatníme odvozené vztahy na příkladě rovnice ochlazování a rovnice logistického růstu s lovem."),
+            MujTex(r"Redukce parametrů je důležitá pro numerické modelování, kdy měníme hodnoty parametrů a sledujeme odezvu systému. Menší počet parametrů je dramatickou výhodou."),
+        ).arrange(DOWN).next_to(title,DOWN)
+        k[-1].set_color(RED)
+        for i in k:
+            self.play(GrowFromCenter(i))
+        self.wait()
+
+
 
 class TransformaceJednotek(MovingCameraScene):
     def construct(self):
@@ -41,9 +59,11 @@ class TransformaceJednotek(MovingCameraScene):
         ).arrange(DOWN, aligned_edge=LEFT).next_to(title,DOWN)
 
         for i in text:
+            if i != text[0]:
+                self.next_section("")        
             if i == text[-1]:
                 self.play(self.camera.frame.animate.move_to(text[-1],aligned_edge=DOWN).shift(DOWN))
-            self.play(FadeIn(i))
+            self.play(GrowFromCenter(i))
             self.wait()
 
         title.move_to
@@ -55,7 +75,7 @@ class Teplota(MovingCameraScene):
 
         self.camera.frame.shift(1.3*UP)
 
-        title = Title(r"Změna jednotek v rovnici ochlazování").shift(1.3*UP)
+        title = Title(r"Volba jednotek v rovnici ochlazování").shift(1.3*UP)
         self.add(title)
 
         merak = VGroup()
@@ -118,7 +138,7 @@ class Teplota(MovingCameraScene):
             )
 
         uloha = VGroup(
-            Tex("Základní model v jednotkách SI:"),
+            Tex("Základní model v libovolných jednotkách:"),
             MathTex(r"\frac{\mathrm dT}{\mathrm dt}=-k(T-T_\infty), \quad T(0)=T_0"),
             Tex("V nových jednotkách teploty,"),
             MathTex(r"{{\frac{\mathrm d\tau}{\mathrm dt}=}}{{-k}}{{(\tau-0),}} \quad \tau(0)={{\tau_0}}"),
@@ -135,7 +155,7 @@ class Teplota(MovingCameraScene):
         def MujTex(text):
             return(Tex(r"\begin{minipage}[t]{10cm}"+text+"\end{minipage}", tex_template=template).scale(.9))
 
-        temp = MujTex(r"Rovnice modeluje ochlazování tělesa o počáteční teplotě $T_0$ v~prostředí s teplotou $T_\infty$ podle Newtonova zákona ochlazování, kdy rychlost změny teploty je úměrná teplotnímu rozdílu").set_color(BLUE).to_edge(DOWN, buff=3)
+        temp = MujTex(r"Rovnice modeluje ochlazování tělesa o počáteční teplotě $T_0$ v~prostředí s teplotou $T_\infty$ podle Newtonova zákona ochlazování, kdy rychlost změny teploty je úměrná teplotnímu rozdílu.").set_color(BLUE).to_edge(DOWN, buff=3)
         self.play(FadeIn(temp))
         self.wait()
 
@@ -148,7 +168,7 @@ class Teplota(MovingCameraScene):
 
         self.next_section()        
         # stupnice.add(Tex(r"1").scale(0.5).next_to(nova_stupnice[22],RIGHT, buff=0.1).set_color(ORANGE))
-        komentar = Tex(r"Posuneme stupnici. Bude začínat na teplotě okolí.").next_to(teplomer, aligned_edge=DOWN)
+        komentar = Tex(r"Posuneme stupnici. Bude začínat na teplotě okolí.").next_to(teplomer, aligned_edge=DOWN).set_color(BLUE)
         self.play(FadeIn(komentar))
         self.play(VGroup(nova_stupnice,nova_stupnice_popisek).animate().shift(3/10*2*UP))
         self.play(FadeIn(teplomer["merak2"].add_background_rectangle()))
@@ -163,7 +183,7 @@ class Teplota(MovingCameraScene):
 
         self.next_section()        
         self.remove(komentar)
-        komentar = Tex(r"Změníme dílek stupnice. Počáteční teplota bude 1.").next_to(teplomer, aligned_edge=DOWN)
+        komentar = Tex(r"Změníme dílek stupnice. Počáteční teplota bude 1.").next_to(teplomer, aligned_edge=DOWN).set_color(BLUE)
         self.play(FadeIn(komentar))
         self.play(
             FadeOut(temp),
@@ -218,7 +238,7 @@ class TeplotaFormalne(MovingCameraScene):
             return(Tex(r"\begin{minipage}[t]{10cm}"+text+"\end{minipage}", tex_template=template).scale(.9))
 
         k = VGroup(
-            MujTex(r"Základní rovnice pro ochlazování tělesa o počáteční teplotě $T_0$ v~prostředí o teplotě $T_\infty$ obsahuje tři parametry. Dva uvedené ($T_0$ a $T_\infty$) souvisí s teplotou. Třetí parametr, $k$, souvisí s intenzitou předávání tepla. Například s tím, jestli máme kafe v plechovém nebo polystyrenovém hrníčku."),
+            MujTex(r"Toto je základní rovnice pro ochlazování tělesa o počáteční teplotě $T_0$ v~prostředí o teplotě $T_\infty$. Rovnice obsahuje tři parametry. Dva z~nich ($T_0$ a $T_\infty$) souvisí s teplotou. Třetí parametr ($k$) souvisí s intenzitou předávání tepla. Například s tím, jestli máme kafe v~plechovém nebo polystyrenovém hrníčku."),
             MujTex(r"Posuneme teplotu o $T_\infty.$ Protože derivace konstanty je nulová a derivace rozdílu je rozdíl derivací, platí $$\frac{\mathrm d(T-T_\infty)}{\mathrm dt}=\frac{\mathrm dT}{\mathrm dt}-\frac{\mathrm dT_\infty}{\mathrm dt}=\frac{\mathrm dT}{\mathrm dt}.$$ U počáteční podmínky odečteme z obou stran konstantu $T_\infty$."),
             MujTex(r"Vydělíme rovnici i počáteční podmínku výrazem $T_0-T_\infty$."),
             MujTex(r"Začleníme násobení konstantou před zlomkem do derivované veličiny. Podle pravidla pro derivaci konstantního násobku platí $$k\frac{\mathrm dy}{\mathrm dx}=\frac{\mathrm d(ky)}{\mathrm dx}.$$"),
@@ -274,7 +294,7 @@ class Logisticka(Scene):
         )
 
         self.add(eq[0])
-        temp = MujTex(r"Logistická rovnice s lovem obsahuje tři parametry. Podle vzájemných relací mezi těmito parametry může a nemusí populace přežít. Vhodná volba jednotek (vhodná transformace rovnice) ukáže, že ve skutečnosti chování rovnice řídí jediný parametr, závisející na $r$, $K$ a $h$.")
+        temp = MujTex(r"Toto je základní rovnice pro popis populací rostlin nebo živočichů vystavených lovu. Rovnice obsahuje tři parametry. Podle vzájemných relací mezi těmito parametry může a nemusí populace přežít. Vhodná volba jednotek (vhodná transformace rovnice) ukáže, že ve skutečnosti chování rovnice řídí jediný parametr, kombinující vhodným způsobem $r$, $K$ a $h$.").shift(DOWN).set_color(BLUE)
         self.add(temp)
         self.wait()
 
@@ -300,7 +320,7 @@ class Logisticka(Scene):
         self.play(*[FadeOut(i) for i in [eq1,eq2,eq3,*k[:-1  ]]])
         self.play(eq4.animate().next_to(eq0).to_edge(RIGHT).set_color(YELLOW))
         self.play(k[4].animate().next_to(eq4,DOWN).to_edge(RIGHT))
-        temp = MujTex(r"Logistická rovnice s lovem obsahuje tři parametry. Po transformaci zůstane jediný parametr $\displaystyle H=\frac h{rK}.$ Rovnice se tedy chová pořád stejně, pokud se lov $h$ i nosná kapacita $K$ zvětší stejným násobkem (například o stejné procento). Dokud vychází bezrozměrný parametr $H$ stále stejný, chová se rovnice stále stejně ve smyslu persistence populace.").to_edge(DOWN)
+        temp = MujTex(r"Model obsahuje tři parametry. Vhodnou transformací je umíme redukovat na jediný parametr, $\displaystyle H=\frac h{rK}.$ Pokud se například lov $h$ i nosná kapacita $K$ zvětší stejným násobkem (například o~stejné procento), chová se rovnice pořád stejně. Dokud vychází bezrozměrný parametr $H$ stále stejný, chová se rovnice stále stejně ve smyslu persistence populace.").to_edge(DOWN, buff=1).set_color(BLUE)
         self.add(temp)
 
         self.wait()
@@ -323,7 +343,7 @@ class TransformaceDerivace(MovingCameraScene):
         for i in text:
             if i == text[-1]:
                 self.play(self.camera.frame.animate.move_to(text[-1],aligned_edge=DOWN).shift(DOWN))
-            self.play(FadeIn(i))
+            self.play(GrowFromCenter(i))
             self.wait()
             self.next_section()        
 
