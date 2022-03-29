@@ -469,4 +469,9 @@ pozor. Může se stát, že malá změna má dalekosáhlé důsledky. Může zan
 stacionární bod, což může vést například k přemnožení nežádoucího živočišného
 druhu, k přehřátí planety skleníkovým efektem, k rozkmitání a mechanickému
 selhání doposud fungujícího stroje a podobně.  
+
+Ve videu jsme si ukázali, jak u diferenciální rovnice nezávislé na čase najít
+podle grafu pravé strany stacionární body a posoudit jejich stabilitu. Ukázali
+jsme si, že pokud pravá strana závisí na parametrech,  mohou při změně parametru
+stacionární body vznikat nebo zanikat.
 """

@@ -224,7 +224,7 @@ class Model(ZoomedScene):
         popisek_x = Tex(r"velikost populace obaleče").scale(0.7)
         popisek_x.next_to(axes.get_x_axis(), DOWN)
 
-        popisek_y = Tex(r"dynamika populace obaleče").scale(0.7).rotate(PI/2)
+        popisek_y = Tex(r"dynamika obou populací").scale(0.7).rotate(PI/2)
         popisek_y.next_to(axes.get_y_axis(), LEFT)
 
         t = np.linspace(0,12.5,5000)
@@ -416,25 +416,25 @@ Pokud nakreslíme pro mladý les obě křivky z pravé strany rovnice do jednoho
 obrázku, vidíme jeden průsečík a tedy jeden stacionární bod. Společný bod v
 počátku pochopitelně neuvažujeme, ten odpovídá stavu, kdy populace obaleče
 neexistuje a není co modelovat. Jediný stacionární bod si označíme kroužkem. Ze
-způsobuj, jakým se křivky protínají vidíme, že tento bod je stabilní. Opravdu,
+způsobu, jakým se křivky protínají vidíme, že tento bod je stabilní. Opravdu,
 nalevo je výše modrá křivka značící růst a napravo je výše červená křivka,
 značící pokles. Z obou stran tedy populace s časem přechází do tohoto
 stacionárního stavu. 
 
-Les roste, roste tedy i jeho nosná kapacita a pravý průsečík modré paraboly se
+Les roste, roste tedy i jeho nosná kapacita a pravý nulový bod modré paraboly se
 posunuje doprava. Tím parabola roste i do výšky. Stacionární bod se hýbe, ale ne
 moc. To znamená, že populace obaleče má vyšší hodnoty, ale tento růst není nijak
-dramatický. Dokonce můžou vzniknout další dva průsečíky, odpovídající
-nestabilnímu oranžovému a stabilnímu žlutému bodu. Teoreticky máme další možnost
-pro ustálení populace obaleče, ale mějme na paměti, že populace doteď byla v
-menším stabilním bodě. Sice vznikl další stabilní stacionární bod, ale oba body
-jsou odděleny nestabilním stacionárním bodem. Tím vzniká jakási bariéra
-zabraňující přehoupnutí populace obaleče do stacionárního stavu s vzšším stavem
+dramatický. Dokonce můžou vzniknout další dva průsečíky, odpovídající dalšímu
+jednomu stabilnímu a jednomu nestabilnímu stacionárního bodu. Teoreticky máme
+další možnost pro ustálení populace obaleče, ale mějme na paměti, že populace
+doteď byla na nízké hodnotě a oba stabilní stacionární body jsou odděleny
+nestabilním stacionárním bodem. Tím vzniká jakási bariéra zabraňující
+přehoupnutí populace obaleče do stacionárního stavu s vyšším stavem 
 populace. 
 
-Nechme les dále růst. Stacionární body se pohybují a nestacionární bod se
-přiblíží k dolnímu stacionární bodu. Jsou-li opravdu blízko u sebe, je už velká
-šance, že pokud budou například jeden rok příznivější podmínky než je obvyklé,
+Nechme les dále růst. Stacionární body se pohybují a nestabilní bod se
+přiblíží k dolnímu stabilnímu bodu. Jsou-li opravdu blízko u sebe, je už velké
+riziko, že pokud budou například jeden rok příznivější podmínky než je obvyklé,
 může populace obaleče překonat vzdálenost mezi prvními dvěma stacionárními body
 a poté bude dorůst ke stacionárnímu bodu napravo. Nicméně příznivý rok ani není
 potřeba. Pokud totiž ještě zvětšíme nosnou kapacitu prostředí, tedy pokud les
