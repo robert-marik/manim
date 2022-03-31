@@ -118,3 +118,15 @@ class Obrazek(MovingCameraScene):
         self.play(self.camera.frame.animate.scale(2).move_to(all))
         self.wait()
 
+komentar = """
+Dobrý den, v tomto videu si ukážeme užitečnost lineární aproximace funkce. Ukážeme si, že tato technika nám umožní za určitých okolností nahradit komplikované funkční závislosti jednoduchými vztahy. 
+
+Budeme uvažovat funkci z obrazovky. To je poměrně škaredá funkce, převrácená hodnota z odmocniny z rozdílu x méně jedna a ještě snížená o jedničku. Je však velmi užitečná, protože souvisí s kinetickou energií těles. Opravdu, pokud vyjdeme ze vztahu pro kinetickou energii tělesa o hmotnosti m, které se pohybuje rychlostí v, dostáváme vzorec uvedený na obrazovce, ve kterém c označuje rychlost světla ve vakuu. Pokud namítnete, že ve fyzice jste se učili jednodušší vzorec, 1/2 m v^2, máte pravdu. Ale tento jednodušší vzorec platí jenom pro malé rychlosti. Pro libovolné rychlosti je nutné vyjít z Einsteinovy teorie relativity a ta udává přesně vzorec z našeho videa. Pokud vytkneme součin m c^2, zůstane v závorce naše škaredá funkce vypočtená v bodě v^2/c^2. 
+
+Jaká je asi hodnota tohoto podílu v prakticky využitelných případech? Asi malá, protože se srovnává rychlost pohybu s rychlostí světla, ale podívejme se na to detailněji. Pokud vezmeme i opravdu velké rychlosti, jako například rychlost auta na dálnici, rychlost japonského superexpresu, rychlost nejrychlejšího letadla z dílny NASA nebo rychlost družice mířící mimo sluneční soustavu, u všech těchto obrovských rychlostí je podíl v^2/c^2 směšně malý. To nás může přivést na myšlenku, podívat se u naší škaredé funkce jenom na okolí počátku. 
+
+A opravdu, v okolí počátku je graf funkce prakticky nerozlišitelný od přímky. V tomto případě by to byla přímka se směrnicí 1/2. Proto můžeme v okolí nuly bez větší újmy nahradit naši škaredou funkci s odmocninou ve jmenovateli násobením jednou polovinou. Jakmile to uděláme, okamžitě vidíme, že se vzorec redukuje na středoškolské 1/2 mv^2.
+
+A to je celé kouzlo lineární aproximace. Pokud máme funkci procházející počátkem a argument je blízký k nule, můžeme funkci nahradit přímou úměrností, kde konstanta úměrnosti je derivace v počátku. V našem případě to byla jedna polovina. Pokud funkce neprochází počátkem, musíme ještě přidat funkční hodnotu. Pokud aproximaci nepíšeme v okolí nuly, ale v okolí nějakého bodu x0, musíme aproximační vzorec do tohoto bodu posunout a máme aproximaci funkce pomocí tečny. Tato aproximace platí v okolí bodu dotyku a další 
+
+"""
