@@ -48,10 +48,13 @@ class Obrazek(MovingCameraScene):
 
         self.camera.frame.save_state()
 
+        vzorec = Tex(r"Kinetická energie")
+        vzorec.next_to(postup,UP)
         self.play(self.camera.frame.animate.scale(0.6).move_to(postup[0]).shift(UP))
+        self.play(FadeIn(vzorec))
         for i in range(3):
             if i==0:
-                zdroj=VGroup()
+                zdroj=VGroup(vzorec.copy())
             else:
                 zdroj=postup[i-1].copy() 
             self.play(
@@ -88,9 +91,10 @@ class Obrazek(MovingCameraScene):
         zavorka = DoubleArrow(start=ax.c2p(0,-0.01,0), end=ax.c2p(0.01,-0.01,0),buff=0,  max_stroke_width_to_length_ratio=30, max_tip_length_to_length_ratio=0.2)
         zavorka.set_color(PURPLE).set_stroke(width=2)
 
-        self.play(self.camera.frame.animate.scale(0.1).move_to(ax.c2p(0,0,0)))
-        self.play(FadeIn(zavorka))
-        self.play(Wiggle(zavorka))
+        self.play(
+            self.camera.frame.animate.scale(0.1).move_to(ax.c2p(0,0,0)),
+            FadeIn(zavorka)
+            )        
         self.wait()
         self.next_section("")
 
@@ -105,7 +109,9 @@ class Obrazek(MovingCameraScene):
         self.wait()
         self.next_section("")
 
-        self.play(self.camera.frame.animate.scale(0.5).move_to(postup[3]).shift(UP))
+        self.play(
+            self.camera.frame.animate.scale(0.5).move_to(postup[3]).shift(UP)
+            )
         for ii in range(3):
             i = ii+3
             self.play(
