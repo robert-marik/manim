@@ -165,11 +165,14 @@ class PhasePortrait(MovingCameraScene):
         self.play(*[FadeIn(i) for i in [axes,pplot,krivky]])
         self.play(FadeIn(rovnice))
         self.wait()
+
+        self.next_section()       
         body = VGroup(*[Dot(axes.c2p(i,j,0)).set_color(YELLOW) for i,j in SPall])
         self.play(FadeIn(body))
         self.play(*[Flash(i) for i in body])
         self.wait()
 
+        self.next_section()
         self.play(FadeOut(body), FadeOut(rovnice))
         # SPall = [SPall[0]]
         # Jall = [Jall[0]]
@@ -216,6 +219,7 @@ class PhasePortrait(MovingCameraScene):
             self.play(*[FadeIn(i) for i in [axes2,pplot2,StacBod,StacBod2]])
             self.wait()
 
+            self.next_section()
             napis = always_redraw(lambda :
                 Tex(r"Lineární systém "+str(i)).scale_to_fit_width(self.camera.frame_width/3).move_to(
                 self.camera.frame_center-self.camera.frame_width/2*0.95*RIGHT+self.camera.frame_height/2*0.95*UP,
@@ -238,7 +242,7 @@ class PhasePortrait(MovingCameraScene):
             self.play(Flash(StacBod),Flash(StacBod2))
             self.wait()
 
-            
+            self.next_section()
             self.play(
                 FadeOut(vektory['lin']),
                 FadeOut(vektory['hodnoty']),
@@ -246,11 +250,29 @@ class PhasePortrait(MovingCameraScene):
                 )
             self.wait()
 
+            self.next_section()
             self.camera.frame.save_state()
             self.play(self.camera.frame.animate.scale(0.2).move_to(StacBod))
             self.wait()     
 
+            self.next_section()
             self.play(Restore(self.camera.frame))
-            self.play(FadeOut(pplot2,krivky2,StacBod,StacBod2,napis,vektory['ori'],axes2))            
+            self.play(FadeOut(pplot2,krivky2,StacBod,StacBod2,napis,vektory['ori'],axes2))  
+            if i==4:
+                konec = VGroup()
+                vl = VGroup()
+                for sp,j,c in zip(SPall,Jall,[YELLOW,GREEN,BLUE,WHITE]):
+                    bod=Dot(axes.c2p(sp[0],sp[1],0)).set_color(c)
+                    konec.add(bod)
+                    vals, vecs = np.linalg.eig(j)
+                    vl.add(VGroup(
+                        MathTex(r"\lambda_1 = "+str(round(vals[0],3))).set_color(c),
+                        MathTex(r"\lambda_2 = "+str(round(vals[1],3))).set_color(c)
+                        ).arrange(RIGHT))
+                vl.arrange(DOWN).to_corner(UL)
+                self.play(FadeIn(konec),FadeIn(vl))    
+
             self.wait()
+
+        
 
