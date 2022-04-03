@@ -217,9 +217,9 @@ class PhasePortrait(MovingCameraScene):
                     MathTex(r"\lambda_2 = "+str(round(vals[1],3))).set_color(GREEN).scale(.7)
                     ).arrange(RIGHT) 
             self.play(*[FadeIn(i) for i in [axes2,pplot2,StacBod,StacBod2]])
-            self.wait()
+            #self.wait()
 
-            self.next_section()
+            #self.next_section()
             napis = always_redraw(lambda :
                 Tex(r"Lineární systém "+str(i)).scale_to_fit_width(self.camera.frame_width/3).move_to(
                 self.camera.frame_center-self.camera.frame_width/2*0.95*RIGHT+self.camera.frame_height/2*0.95*UP,
