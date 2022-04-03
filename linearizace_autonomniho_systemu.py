@@ -268,8 +268,8 @@ class PhasePortrait(MovingCameraScene):
                     vl.add(VGroup(
                         MathTex(r"\lambda_1 = "+str(round(vals[0],3))).set_color(c),
                         MathTex(r"\lambda_2 = "+str(round(vals[1],3))).set_color(c)
-                        ).arrange(RIGHT))
-                vl.arrange(DOWN).to_corner(UL)
+                        ).arrange(DOWN, aligned_edge=LEFT))
+                vl.arrange(DOWN, buff=0.5, aligned_edge=LEFT).to_corner(UL).shift(RIGHT)
                 self.play(FadeIn(konec),FadeIn(vl))    
 
             self.wait()
