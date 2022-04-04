@@ -11,33 +11,7 @@ from scipy.interpolate import interp1d
 xmax = 1.5
 ymax = 1.5
 myaxis_config={'tips':False}
-
-class Pokus(MovingCameraScene):
-    def construct(self):
-        self.camera.frame.save_state()
-        axes = Axes(
-            x_range=[0,xmax,1e6],
-            y_range=[0,ymax,1e6],
-            x_length=4*xmax,
-            y_length=4*ymax, 
-            **myaxis_config
-        )
-        self.add(axes)
-        napis = always_redraw(lambda : Group(
-            Tex(r"Lineární systém").scale_to_fit_width(self.camera.frame_width/3).move_to(
-            self.camera.frame_center-self.camera.frame_width/2*0.95*RIGHT+self.camera.frame_height/2*0.95*UP,
-            aligned_edge=UL
-            ).set_color(BLUE).add_background_rectangle(),
-            Tex(r"Nelineární systém").scale_to_fit_width(self.camera.frame_width/3).move_to(
-            self.camera.frame_center+self.camera.frame_width/2*0.95*RIGHT+self.camera.frame_height/2*0.95*UP,
-            aligned_edge=UR
-            ).set_color(RED).add_background_rectangle(),
-            ))
-        self.add(napis)
-        self.play(self.camera.frame.animate.scale(0.2).move_to(ORIGIN))
-        self.wait()     
-
-        self.play(Restore(self.camera.frame))        
+   
 
 class PhasePortrait(MovingCameraScene):
     def construct(self):
@@ -217,9 +191,9 @@ class PhasePortrait(MovingCameraScene):
                     MathTex(r"\lambda_2 = "+str(round(vals[1],3))).set_color(GREEN).scale(.7)
                     ).arrange(RIGHT) 
             self.play(*[FadeIn(i) for i in [axes2,pplot2,StacBod,StacBod2]])
-            #self.wait()
+            self.wait()
 
-            #self.next_section()
+            self.next_section()
             napis = always_redraw(lambda :
                 Tex(r"Lineární systém "+str(i)).scale_to_fit_width(self.camera.frame_width/3).move_to(
                 self.camera.frame_center-self.camera.frame_width/2*0.95*RIGHT+self.camera.frame_height/2*0.95*UP,
