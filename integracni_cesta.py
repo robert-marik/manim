@@ -10,6 +10,30 @@ template = TexTemplate(preamble=r'\usepackage{url}\usepackage[czech]{babel}\usep
 
 myaxis_config={'tips':False}
 
+class Intro(Scene):
+
+    def construct(self):
+        title = Title("(Ne-)závislost na integrační cestě")
+        self.play(GrowFromCenter(title))
+        self.wait()
+
+        popis = VGroup(
+            MathTex(r"F_1(x,y)=\frac{-y\vec \imath+x\vec \jmath}{\sqrt{x^2+y^2}}"),
+            MathTex(r"F_2(x,y)=\frac{-y\vec \imath+x\vec \jmath}{x^2+y^2}"),
+            Tex(r"""
+            \begin{minipage}{10cm}
+            Obě vektorová pole obíhají počátek proti směru hodinových ručiček.
+            První vektorové pole má všechny vektory jednotkové délky. Druhé vektorové pole 
+            je gradientem skalární funkce $\varphi(x,y)=\arctan\frac yx.$ V každém poli budeme 
+            integrovat po třech křivkách, které začínají a končí všechny
+            ve stejném bodě.
+            \end{minipage}
+            """)
+        ).scale(.8).arrange(DOWN, aligned_edge=LEFT)
+        popis.next_to(title,DOWN)
+        self.add(popis)
+        self.wait()
+
 class Obrazek(Scene):
 
     def construct(self):
@@ -69,7 +93,7 @@ class Obrazek(Scene):
 
         for curF,TexF in zip(
             [F1,F2],
-            [r"$$\frac{-x\vec \imath+y\vec \jmath}{\sqrt{x^2+y^2}}$$",r"$$\frac{-x\vec \imath+y\vec \jmath}{x^2+y^2}$$"]
+            [r"$$\frac{-y\vec \imath+x\vec \jmath}{\sqrt{x^2+y^2}}$$",r"$$\frac{-y\vec \imath+x\vec \jmath}{x^2+y^2}$$"]
             ):
 
             t = np.linspace(0,1,150)
@@ -88,6 +112,8 @@ class Obrazek(Scene):
             self.remove(*[i for i in self.mobjects])
 
             self.add(axes)
+            self.add(get_vfield(F=curF))
+
             axes2 = Axes(
                 x_range=[0,1,1],
                 y_range=[np.min(Int),np.max(Int),1e6],
@@ -119,8 +145,6 @@ class Obrazek(Scene):
                     add_vertex_dots=False).set_color(c[i]) for i in range(3)]))
             self.add(cur)
 
-
-            self.add(get_vfield(F=curF))
             self.wait()
 
             self.next_section("")        
@@ -138,4 +162,6 @@ class Obrazek(Scene):
             ))
             self.wait() 
             self.next_section("")        
+
+    
 
