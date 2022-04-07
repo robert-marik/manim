@@ -26,24 +26,30 @@ class PhasePortrait(MovingCameraScene):
             **myaxis_config
         )
         axes.set_z_index(-2)
-        axes2 = axes.copy()
+        axes2 = Axes(
+            x_range=[-5,5,1e6],
+            y_range=[-np.exp(5),np.exp(5),1e6],
+            x_length=3,
+            y_length=3, 
+            **myaxis_config
+        )
         Y, X = np.mgrid[-ymax:ymax:400j, -xmax:xmax:400j]
    
-        trace = ValueTracker(0)
-        determinant = ValueTracker(2)
-        zkoseni = ValueTracker(.30)
+        trace = ValueTracker(0.5)
+        determinant = ValueTracker(0.05)
+        zkoseni = ValueTracker(.1)
         otoceni = ValueTracker(-20)
 
         def get_characteristics():
             t,d,zk,ot = [i.get_value() for i in [trace,determinant,zkoseni,otoceni]]
-            if t<4*d**2:
+            if t**2<4*d:
                 reals = False
                 vecs = None
-                A = np.matrix([[t,1],[-d,0]])
-                vals = [-t/2,np.sqrt(d**2-4*t)/2]
+                A = np.matrix([[t/2,1],[-d+t**2/4,t/2]])
+                vals, vecs = np.linalg.eig(A)
             else:    
-                l1 = (-t + np.sqrt(t^2-4*d) )/2
-                l2 = (-t - np.sqrt(t^2-4*d) )/2
+                l1 = (-t + np.sqrt(t**2-4*d) )/2
+                l2 = (-t - np.sqrt(t**2-4*d) )/2
                 Aori = np.array([[l1,zk],[0,l2]])
                 uhel = ot*DEGREES
                 R = np.array([[np.cos(uhel),-np.sin(uhel)],[np.sin(uhel),np.cos(uhel)]])
@@ -58,43 +64,28 @@ class PhasePortrait(MovingCameraScene):
             A = get_characteristics()[0]
             return np.array([A[0,0]*x+A[0,1]*y,A[1,0]*x+A[1,1]*y])
 
-        # SPall = [] # stationary points
-        # Jall = [] # Jacobi matrices
-        # for start in [(1,1),(1.2,0),(0,1.2),(0.01,0.01)]:
-        #     SP = fsolve(F, start)
-        #     SPall = SPall + [SP]
-        #     x0,y0 = SP
 
-        #     h=0.001
-        #     dx = h*np.array([1,0])
-        #     dy = h*np.array([0,1])
-
-        #     DX = (F(SP+dx)-F(SP-dx))/(2*h) 
-        #     DY = (F(SP+dy)-F(SP-dy))/(2*h) 
-
-        #     J = np.matrix([DX,DY]).T
-        #     Jall = Jall + [J]
-
-        def get_phase_plot(F=F,axes=axes, small_arrows=False):
-            phase_portarit_arrows = VGroup()
-            delka = .1
+        def get_phase_plot(F=F,axes=axes, axes2 = axes2, small_arrows=False):
+            """
+            In axes draws vector field defined by the function F. In axes2
+            """
+            phase_portrait_arrows = VGroup()
+            delka = .07
             data = []        
             for i in np.linspace(*axes.x_range[:2],25):
                 for j in np.linspace(*axes.y_range[:2],25):
-                    #if i*j == 0:
-                    #    continue
                     start = np.array([i,j])
                     rhs = F([i,j])
                     norm = np.sqrt(rhs[0]**2+rhs[1]**2)
-                    if norm>0.0001:
+                    if norm>-0.0000001:
                         end = start + rhs/norm*delka
                         if all(F(start)*F(end)>=0):
                             data += [[start,end,norm]]
 
             maximum = np.max([i[2] for i in data])
             for i in data:             
-                sw = 2
-                phase_portarit_arrows.add(
+                sw = 4
+                phase_portrait_arrows.add(
                     Line(
                         start=axes.c2p(*i[0],0), 
                         end=axes.c2p(*i[1],0), 
@@ -103,32 +94,30 @@ class PhasePortrait(MovingCameraScene):
                     ).add_tip(tip_length=0.1)
                 )
             _,A,vals,isreal = get_characteristics()
-            if A is not None:
+            if not isreal:
+                hodnoty = VGroup(
+                    MathTex(r"\lambda_{1} = "+str(round(vals[0],2))).set_color(WHITE),
+                    MathTex(r"\lambda_{2} = "+str(round(vals[1],2))).set_color(WHITE)
+                ).arrange(DOWN).to_edge(UL)
+                phase_portrait_arrows.add(hodnoty)
+            else:
                 for v,col in zip([[A[0,0],A[1,0]],[A[0,1],A[1,1]]],c):
                     v_ = np.array(v)
                     start = v_/np.sqrt(v[0]**2+v[1]**2)
                     end = -start
-                    phase_portarit_arrows.add(Line(start = axes.c2p(*start,0), end = axes.c2p(*end,0)).set_color(col))
-            return(phase_portarit_arrows)
+                    phase_portrait_arrows.add(Line(start = axes.c2p(*start,0), end = axes.c2p(*end,0)).set_color(col))
+                hodnoty = VGroup(
+                    MathTex(r"\lambda_1 = "+str(round(vals[0],2))).set_color(c[0]),
+                    MathTex(r"\lambda_2 = "+str(round(vals[1],2))).set_color(c[1])
+                ).arrange(DOWN, aligned_edge = LEFT).to_edge(UL)
+                phase_portrait_arrows.add(hodnoty)
+                # phase_portrait_arrows.add(axes2.plot(lambda x: np.exp(vals[0]*x)/10).set_color(c[0]))
+                # phase_portrait_arrows.add(axes2.plot(lambda x: np.exp(vals[1]*x)/10).set_color(c[1]))
+
+
+            return(phase_portrait_arrows)
 
         c = [BLUE,YELLOW]
-        # def zjemni(pole):
-        #     pole = np.array(pole)
-        #     x = pole[:,0]
-        #     y = pole[:,1]
-        #     df = [i for i in range(len(x))]
-        #     df1=df[:-1]
-        #     df2=df[1:]
-        #     out = []
-        #     for i,j in zip(df1,df2):
-        #         out = out + [i,(2*i+j)/3,(i+2*j)/3]
-        #     out = out + [j]
-        #     out = np.array(out)
-        #     fx = interp1d(df,pole[:,0],kind = 'quadratic')
-        #     fy = interp1d(df,pole[:,1],kind = 'quadratic')
-        #     return([i for i in np.array([fx(out),fy(out)]).T])
-        # def zjemni(pole):
-        #     return(pole)
 
         def plot_streams(F=F, axes=axes):
             U,V = F([X,Y])
@@ -155,12 +144,41 @@ class PhasePortrait(MovingCameraScene):
                     for t in ciste_krivky
             ]))
 
-       
-
         axes.to_corner(UR)
-        pplot = get_phase_plot()
+        axes2.to_edge(LEFT)
+        pplot = always_redraw(lambda : get_phase_plot())
+        self.add(pplot)
+
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        self.play(*[FadeIn(i) for i in [pplot,krivky]])
+        self.add(krivky)
+        self.wait()
+
+        self.next_section()
+        self.play(FadeOut(krivky))
+        self.play(determinant.animate.set_value(-0.1))
+        krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        self.add(krivky)
+        self.wait()
+
+        self.next_section()
+        self.play(FadeOut(krivky))
+        self.play(determinant.animate.set_value(0.05), trace.animate.set_value(-0.5))
+        krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        self.add(krivky)
+        self.wait()
+
+        self.next_section()
+        self.play(FadeOut(krivky))
+        self.play(trace.animate.set_value(-0.5),determinant.animate.set_value(0.5))
+        krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        self.add(krivky)
+        self.wait()
+
+        self.next_section()
+        self.play(FadeOut(krivky))
+        self.play(trace.animate.set_value(0.5),determinant.animate.set_value(0.5))
+        krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        self.add(krivky)
         self.wait()
 
         return False
