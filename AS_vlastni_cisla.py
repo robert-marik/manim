@@ -1,3 +1,4 @@
+from tkinter import LEFT, TOP
 from manim import *
 
 from scipy.integrate import odeint
@@ -29,15 +30,15 @@ class PhasePortrait(MovingCameraScene):
         axes2 = Axes(
             x_range=[-1.5,1.5,1e6],
             y_range=[-1.5,1.5,1e6],
-            x_length=2,
-            y_length=2, 
+            x_length=1.5,
+            y_length=1.5, 
             **myaxis_config
         )
         Y, X = np.mgrid[-ymax:ymax:400j, -xmax:xmax:400j]
    
         # trace = ValueTracker(0.5)
         # determinant = ValueTracker(0.05)
-        lambda1 = ValueTracker(1)
+        lambda1 = ValueTracker(1.2)
         lambda2 = ValueTracker(0.7)
         lambdaIm = ValueTracker(0)
         zkoseni = ValueTracker(.1)
@@ -99,17 +100,23 @@ class PhasePortrait(MovingCameraScene):
                         stroke_width=sw,
                     ).add_tip(tip_length=0.1)
                 )
-            _,A,vals,isreal = get_characteristics()
+            matice,A,vals,isreal = get_characteristics()
             if not isreal:
+                reseni = VGroup(
+                    MathTex(r'X(t)=e^{'+'{:.2f}'.format(vals[0].real)+r't}\varphi(t)'),
+                    Tex(r'$\varphi(t)$ osciluje s úhlovou frekvencí $'+'{:.2f}'.format(vals[0].imag)+r'$')
+                    ).scale(0.75).arrange(DOWN, aligned_edge=LEFT)
+                reseni.scale_to_fit_width(6)                
+                reseni.next_to(system, DOWN, aligned_edge=LEFT, buff=0.25)
+                reseni.add_background_rectangle()
                 hodnoty = VGroup(
-                    #MathTex(r"\lambda_{1} = "+str(round(vals[0],2))).set_color(c[0]),
-                    #MathTex(r"\lambda_{2} = "+str(round(vals[1],2))).set_color(c[1])
                     MathTex(r"\lambda_{1} = "+'{:.2f} {:+.2f}i'.format(np.round(vals[0].real,2), vals[0].imag)).set_color(c[0]),
-                    MathTex(r"\lambda_{2} = "+'{:.2f} {:+.2f}i'.format(np.round(vals[1].real,2), vals[1].imag)).set_color(c[1]),
-                ).arrange(DOWN).to_edge(UL)
+                    MathTex(r"\lambda_{2} = "+'{:.2f} {:+.2f}i'.format(np.round(vals[1].real,2), vals[1].imag)).set_color(c[1])
+                ).arrange(DOWN).to_edge(UL).shift(2*DOWN)
                 phase_portrait_arrows.add(hodnoty)
                 phase_portrait_arrows.add(Dot(axes2.c2p(np.real(vals[0]),np.imag(vals[0]),0)).set_color(c[0]))
                 phase_portrait_arrows.add(Dot(axes2.c2p(np.real(vals[1]),np.imag(vals[1]),0)).set_color(c[1]))
+                phase_portrait_arrows.add(reseni)
             else:
                 if np.abs(vals[0]-vals[1])>0.0001:
                     for v,col in zip([[A[0,0],A[1,0]],[A[0,1],A[1,1]]],c):
@@ -117,25 +124,36 @@ class PhasePortrait(MovingCameraScene):
                         start = v_/np.sqrt(v[0]**2+v[1]**2)
                         end = -start
                         phase_portrait_arrows.add(Line(start = axes.c2p(*start,0), end = axes.c2p(*end,0)).set_color(col))
+                    reseni = MathTex(r'X(t)={{C_1 \vec u_1 e^{'+'{:.2f}'.format(vals[0])+r't}}}+{{C_2 \vec u_2 e^{'+'{:.2f}'.format(vals[1])+r't}}}').scale(0.75)
+                    reseni[1].set_color(c[0])
+                    reseni[3].set_color(c[1])
+                    reseni.scale_to_fit_width(5.5)                
+                    reseni.next_to(system, DOWN, aligned_edge=LEFT, buff=0.25)
+                    reseni.add_background_rectangle()
+                else:
+                    reseni=VGroup().next_to(system,DOWN)
                 hodnoty = VGroup(
-                    MathTex(r"\lambda_1 = "+str(round(vals[0],2))).set_color(c[0]),
-                    MathTex(r"\lambda_2 = "+str(round(vals[1],2))).set_color(c[1])
-                ).arrange(DOWN, aligned_edge = LEFT).to_edge(UL)
+                    MathTex(r"\lambda_1 = "+'{:.2f}'.format(np.round(vals[0],2))).set_color(c[0]),
+                    MathTex(r"\lambda_2 = "+'{:.2f}'.format(np.round(vals[1],2))).set_color(c[1])
+                ).arrange(DOWN, aligned_edge = LEFT).to_edge(UL).shift(2*DOWN)
                 phase_portrait_arrows.add(hodnoty)
                 phase_portrait_arrows.add(Dot(axes2.c2p(vals[0],0,0)).set_color(c[0]))
                 phase_portrait_arrows.add(Dot(axes2.c2p(vals[1],0,0)).set_color(c[1]))
-
+                phase_portrait_arrows.add(reseni)
 
             return(phase_portrait_arrows)
 
         c = [BLUE,YELLOW]
 
-        def plot_streams(F=F, axes=axes):
+        def plot_streams(F=F, axes=axes, minlength=None, maxlength=None):
             U,V = F([X,Y])
             
             speed = np.sqrt(U*U + V*V)
             #return VGroup()
-            stream_img = plt.streamplot(X, Y, U, V, density = 1)
+            if minlength is None:
+                stream_img = plt.streamplot(X, Y, U, V, density = 1)
+            else:
+                stream_img = plt.streamplot(X, Y, U, V, minlength=minlength, maxlength=maxlength)
             sgm = stream_img.lines.get_segments()
             krivky = []
             lastpoint = sgm[0]
@@ -159,21 +177,60 @@ class PhasePortrait(MovingCameraScene):
         def odstranit(co):
             self.remove(co)
 
+        def typ(text):
+            out = Tex(text).set_color(YELLOW).add_background_rectangle(buff=0.25).move_to(axes, aligned_edge=UP)
+            return out
+
+        def podgraf(tmin=-1,tmax=1,ymin=-0.1,ymax=1,popisek=r"e^{\lambda_i t}",x_values=None,y_values=None,posun=0*DOWN):
+            l1 = lambda1.get_value()
+            l2 = lambda2.get_value()
+            axes3 = Axes(
+                x_range=[tmin,tmax,1e6],
+                y_range=[ymin,ymax,1e6],
+                x_length=3,
+                y_length=1.5, 
+                **myaxis_config
+            ).to_edge(LEFT).shift(DOWN)
+            if x_values is None:
+                t = np.linspace(tmin,tmax,500)
+                y1 = np.exp(l1*t)
+                y2 = np.exp(l2*t)
+                factor = max(max(y1),max(y2))
+                g1 = axes3.plot_line_graph(x_values=t,y_values=y1/factor, add_vertex_dots=False, line_color=c[0])
+                g2 = axes3.plot_line_graph(x_values=t,y_values=y2/factor, add_vertex_dots=False, line_color=c[1])
+            else:
+                g1 = axes3.plot_line_graph(x_values=x_values,y_values=y_values, add_vertex_dots=False, line_color=c[0])
+                g2 = VGroup()
+            popisekG = VGroup()
+            popisekG.add(MathTex("t").scale(0.5).move_to(axes3.get_x_axis(),DR).shift(0.05*UP))
+            popisekG.add(MathTex(popisek).scale(0.5).move_to(axes3.get_y_axis(),UL).shift(0.05*RIGHT))
+            output = VGroup(axes3,g1,g2,popisekG).shift(posun)
+            return output
+
+        system = MathTex(r"X'=AX").to_corner(UL)
+        self.add(system)
+
         axes.to_corner(UR)
-        axes2.to_edge(LEFT)
-        axes2.add(Tex(r"$\Re(\lambda)$").next_to(axes2.get_x_axis()))
-        axes2.add(Tex(r"$\Im(\lambda)$").next_to(axes2.get_y_axis(),UP))
+        axes2.move_to((-2,0.5,0))
+        axes2.add(Tex(r"$\Re(\lambda)$").scale(0.5).next_to(axes2.get_x_axis(),buff=0))
+        axes2.add(Tex(r"$\Im(\lambda)$").scale(0.5).next_to(axes2.get_y_axis(),UP,buff=0))
         pplot = always_redraw(lambda : get_phase_plot())
         self.add(pplot,axes2)
 
+
+
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        krivky.add(typ(r"Nestabilní uzel"))
+        krivky.add(podgraf())
         self.add(krivky)
         self.wait()
 
         self.next_section()
         odstranit(krivky)
-        self.play(lambda1.animate.set_value(0.7))
+        self.play(lambda1.animate.set_value(0.4))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        krivky.add(typ(r"Nestabilní uzel"))
+        krivky.add(podgraf(tmin=-2,tmax=2))
         self.add(krivky)
         self.wait()
 
@@ -181,6 +238,8 @@ class PhasePortrait(MovingCameraScene):
         odstranit(krivky)
         self.play(lambda1.animate.set_value(-0.7))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        krivky.add(typ(r"Sedlo"))
+        krivky.add(podgraf(tmin=-2,tmax=2))
         self.add(krivky)
         self.wait()
 
@@ -188,6 +247,8 @@ class PhasePortrait(MovingCameraScene):
         odstranit(krivky)
         self.play(lambda2.animate.set_value(-0.2),otoceni.animate.set_value(0))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        krivky.add(typ(r"Stabilní uzel"))
+        krivky.add(podgraf(tmin=-2,tmax=2))
         self.add(krivky)
         self.wait()
 
@@ -195,6 +256,8 @@ class PhasePortrait(MovingCameraScene):
         odstranit(krivky)
         self.play(lambda2.animate.set_value(-0.7),zkoseni.animate.set_value(0))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        krivky.add(typ(r"Stabilní uzel"))
+        krivky.add(podgraf(tmin=-2,tmax=2))
         self.add(krivky)
         self.wait()
 
@@ -202,6 +265,7 @@ class PhasePortrait(MovingCameraScene):
         odstranit(krivky)
         self.play(lambdaIm.animate.set_value(0.6))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        krivky.add(typ(r"Stabilní ohnisko"))
         self.add(krivky)
         self.wait()
 
@@ -209,140 +273,32 @@ class PhasePortrait(MovingCameraScene):
         odstranit(krivky)
         self.play(lambda1.animate.set_value(0.7))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        krivky.add(typ(r"Nestabilní ohnisko"))
         self.add(krivky)
         self.wait()
 
         self.next_section()
         odstranit(krivky)
-        self.play(lambdaIm.animate.set_value(1.2),lambda1.animate.set_value(0.3))
-        krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
+        _l_real = 0.15
+        _l_imag = 1.2
+        self.play(lambdaIm.animate.set_value(_l_imag),lambda1.animate.set_value(_l_real))
+        krivky = plot_streams(F=F, axes=axes, minlength=4, maxlength=8).set_color(ORANGE)
+        krivky.add(typ(r"Nestabilní ohnisko"))
+        domain = np.linspace(-1,20,1000)
+        krivky.add(
+            podgraf(
+                tmin=-1,
+                tmax=20,
+                ymin=-15,
+                ymax=10,
+                popisek=r"e^{\Re(\lambda) t}\cos(\Im(\lambda)t)",
+                x_values=domain,
+                y_values=np.exp(_l_real*domain)*np.cos(_l_imag*domain)
+                )
+                )
+
         self.add(krivky)
         self.wait()
-
-
-        return False
-        self.next_section()
-        self.play(FadeOut(krivky))
-        self.play(trace.animate.set_value(-0.5),determinant.animate.set_value(0.5))
-        krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        self.add(krivky)
-        self.wait()
-
-        self.next_section()
-        self.play(FadeOut(krivky))
-        self.play(trace.animate.set_value(0.5),determinant.animate.set_value(0.5))
-        krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        self.add(krivky)
-        self.wait()
-
-        return False
-        self.next_section()       
-        body = VGroup(*[Dot(axes.c2p(i,j,0)).set_color(YELLOW) for i,j in SPall])
-        self.play(FadeIn(body))
-        self.play(*[Flash(i) for i in body])
-        self.wait()
-
-        self.next_section()
-        self.play(FadeOut(body), FadeOut(rovnice))
-        # SPall = [SPall[0]]
-        # Jall = [Jall[0]]
-
-        i = 0
-        for SP,J in zip(SPall,Jall):
-            i = i+1
-            x0,y0 = SP
-            def F2(X):
-                x,y = X
-                return np.array([
-                    J[0,0]*(x-x0) + J[0,1]*(y-y0),
-                    J[1,0]*(x-x0) + J[1,1]*(y-y0)
-                    ])
-
-            axes2.to_corner(UL)
-            StacBod = Dot(axes.c2p(x0,y0,0)).set_color(ORANGE)
-            StacBod2 = Dot(axes2.c2p(x0,y0,0)).set_color(BLUE)
-            pplot2 = get_phase_plot(F=F2,axes=axes2,small_arrows=True).set_color(BLUE)   
-            krivky2 = plot_streams(F=F2, axes=axes2).set_color(BLUE)
-            vals, vecs = np.linalg.eig(J)
-            vektory = {}
-            vektory['ori']=VGroup()
-            vektory['lin']=VGroup()
-            P = np.array(vecs)
-            sx,sy = np.array(SP)-.2*P[:,0]
-            ex,ey = np.array(SP)+.2*P[:,0]
-            for a,w in zip([axes,axes2],['ori','lin']):
-                vektory[w].add(Line(
-                    start=a.c2p(sx,sy,0), 
-                    end=a.c2p(ex,ey,0), 
-                    buff = 0).set_color(GRAY))
-            sx,sy = np.array(SP)-.2*P[:,1]
-            ex,ey = np.array(SP)+.2*P[:,1]
-            for a,w in zip([axes,axes2],['ori','lin']):
-                vektory[w].add(Line(
-                    start=a.c2p(sx,sy,0), 
-                    end=a.c2p(ex,ey,0), 
-                    buff = 0).set_color(GREEN))
-            vektory['hodnoty'] = VGroup(
-                    MathTex(r"\lambda_1 = "+str(round(vals[0],3))).set_color(GRAY).scale(.7),
-                    MathTex(r"\lambda_2 = "+str(round(vals[1],3))).set_color(GREEN).scale(.7)
-                    ).arrange(RIGHT) 
-            self.play(*[FadeIn(i) for i in [axes2,pplot2,StacBod,StacBod2]])
-            self.wait()
-
-            self.next_section()
-            napis = always_redraw(lambda :
-                Tex(r"Lineární systém "+str(i)).scale_to_fit_width(self.camera.frame_width/3).move_to(
-                self.camera.frame_center-self.camera.frame_width/2*0.95*RIGHT+self.camera.frame_height/2*0.95*UP,
-                aligned_edge=UL
-                ).set_color(BLUE).set_z_index(10).add_background_rectangle(opacity=1)
-                )
-            napis2 = always_redraw(lambda :
-                Tex(r"Nelineární systém").scale_to_fit_width(self.camera.frame_width/3).move_to(
-                self.camera.frame_center+self.camera.frame_width/2*0.95*RIGHT+self.camera.frame_height/2*0.95*UP,
-                aligned_edge=UR
-                ).set_color(RED).set_z_index(10).add_background_rectangle(opacity=1)
-                )
-            vektory['hodnoty'].add_background_rectangle(
-                    buff=0.2, opacity=1).next_to(napis,DOWN).to_edge(
-                LEFT)
-            if i==3:
-                vektory['hodnoty'].move_to(axes2,aligned_edge=DOWN)
-            self.play(*[FadeIn(i) for i in 
-                [krivky2,vektory['ori'],vektory['lin'],vektory['hodnoty'],napis,napis2]])
-            self.play(Flash(StacBod),Flash(StacBod2))
-            self.wait()
-
-            self.next_section()
-            self.play(
-                FadeOut(vektory['lin']),
-                FadeOut(vektory['hodnoty']),
-                VGroup(axes2,pplot2,krivky2,StacBod2).animate.shift(axes.c2p(0,0,0)-axes2.c2p(0,0,0))
-                )
-            self.wait()
-
-            self.next_section()
-            self.camera.frame.save_state()
-            self.play(self.camera.frame.animate.scale(0.2).move_to(StacBod))
-            self.wait()     
-
-            self.next_section()
-            self.play(Restore(self.camera.frame))
-            self.play(FadeOut(pplot2,krivky2,StacBod,StacBod2,napis,vektory['ori'],axes2))  
-            if i==4:
-                konec = VGroup()
-                vl = VGroup()
-                for sp,j,c in zip(SPall,Jall,[YELLOW,GREEN,BLUE,WHITE]):
-                    bod=Dot(axes.c2p(sp[0],sp[1],0)).set_color(c)
-                    konec.add(bod)
-                    vals, vecs = np.linalg.eig(j)
-                    vl.add(VGroup(
-                        MathTex(r"\lambda_1 = "+str(round(vals[0],3))).set_color(c),
-                        MathTex(r"\lambda_2 = "+str(round(vals[1],3))).set_color(c)
-                        ).arrange(DOWN, aligned_edge=LEFT))
-                vl.arrange(DOWN, buff=0.5, aligned_edge=LEFT).to_corner(UL).shift(RIGHT)
-                self.play(FadeIn(konec),FadeIn(vl))    
-
-            self.wait()
 
         
 
