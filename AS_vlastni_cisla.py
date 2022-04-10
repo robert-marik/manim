@@ -184,8 +184,6 @@ class PhasePortrait(MovingCameraScene):
         )
         Y, X = np.mgrid[-ymax:ymax:400j, -xmax:xmax:400j]
    
-        # trace = ValueTracker(0.5)
-        # determinant = ValueTracker(0.05)
         lambda1 = ValueTracker(1.2)
         lambda2 = ValueTracker(0.7)
         lambdaIm = ValueTracker(0)
@@ -509,7 +507,7 @@ class PhasePortrait(MovingCameraScene):
         _l_real = -0.15
         _l_imag = 1.2
         self.play(lambdaIm.animate.set_value(_l_imag),lambda1.animate.set_value(_l_real))
-        krivky = plot_streams(F=F, axes=axes, minlength=4, maxlength=8).set_color(ORANGE)
+        krivky = plot_streams(F=F, axes=axes, minlength=4.15, maxlength=8).set_color(ORANGE)
         krivky.add(typ(r"Stabilní ohnisko"))
         domain = np.linspace(-1,20,1000)
         y_val = np.exp(_l_real*domain)*np.cos(_l_imag*domain)
