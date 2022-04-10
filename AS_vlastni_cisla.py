@@ -1,18 +1,166 @@
-from tkinter import LEFT, TOP
 from manim import *
 
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import fsolve
-from scipy.interpolate import interp1d
-
 
 
 xmax = 1
 ymax = 1
 myaxis_config={'tips':False}
+
+
    
+class Nadpis(Scene):
+    def construct(self):
+        self.next_section("Nadpis")        
+        title = Title(r"Lineární autonomní systémy")
+        autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
+        self.play(GrowFromCenter(title))
+        self.play(GrowFromCenter(autor[0]))
+        self.play(GrowFromCenter(autor[1]))
+        self.wait()
+        aplikace = VGroup(*[Tex(_) for _ in ["mechanické kmity", "tepelná výměna mezi více vrstvami", "linearizace obecnějších nelineárních systémů"]]).arrange(DOWN).next_to(autor,DOWN, buff=2)
+        for i,c in enumerate([RED,BLUE,ORANGE]):
+            aplikace[i].set_color(c)
+        self.play(AnimationGroup(*[GrowFromCenter(_) for _ in aplikace], lag_ratio=0.95), run_time=5)
+
+        self.wait()
+
+
+class Ukazky(Scene):
+    def construct(self):
+
+        rovnice =VGroup(
+            Tex(r"Mechanické kmitání"),
+            Tex(r"""
+            \begin{align*}
+            x'&=v\\
+            v'&=-kx - bv
+            \end{align*}
+            """),
+            Tex(r"""
+            \begin{align*}
+            x'&=0\cdot x+1\cdot v\\
+            v'&=-k\cdot x - b\cdot v
+            \end{align*}
+            """),
+            MathTex(r"""
+            \begin{pmatrix}
+            x \\ v
+            \end{pmatrix}'
+            =
+            \begin{pmatrix}
+            0 & 1 \\ -k & -b
+            \end{pmatrix}
+            \begin{pmatrix}
+            x \\ v
+            \end{pmatrix}
+            """),
+            MathTex(r"X'=AX")
+            ).scale(0.8).arrange(DOWN,buff=0.5).to_corner(UL)
+        
+        rovnice2 =VGroup(
+            Tex(r"Tepelná výměna s mezivrstvou"),
+            Tex(r"""
+            \begin{align*}
+            T_1'&=k_1(T_0-T_1)-k_2(T_1-T_2)\\
+            T_2'&=k_3(T_1-T_2)
+            \end{align*}
+            """),
+            Tex(r"""
+            \begin{align*}
+            T_1'&=-(k_1+k_2)\cdot T_1+k_2\cdot T_2 + k_1T_0\\
+            T_2'&=k_3\cdot T_1 - k_3\cdot T_2
+            \end{align*}
+            """),
+            MathTex(r"""
+            \begin{pmatrix}
+            T_1 \\ T_2
+            \end{pmatrix}'
+            =
+            \begin{pmatrix}
+            -(k_1+k_2) & k_2 \\ k_3 & -k_3
+            \end{pmatrix}
+            \begin{pmatrix}
+            T_1 \\ T_2
+            \end{pmatrix}
+            +
+            \begin{pmatrix}
+            k_1T_0 \\ 0
+            \end{pmatrix}
+            """),
+            Tex(r"$T'=AT$ (pro $T_0=0$)")
+            ).scale(0.8).arrange(DOWN,buff=0.5).to_corner(UR)
+
+        rovnice[0].set_color(BLUE)
+        rovnice2[0].set_color(BLUE)
+
+        self.next_section("")
+        self.play(FadeIn(rovnice[:2]))
+        for i in range(2,len(rovnice)):
+            self.wait(.5)
+            self.play(TransformMatchingShapes(rovnice[i-1].copy(),rovnice[i]))
+        self.wait()
+
+        self.next_section("")
+        self.play(FadeIn(rovnice2[:2]))
+        for i in range(2,len(rovnice2)):
+            self.wait()
+            self.play(TransformMatchingShapes(rovnice2[i-1].copy(),rovnice2[i]))
+        self.wait()
+
+        
+
+class Description(Scene):
+    def construct(self):
+        
+        rovnice = VGroup(
+            Tex(r"Maticová formulace"),
+            MathTex(r"X'=AX"),
+            MathTex(r"X(t)=e^{\lambda t}\vec u"),
+            VGroup(
+                MathTex(r"\lambda e^{\lambda t}\vec u=Ae^{\lambda t}\vec u"),
+                MathTex(r"A\vec u =\lambda \vec u"),
+                MathTex(r"(A-\lambda I)\vec u = 0"),
+                MathTex(r"|A-\lambda I|=0")).arrange(DOWN, aligned_edge=LEFT)
+        ).arrange(DOWN, buff=0.5, aligned_edge=LEFT).scale(0.9).to_corner(UL)
+        rovnice[-1].shift(RIGHT)
+
+        komponenty=VGroup(
+            Tex(r"Formulace v komponentách"),
+            Tex(r"""
+            \begin{align*}
+            x_1'&=a_{11}x_1+a_{12}x_2\\
+            x_2'&=a_{21}x_1+a_{22}x_2
+            \end{align*}
+            """).set_color(YELLOW),
+            MathTex(r"\lambda^2-(a_{11}+a_{22})\lambda+a_{11}a_{22}-a_{12}a_{21}=0").scale(1).set_color(RED),
+            MathTex(r"\lambda_{1,2}=\cdots"),
+            Tex(r"""\begin{align*}(a_{11}-\lambda_i) u_{i1} + a_{12}u_{i2}&=0\\
+            a_{21}u_{i1}+(a_{22}-\lambda_i)u_{i2}&=0
+            \end{align*}
+            """).set_color(BLUE),
+        ).arrange(DOWN,buff=0.5).scale(0.9).to_corner(UR)
+
+        self.next_section()
+        self.play(FadeIn(rovnice[:3]))
+        self.wait()
+
+        self.next_section()
+        self.play(
+            FadeIn(rovnice[3:])
+            )
+        self.wait()
+
+        self.next_section()
+        self.play(
+            FadeIn(komponenty),
+            FadeToColor(rovnice[1],YELLOW),
+            FadeToColor(rovnice[3][2],BLUE),
+            FadeToColor(rovnice[3][3],RED)
+                )
+        self.wait()
 
 class PhasePortrait(MovingCameraScene):
     def construct(self):
@@ -71,12 +219,11 @@ class PhasePortrait(MovingCameraScene):
             A = get_characteristics()[0]
             return np.array([A[0,0]*x+A[0,1]*y,A[1,0]*x+A[1,1]*y])
 
-
         def get_phase_plot(F=F,axes=axes, axes2 = axes2, small_arrows=False, deleni = 10):
             """
             In axes draws vector field defined by the function F. In axes2
             """
-            phase_portrait_arrows = VGroup()
+            phase_plot = VGroup()
 
             delka = .07
             data = []        
@@ -90,9 +237,10 @@ class PhasePortrait(MovingCameraScene):
                         data += [[start,end,norm]]
 
             maximum = np.max([i[2] for i in data])
+            phase_plot.sipky = VGroup()
             for i in data:             
                 sw = 4
-                phase_portrait_arrows.add(
+                phase_plot.sipky.add(
                     Line(
                         start=axes.c2p(*i[0],0), 
                         end=axes.c2p(*i[1],0), 
@@ -100,11 +248,12 @@ class PhasePortrait(MovingCameraScene):
                         stroke_width=sw,
                     ).add_tip(tip_length=0.1)
                 )
+            phase_plot.add(phase_plot.sipky)
             matice,A,vals,isreal = get_characteristics()
             if not isreal:
                 reseni = VGroup(
                     MathTex(r'X(t)=e^{'+'{:.2f}'.format(vals[0].real)+r't}\varphi(t)'),
-                    Tex(r'$\varphi(t)$ osciluje s úhlovou frekvencí $'+'{:.2f}'.format(vals[0].imag)+r'$')
+                    Tex(r'$\varphi(t)$ periodická s úhlovou frekvencí $'+'{:.2f}'.format(vals[0].imag)+r'$')
                     ).scale(0.75).arrange(DOWN, aligned_edge=LEFT)
                 reseni.scale_to_fit_width(6)                
                 reseni.next_to(system, DOWN, aligned_edge=LEFT, buff=0.25)
@@ -113,20 +262,27 @@ class PhasePortrait(MovingCameraScene):
                     MathTex(r"\lambda_{1} = "+'{:.2f} {:+.2f}i'.format(np.round(vals[0].real,2), vals[0].imag)).set_color(c[0]),
                     MathTex(r"\lambda_{2} = "+'{:.2f} {:+.2f}i'.format(np.round(vals[1].real,2), vals[1].imag)).set_color(c[1])
                 ).arrange(DOWN).to_edge(UL).shift(2*DOWN)
-                phase_portrait_arrows.add(hodnoty)
-                phase_portrait_arrows.add(Dot(axes2.c2p(np.real(vals[0]),np.imag(vals[0]),0)).set_color(c[0]))
-                phase_portrait_arrows.add(Dot(axes2.c2p(np.real(vals[1]),np.imag(vals[1]),0)).set_color(c[1]))
-                phase_portrait_arrows.add(reseni)
+                phase_plot.hodnoty = hodnoty
+                phase_plot.dots=VGroup(
+                    Dot(axes2.c2p(np.real(vals[0]),np.imag(vals[0]),0)).set_color(c[0]),
+                    Dot(axes2.c2p(np.real(vals[1]),np.imag(vals[1]),0)).set_color(c[1]))
+                phase_plot.reseni = reseni
+                phase_plot.add(
+                    phase_plot.hodnoty,
+                    phase_plot.reseni,
+                    phase_plot.dots)
             else:
                 if np.abs(vals[0]-vals[1])>0.0001:
+                    phase_plot.smery = VGroup()
                     for v,col in zip([[A[0,0],A[1,0]],[A[0,1],A[1,1]]],c):
                         v_ = np.array(v)
                         start = v_/np.sqrt(v[0]**2+v[1]**2)
                         end = -start
-                        phase_portrait_arrows.add(Line(start = axes.c2p(*start,0), end = axes.c2p(*end,0)).set_color(col))
-                    reseni = MathTex(r'X(t)={{C_1 \vec u_1 e^{'+'{:.2f}'.format(vals[0])+r't}}}+{{C_2 \vec u_2 e^{'+'{:.2f}'.format(vals[1])+r't}}}').scale(0.75)
-                    reseni[1].set_color(c[0])
-                    reseni[3].set_color(c[1])
+                        phase_plot.smery.add(Line(start = axes.c2p(*start,0), end = axes.c2p(*end,0)).set_color(col))
+                    phase_plot.add(phase_plot.smery)    
+                    reseni = MathTex(r'X(t)={{C_1}} {{\vec u_1 e^{'+'{:.2f}'.format(vals[0])+r't}}}+{{C_2}}{{\vec u_2 e^{'+'{:.2f}'.format(vals[1])+r't}}}').scale(0.75)
+                    reseni[1:4].set_color(c[0])
+                    reseni[5:].set_color(c[1])
                     reseni.scale_to_fit_width(5.5)                
                     reseni.next_to(system, DOWN, aligned_edge=LEFT, buff=0.25)
                     reseni.add_background_rectangle()
@@ -136,12 +292,17 @@ class PhasePortrait(MovingCameraScene):
                     MathTex(r"\lambda_1 = "+'{:.2f}'.format(np.round(vals[0],2))).set_color(c[0]),
                     MathTex(r"\lambda_2 = "+'{:.2f}'.format(np.round(vals[1],2))).set_color(c[1])
                 ).arrange(DOWN, aligned_edge = LEFT).to_edge(UL).shift(2*DOWN)
-                phase_portrait_arrows.add(hodnoty)
-                phase_portrait_arrows.add(Dot(axes2.c2p(vals[0],0,0)).set_color(c[0]))
-                phase_portrait_arrows.add(Dot(axes2.c2p(vals[1],0,0)).set_color(c[1]))
-                phase_portrait_arrows.add(reseni)
+                phase_plot.hodnoty = hodnoty
+                phase_plot.dots = VGroup(
+                        Dot(axes2.c2p(vals[0],0,0)).set_color(c[0]),
+                        Dot(axes2.c2p(vals[1],0,0)).set_color(c[1]))
+                phase_plot.reseni = reseni
+                phase_plot.add(
+                    phase_plot.hodnoty,
+                    phase_plot.reseni,
+                    phase_plot.dots)
 
-            return(phase_portrait_arrows)
+            return(phase_plot)
 
         c = [BLUE,YELLOW]
 
@@ -149,7 +310,6 @@ class PhasePortrait(MovingCameraScene):
             U,V = F([X,Y])
             
             speed = np.sqrt(U*U + V*V)
-            #return VGroup()
             if minlength is None:
                 stream_img = plt.streamplot(X, Y, U, V, density = 1)
             else:
@@ -177,6 +337,9 @@ class PhasePortrait(MovingCameraScene):
         def odstranit(co):
             self.remove(co)
 
+        def pridat(co):
+            self.add(co)
+
         def typ(text):
             out = Tex(text).set_color(YELLOW).add_background_rectangle(buff=0.25).move_to(axes, aligned_edge=UP)
             return out
@@ -202,27 +365,64 @@ class PhasePortrait(MovingCameraScene):
                 g1 = axes3.plot_line_graph(x_values=x_values,y_values=y_values, add_vertex_dots=False, line_color=c[0])
                 g2 = VGroup()
             popisekG = VGroup()
-            popisekG.add(MathTex("t").scale(0.5).move_to(axes3.get_x_axis(),DR).shift(0.05*UP))
+            popisekG.add(MathTex("t").scale(0.5).next_to(axes3.get_x_axis(),buff=0.05))
             popisekG.add(MathTex(popisek).scale(0.5).move_to(axes3.get_y_axis(),UL).shift(0.05*RIGHT))
+            if realna_cast_dodatek:
+                dodatek = r"\\(reálná část)"
+            else:
+                dodatek = ""
+            popisekG.add(Tex(r"Graf exponenciální funkce"+dodatek).scale(0.5).next_to(axes3,DOWN))
+            
             output = VGroup(axes3,g1,g2,popisekG).shift(posun)
             return output
 
+        realna_cast_dodatek = False
         system = MathTex(r"X'=AX").to_corner(UL)
         self.add(system)
+        self.wait()
 
+        self.next_section()
         axes.to_corner(UR)
-        axes2.move_to((-2,0.5,0))
+        axes2.move_to((-2.2,-1.3,0))
         axes2.add(Tex(r"$\Re(\lambda)$").scale(0.5).next_to(axes2.get_x_axis(),buff=0))
         axes2.add(Tex(r"$\Im(\lambda)$").scale(0.5).next_to(axes2.get_y_axis(),UP,buff=0))
-        pplot = always_redraw(lambda : get_phase_plot())
-        self.add(pplot,axes2)
-
-
-
+        axes2.add(Tex(r"Vlastní čísla\\ v Gaussově rovině").scale(0.5).next_to(axes2,DOWN))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
         krivky.add(typ(r"Nestabilní uzel"))
         krivky.add(podgraf())
-        self.add(krivky)
+        pplot = get_phase_plot()
+        self.add(pplot.hodnoty)
+        self.wait()
+
+        self.next_section()
+        fund_system = VGroup(pplot.reseni[3:5],pplot.reseni[7:])
+        self.add(fund_system)
+        self.add(axes2,krivky[-1],pplot.dots)
+        self.wait()
+
+        self.next_section()
+        self.add(axes)
+        _, vecs, __, ___ = get_characteristics()
+        self.add(pplot.smery)
+        self.wait()
+
+        self.next_section()
+        self.add(pplot.sipky)
+        self.wait()
+
+        self.next_section()
+        self.remove(
+            pplot.dots,
+            pplot.hodnoty,
+            pplot.smery,
+            pplot.sipky,
+            axes,
+            fund_system
+            )
+        pplot = always_redraw(lambda : get_phase_plot())
+        self.add(pplot)
+        pridat(krivky)
+        self.add(Tex(r"Fázový portrét").scale(0.7).add_background_rectangle(buff=0.2).move_to(axes,DOWN))
         self.wait()
 
         self.next_section()
@@ -231,7 +431,7 @@ class PhasePortrait(MovingCameraScene):
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
         krivky.add(typ(r"Nestabilní uzel"))
         krivky.add(podgraf(tmin=-2,tmax=2))
-        self.add(krivky)
+        pridat(krivky)
         self.wait()
 
         self.next_section()
@@ -240,7 +440,7 @@ class PhasePortrait(MovingCameraScene):
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
         krivky.add(typ(r"Sedlo"))
         krivky.add(podgraf(tmin=-2,tmax=2))
-        self.add(krivky)
+        pridat(krivky)
         self.wait()
 
         self.next_section()
@@ -249,7 +449,7 @@ class PhasePortrait(MovingCameraScene):
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
         krivky.add(typ(r"Stabilní uzel"))
         krivky.add(podgraf(tmin=-2,tmax=2))
-        self.add(krivky)
+        pridat(krivky)
         self.wait()
 
         self.next_section()
@@ -258,15 +458,29 @@ class PhasePortrait(MovingCameraScene):
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
         krivky.add(typ(r"Stabilní uzel"))
         krivky.add(podgraf(tmin=-2,tmax=2))
-        self.add(krivky)
+        pridat(krivky)
         self.wait()
 
         self.next_section()
+        realna_cast_dodatek = True
         odstranit(krivky)
         self.play(lambdaIm.animate.set_value(0.6))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
         krivky.add(typ(r"Stabilní ohnisko"))
-        self.add(krivky)
+        domain = np.linspace(-1,10,1000)
+        ft = np.exp(lambda1.get_value()*domain)*np.cos(lambdaIm.get_value()*domain)
+        krivky.add(
+            podgraf(
+                tmin=0,
+                tmax=10,
+                ymin=np.min(ft),
+                ymax=np.max(ft),
+                popisek=r"\Re(e^{\lambda t})",
+                x_values=domain,
+                y_values=ft
+                )
+                )
+        pridat(krivky)
         self.wait()
 
         self.next_section()
@@ -274,30 +488,43 @@ class PhasePortrait(MovingCameraScene):
         self.play(lambda1.animate.set_value(0.7))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
         krivky.add(typ(r"Nestabilní ohnisko"))
-        self.add(krivky)
+        ft = np.exp(lambda1.get_value()*domain)*np.cos(lambdaIm.get_value()*domain)
+        krivky.add(
+            podgraf(
+                tmin=0,
+                tmax=10,
+                ymin=np.min(ft),
+                ymax=np.max(ft),
+                popisek=r"\Re(e^{\lambda t})",
+                x_values=domain,
+                y_values=ft
+                )
+                )
+        
+        pridat(krivky)
         self.wait()
 
         self.next_section()
         odstranit(krivky)
-        _l_real = 0.15
+        _l_real = -0.15
         _l_imag = 1.2
         self.play(lambdaIm.animate.set_value(_l_imag),lambda1.animate.set_value(_l_real))
         krivky = plot_streams(F=F, axes=axes, minlength=4, maxlength=8).set_color(ORANGE)
-        krivky.add(typ(r"Nestabilní ohnisko"))
+        krivky.add(typ(r"Stabilní ohnisko"))
         domain = np.linspace(-1,20,1000)
+        y_val = np.exp(_l_real*domain)*np.cos(_l_imag*domain)
         krivky.add(
             podgraf(
                 tmin=-1,
                 tmax=20,
-                ymin=-15,
-                ymax=10,
-                popisek=r"e^{\Re(\lambda) t}\cos(\Im(\lambda)t)",
+                ymin=np.min(y_val),
+                ymax=np.max(y_val),
+                popisek=r"\Re(e^{\lambda t})",
                 x_values=domain,
-                y_values=np.exp(_l_real*domain)*np.cos(_l_imag*domain)
+                y_values=y_val
                 )
                 )
-
-        self.add(krivky)
+        pridat(krivky)
         self.wait()
 
         
