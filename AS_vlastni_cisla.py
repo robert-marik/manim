@@ -1,9 +1,8 @@
 from manim import *
 
-from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 import numpy as np
-
+from scipy.integrate import solve_ivp  # řešení diferenciálních rovnic
 
 xmax = 1
 ymax = 1
@@ -335,8 +334,13 @@ class PhasePortrait(MovingCameraScene):
         def odstranit(co):
             self.remove(co)
 
+        def odstranit_(co):
+            for i in co:
+                self.remove(i)
+
         def pridat(co):
-            self.add(co)
+            #self.add(co)
+            self.play(*[Create(_) for _ in co])
 
         def typ(text):
             out = Tex(text).set_color(YELLOW).add_background_rectangle(buff=0.25).move_to(axes, aligned_edge=UP)
@@ -386,8 +390,8 @@ class PhasePortrait(MovingCameraScene):
         axes2.add(Tex(r"$\Im(\lambda)$").scale(0.5).next_to(axes2.get_y_axis(),UP,buff=0))
         axes2.add(Tex(r"Vlastní čísla\\ v Gaussově rovině").scale(0.5).next_to(axes2,DOWN))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        krivky.add(typ(r"Nestabilní uzel"))
-        krivky.add(podgraf())
+        info = VGroup(typ(r"Nestabilní uzel"))
+        info.add(podgraf())
         pplot = get_phase_plot()
         self.add(pplot.hodnoty)
         self.wait()
@@ -395,7 +399,7 @@ class PhasePortrait(MovingCameraScene):
         self.next_section()
         fund_system = VGroup(pplot.reseni[3:5],pplot.reseni[7:])
         self.add(fund_system)
-        self.add(axes2,krivky[-1],pplot.dots)
+        self.add(axes2,info[-1],pplot.dots)
         self.wait()
 
         self.next_section()
@@ -419,55 +423,65 @@ class PhasePortrait(MovingCameraScene):
             )
         pplot = always_redraw(lambda : get_phase_plot())
         self.add(pplot)
+        self.add(info)
         pridat(krivky)
         self.add(Tex(r"Fázový portrét").scale(0.7).add_background_rectangle(buff=0.2).move_to(axes,DOWN))
         self.wait()
-
+       
         self.next_section()
-        odstranit(krivky)
+        odstranit_(krivky)
+        odstranit(info)
         self.play(lambda1.animate.set_value(0.4))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        krivky.add(typ(r"Nestabilní uzel"))
-        krivky.add(podgraf(tmin=-2,tmax=2))
+        info = VGroup(typ(r"Nestabilní uzel"))
+        info.add(podgraf(tmin=-2,tmax=2))
+        self.add(info)
         pridat(krivky)
         self.wait()
 
         self.next_section()
-        odstranit(krivky)
+        odstranit_(krivky)
+        odstranit(info)
         self.play(lambda1.animate.set_value(-0.7))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        krivky.add(typ(r"Sedlo"))
-        krivky.add(podgraf(tmin=-2,tmax=2))
+        info = VGroup(typ(r"Sedlo"))
+        info.add(podgraf(tmin=-2,tmax=2))
+        self.add(info)
         pridat(krivky)
         self.wait()
 
         self.next_section()
-        odstranit(krivky)
+        odstranit_(krivky)
+        odstranit(info)
         self.play(lambda2.animate.set_value(-0.2),otoceni.animate.set_value(0))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        krivky.add(typ(r"Stabilní uzel"))
-        krivky.add(podgraf(tmin=-2,tmax=2))
+        info = VGroup(typ(r"Stabilní uzel"))
+        info.add(podgraf(tmin=-2,tmax=2))
+        self.add(info)
         pridat(krivky)
         self.wait()
 
         self.next_section()
-        odstranit(krivky)
+        odstranit_(krivky)
+        odstranit(info)
         self.play(lambda2.animate.set_value(-0.7),zkoseni.animate.set_value(0))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        krivky.add(typ(r"Stabilní uzel"))
-        krivky.add(podgraf(tmin=-2,tmax=2))
+        info = VGroup(typ(r"Stabilní uzel"))
+        info.add(podgraf(tmin=-2,tmax=2))
+        self.add(info)
         pridat(krivky)
         self.wait()
 
         self.next_section()
         realna_cast_dodatek = True
-        odstranit(krivky)
+        odstranit_(krivky)
+        odstranit(info)
         self.play(lambdaIm.animate.set_value(0.6))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        krivky.add(typ(r"Stabilní ohnisko"))
+        info = VGroup(typ(r"Stabilní ohnisko"))
         domain = np.linspace(-1,10,1000)
         ft = np.exp(lambda1.get_value()*domain)*np.cos(lambdaIm.get_value()*domain)
-        krivky.add(
+        info.add(
             podgraf(
                 tmin=0,
                 tmax=10,
@@ -478,16 +492,18 @@ class PhasePortrait(MovingCameraScene):
                 y_values=ft
                 )
                 )
+        self.add(info)
         pridat(krivky)
         self.wait()
 
         self.next_section()
-        odstranit(krivky)
+        odstranit_(krivky)
+        odstranit(info)
         self.play(lambda1.animate.set_value(0.7))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
-        krivky.add(typ(r"Nestabilní ohnisko"))
+        info = VGroup(typ(r"Nestabilní ohnisko"))
         ft = np.exp(lambda1.get_value()*domain)*np.cos(lambdaIm.get_value()*domain)
-        krivky.add(
+        info.add(
             podgraf(
                 tmin=0,
                 tmax=10,
@@ -498,20 +514,27 @@ class PhasePortrait(MovingCameraScene):
                 y_values=ft
                 )
                 )
-        
+        self.add(info)
         pridat(krivky)
         self.wait()
 
         self.next_section()
-        odstranit(krivky)
+        odstranit_(krivky)
+        odstranit(info)
         _l_real = -0.15
         _l_imag = 1.2
         self.play(lambdaIm.animate.set_value(_l_imag),lambda1.animate.set_value(_l_real))
-        krivky = plot_streams(F=F, axes=axes, minlength=4.15, maxlength=8).set_color(ORANGE)
-        krivky.add(typ(r"Stabilní ohnisko"))
+
+        reseni = solve_ivp(lambda t,X:F(X), [0, 35], [-.7,-1], dense_output=True, max_step=0.005)
+        krivky = VGroup(
+            axes.plot_line_graph(x_values=reseni.y[0], y_values=reseni.y[1], add_vertex_dots = False).set_stroke(width=2).set_color(ORANGE)
+        )
+        #krivky = plot_streams(F=F, axes=axes, minlength=4.15, maxlength=8).set_color(ORANGE)
+        
+        info = VGroup(typ(r"Stabilní ohnisko"))
         domain = np.linspace(-1,20,1000)
         y_val = np.exp(_l_real*domain)*np.cos(_l_imag*domain)
-        krivky.add(
+        info.add(
             podgraf(
                 tmin=-1,
                 tmax=20,
@@ -522,8 +545,7 @@ class PhasePortrait(MovingCameraScene):
                 y_values=y_val
                 )
                 )
-        pridat(krivky)
+        self.add(info)
+        pridat([krivky])
         self.wait()
-
-        
 
