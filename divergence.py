@@ -1,6 +1,3 @@
-from asyncio import proactor_events
-from tkinter import CENTER
-from turtle import circle
 from manim import *
 import numpy as np
 import common_definitions
