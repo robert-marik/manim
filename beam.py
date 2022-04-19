@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from common_definitions import temperature_to_color
+from manim_editor import PresentationSectionType
 
 class Ohyb(MovingCameraScene):
     def construct(self):
@@ -30,7 +31,7 @@ class Ohyb(MovingCameraScene):
         pricky = np.array([[ [i,j] for j in y_vrstvy] for i in x_rezy])
 
         axes = Axes(x_range=(-1,1,10),y_range=(-1,1,20),x_length=6,y_length=6)
-        axes.shift(3*UP+3*LEFT)
+        axes.shift(2.5*UP+3*LEFT)
 
         #self.add(NumberPlane())
         def draw_beam(R=R, axes=axes, kreslit_vrstvy=False, oddelovace=False):        
@@ -92,14 +93,17 @@ class Ohyb(MovingCameraScene):
         beam=VGroup()
         beam.outline = VGroup()
         beam.pricky = VGroup()
-        
+
+
         Rs = [100,80,50,30,20,10,9,8,7,6,5,4.5,4,3.5,3]
         #Rs = [3]
         beam = draw_beam(R=500)
+        nadpis = Tex(r"Deformace nosníku").scale(.7).next_to(beam,UP)
         self.camera.frame.save_state()
         self.camera.frame.scale(0.55).move_to(beam).shift(DOWN)
-        self.wait()           
-        self.play(FadeIn(beam.outline, beam.support))
+
+        self.next_section()
+        self.play(FadeIn(beam.outline, beam.support, nadpis))
 
         for R in Rs:
             self.remove(beam, beam.outline)
@@ -108,9 +112,12 @@ class Ohyb(MovingCameraScene):
             self.wait(.2)
         self.wait()
 
-        self.play(FadeOut(beam.outline))
+        self.next_section()
+        self.play(FadeOut(beam.outline, nadpis))
+        nadpis = Tex(r"Eulerův-Bernoulliův nosník").scale(.7).next_to(beam,UP)
+
         beam = draw_beam(R=500)
-        self.play(FadeIn(beam.outline, beam.pricky))
+        self.play(FadeIn(beam.outline, beam.pricky,nadpis))
 
         for R in Rs:
             self.remove(beam, beam.outline, beam.pricky)
@@ -119,6 +126,7 @@ class Ohyb(MovingCameraScene):
             self.wait(.2)
         self.wait()
 
+        self.next_section()
         for R in [Rs[-1]]:
             #self.remove(beam, beam.outline, beam.pricky)
             beam = draw_beam(R=R, kreslit_vrstvy=True, oddelovace=True)
@@ -126,6 +134,7 @@ class Ohyb(MovingCameraScene):
             self.wait(.2)
         self.wait()
 
+        self.next_section()
         osa_y = Line(
             start = axes.c2p(*transform([xmax,0],R=R),0), 
             end = axes.c2p(*transform([xmax,2*ymax],R=R),0)
@@ -143,7 +152,7 @@ class Ohyb(MovingCameraScene):
         self.add(osa_y, osa_x)
         self.wait()
 
-
+        self.next_section()
         text = VGroup(
             MathTex(r"\varepsilon_i = -\frac{\theta}{l}y_i"),
             MathTex(r"F_i = S_i \sigma_i = S_i E \varepsilon_i = -S_i E\frac{\theta}{l}y_i"),
@@ -151,29 +160,29 @@ class Ohyb(MovingCameraScene):
             MathTex(r"M = \sum y_i F_i = -E\frac{\theta}{l}\sum y^2_i S_i"),
             MathTex(r"0 = -E\frac{\theta}{l}\iint y \,\mathrm dS"),
             MathTex(r"M = -E\frac{\theta}{l}\iint y^2 \,\mathrm dS"),
-        ).scale(0.75).arrange(DOWN)
+        ).scale(0.65).arrange(DOWN)
         text.next_to(beam,DOWN)
 
         self.play(FadeIn(text[0]))
         self.play(FadeIn(text[1]))
         self.wait()
 
-        
+        self.next_section()
         self.play(Restore(self.camera.frame))
-
         self.play(FadeIn(text[2]))
         self.play(FadeIn(text[3]))
         self.wait()
 
+        self.next_section()
         self.play(FadeIn(text[4]))
         self.play(FadeIn(text[5]))
         self.wait()
 
-
+        self.next_section()
         text2 = VGroup(
             MathTex(r"I:=\iint y^2\,\mathrm dS"),
             MathTex(r"M=-\frac{\theta}{l}EI"),
-        ).scale(0.75).arrange(DOWN, aligned_edge=LEFT)
+        ).scale(0.65).arrange(DOWN, aligned_edge=LEFT)
 
         text3 = VGroup(
             MathTex(r"\frac{\theta}{l}=-\frac{M}{EI} \text{ (pro konstantní $M$ podél nosníku)}"),
@@ -190,5 +199,6 @@ class Ohyb(MovingCameraScene):
 
         self.play(FadeOut(text))
         for i in text3:
+            self.next_section()
             self.play(FadeIn(i))
             self.wait()
