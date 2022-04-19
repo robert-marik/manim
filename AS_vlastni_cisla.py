@@ -99,13 +99,15 @@ class Ukazky(Scene):
         self.play(FadeIn(rovnice[:2]))
         for i in range(2,len(rovnice)):
             self.wait(.5)
+            self.next_section("")
             self.play(TransformMatchingShapes(rovnice[i-1].copy(),rovnice[i]))
         self.wait()
 
         self.next_section("")
         self.play(FadeIn(rovnice2[:2]))
         for i in range(2,len(rovnice2)):
-            self.wait()
+            self.wait(0.5)
+            self.next_section("")
             self.play(TransformMatchingShapes(rovnice2[i-1].copy(),rovnice2[i]))
         self.wait()
 
@@ -147,9 +149,10 @@ class Description(Scene):
         self.wait()
 
         self.next_section()
-        self.play(
-            FadeIn(rovnice[3:])
-            )
+        self.play(FadeIn(rovnice[-1][:2]))
+        self.wait()
+        self.next_section()
+        self.play(FadeIn(rovnice[-1][2:]))
         self.wait()
 
         self.next_section()
@@ -549,3 +552,15 @@ class PhasePortrait(MovingCameraScene):
         pridat([krivky])
         self.wait()
 
+
+komentar = """
+Dobrý den, v tomto videu si ukážeme, jak je možné použít prostředky lineární algebry k řešení soustav lineárních diferenciálních rovnic s koeficienty nezávislými na čase. Využití najdeme například při studiu kmitajících mechanických soustav, při tepelné výměně s okolním prostředím přes mezivrstvu. Lineární soustavy jsou díky linearitě jednoduché a proto často studujeme nelineární systémy tak, že je aproximujeme pomocí systémů lineárních. 
+
+Uvažujme mechanické kmitání v přímce okolo rovnovážného stavu. Polohu označme x, rychlost označme v. Z mechaniky víme, že derivace polohy je rychlost a derivace rychlosti je úměrná působící síla. Síla má komponentu, která vrací těleso do rovnovážné polohy a komponentu udávající odpor prostředí. Použijeme lineární aproximaci a zápornýám znaménkem vyjádříme, že síla vrací těleso do rovnovážné polohy a že odporová síla působí proti směru pohybu. Tímto dostáváme soustavu dvou rovnic, kterou je možno zapsat i maticově jako je na obrazovce. Derivace sloupcové matice s komponentami poloha a rychlost je rovna násobku této matice s jistou čtvercovou 2-krát-2 maticí.
+
+Uvažujme tepelnou výměnu pomocí Newtonova zákona tepelné výměny, tedy bez vedení tepla. Teplota okolí je T_0. Okolí si vyměňuje teplo s mezivrstvou o teplotě T_1 a tato mezivrstva si vyměňuje teplo s vnitřní vrstvou o teplotě T_2. Intenzita tepelné výměny je úměrná rozdílu teplot, což nám dává diferenciální rovnici pro vývoj teploty v každé vrstvě. Po roznásobení závorek je možné soustavu upravit a zapsat maticově podobně jako soustavu v předchozím případě. Aditivní člen n můžeme vynechat, pokud posuneme stupnici teploty tak, že teplota okolí je nulová.
+
+Předchozí příklady byly speciálním případem soustavy X'=AX pro sloupcový vektor X a čtvercovou matici A. Pokud by se jednalo o skalární veličiny, byla by řešením exponenciální funkce. Pokusíme se o něco podobného a budeme hledat řešení ve tvaru exponenciální funkce s parametrem lambda a vektoru u. Tento předpis můžeme rovnou dostadit do rovnice. Přitom derivace exponenciální funkce je tatáž funkce vynásobená derivací vnitřní složky, což je zde lambda. Po vydělení rovnice exponenciálním členem vidíme stejnou úlohu na hledání vlastních směrů a vlastních čísel matice A. Tato úloha má řešení s nenulovým vektorem u, pokud determinant A-lambda*I bude nulový. Po rozepsání do složek pro soustavu se dvěma rovnicemi a dvěma neznámými je rovnice pro nulovost determinantu kvadratickou rovnicí. Tato rovnice má dva kořeny a každý z nich použijeme v odpovídající modré soustavě rovnic k nalezení vlastních vektorů. Toto platí v nejoptimističtějším případě, kdy existují dvě reálná vlastní čísla. Pokud jsou čísla komplexně sdružená, bereme reálné části. V optimálním případě tedy máme dvě vlastní čísla a k nium vlastní vektory a tím máme dvě řešení. Pojďme si ukázat, jak to může dopadnout. 
+
+Uvažujme soustavu X'=AX a nechť jsou vlastní čísla lambda1 a lambda2. Pokud k nim najdeme vlastní vektory, máme dvě řešení ve tvaru součinu vlastního vektoru s exponenciálním faktorem. Tato exponenciální část podle hodnoty parametru t probíhá kladná reálná čísla. Toto si budeme znázorňovat v grafu vlevo dole. Kromě toho budeme znázorňovat vlastní čísla v gaussově rovině. To znamená, že vodorovně vynášíme reálnou část a svisle imaginární část každého z vlastních čísel. Pokud řešení budeme chápat jako parametrické křivky s parametrem t a pokud tyto křivky zakreslíme v rovině, dostanem polopřímky ze středu mířící vlastním směrem. Protože vlastním vektorem je i vektor opačný, druhá polopřímka směřuje opačným směrem. Tím máme čtyři polopřímky vychzázející z počátku, které odpovídají čtyřem řešením. 
+"""
