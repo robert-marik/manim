@@ -51,6 +51,7 @@ class PrubehFunkce(Scene):
             komentar = MujTex(t,barva)
             self.play(FadeIn(komentar))
             self.wait()
+            self.next_section()
 
         self.remove(komentar)
         popis = VGroup(
@@ -66,6 +67,6 @@ class PrubehFunkce(Scene):
         popis[-1].shift(0.05*DOWN)
         popis.next_to(title,DOWN).to_edge(LEFT)
         self.play(*[FadeToColor(i,j) for i,j in zip(grafy,barvy)])
-        self.play(AnimationGroup(*[TransformFromCopy(i,j) for i,j in zip(grafy,popis)],lag_ratio=.4), run_time=5)
+        self.play(AnimationGroup(*[FadeTransform(i.copy(),j) for i,j in zip(grafy,popis)],lag_ratio=.4), run_time=5)
         popis.add_background_rectangle()
         self.wait()   

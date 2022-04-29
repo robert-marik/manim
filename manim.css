@@ -1,0 +1,9 @@
+.main-video {
+  top: 0;
+  left: 0;
+  min-width: 50vw;
+  max-width: 80vw;
+  max-height: 80vh;
+}
+
+h1 {display:none;}
