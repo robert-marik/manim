@@ -5,6 +5,25 @@ from manim_editor import PresentationSectionType
 config.max_files_cached = 400
 from numpy import sin, cos
 
+def unit_vector(vector):
+    """ Returns the unit vector of the vector.  """
+    return vector / np.linalg.norm(vector)
+
+def angle_between(v1, v2):
+    """ Returns the angle in radians between vectors 'v1' and 'v2'::
+
+            >>> angle_between((1, 0, 0), (0, 1, 0))
+            1.5707963267948966
+            >>> angle_between((1, 0, 0), (1, 0, 0))
+            0.0
+            >>> angle_between((1, 0, 0), (-1, 0, 0))
+            3.141592653589793
+    """
+    v1_u = unit_vector(v1)
+    v2_u = unit_vector(v2)
+    return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
+
+
 class MatrixMultiplication(LinearTransformationScene):
 
     # def __init__(self):
@@ -164,6 +183,58 @@ class MatrixMultiplication(LinearTransformationScene):
         self.wait()
         #self.move_to()
 
+class BranchRotation(ThreeDScene):
+    def construct(self):
+        data = np.genfromtxt('branch.csv', delimiter=',')
+        axes = ThreeDAxes(x_range=[0,1400,1e5], y_range=[0,1400,1e5], z_range=[0,1400,1e5],
+        x_length=2,y_length=2,z_length=2)
+        vetev=axes.plot_line_graph(data[:,0],data[:,1],data[:,2],add_vertex_dots=False)
+        self.set_camera_orientation(phi=15 * DEGREES, theta=30 * DEGREES)
+        self.add(axes,vetev)
+        self.begin_ambient_camera_rotation(rate=0.1)
+        self.wait(5)
+        self.stop_ambient_camera_rotation()
+        self.move_camera(phi=75 * DEGREES, theta=80 * DEGREES)
+        self.wait()
 
+        idx = [3, 39]  # body, ktere pri rotaci maji zustat na miste
+        A = data[idx[0],:]
+        B = data[idx[1],:]
+
+        B_target = [800, None, 850]
+        B_target[1] = np.sqrt(np.linalg.norm(B)**2-B_target[0]**2-B_target[2]**2)
+        k2 = np.cross(B,B_target)
+        k2 = k2/np.linalg.norm(k2)
+        theta2 = angle_between(B,B_target)
+
+        def nakresli_transformovanou_vetev(theta,theta2):
+            K2 = np.array([[0 , -k2[2], k2[1]],[k2[2], 0, -k2[0]],[-k2[1], k2[0], 0]])
+
+            I = np.identity(3);
+            R2 = I + np.sin(theta2)*K2 + (1-np.cos(theta2))*K2**2
+
+            k=B-A
+            k=k/np.linalg.norm(k)
+            K = np.array([[0 , -k[2], k[1]],[k[2], 0, -k[0]],[-k[1], k[0], 0]]);
+            I = np.identity(3);
+
+            R = I + np.sin(theta)*K + (1-np.cos(theta))*K**2
+
+            data2 = np.matmul(R2,np.matmul(R,data.T)).T
+            vetev2=axes.plot_line_graph(data2[:,0],data2[:,1],data2[:,2],add_vertex_dots=False).set_color(RED)            
+            return(vetev2)
+        
+        uhel_skloneni = ValueTracker(0)
+        uhel_otoceni = ValueTracker(0)
+        a = always_redraw (
+            lambda : nakresli_transformovanou_vetev(
+                uhel_otoceni.get_value(),
+                uhel_skloneni.get_value()
+                ))
+        self.add(a)
+        #self.play(uhel_skloneni.animate.set_value(theta2),run_time=4)
+        self.play(uhel_otoceni.animate.set_value(np.pi*0.7),run_time=4)
+
+        self.wait()
 
 
