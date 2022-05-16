@@ -183,18 +183,37 @@ class MatrixMultiplication(LinearTransformationScene):
         self.wait()
         #self.move_to()
 
-class BranchRotation(ThreeDScene):
+class BranchRotation(Scene):
     def construct(self):
         data = np.genfromtxt('branch.csv', delimiter=',')
-        axes = ThreeDAxes(x_range=[0,1400,1e5], y_range=[0,1400,1e5], z_range=[0,1400,1e5],
-        x_length=2,y_length=2,z_length=2)
-        vetev=axes.plot_line_graph(data[:,0],data[:,1],data[:,2],add_vertex_dots=False)
-        self.set_camera_orientation(phi=15 * DEGREES, theta=30 * DEGREES)
-        self.add(axes,vetev)
-        self.begin_ambient_camera_rotation(rate=0.1)
-        self.wait(5)
-        self.stop_ambient_camera_rotation()
-        self.move_camera(phi=75 * DEGREES, theta=80 * DEGREES)
+        ax_length = 3
+        axes = VGroup()
+        #ThreeDAxes(x_range=[0,1400,1e5], y_range=[0,1400,1e5], z_range=[0,1400,1e5],
+        #x_length=2,y_length=2,z_length=2)
+        narys = Axes(
+            x_range=[0,2000,1e5], y_range=[0,2000,1e5],
+            x_length=ax_length,y_length=ax_length,
+            ).to_corner(UR)
+        bokorys = Axes(
+            x_range=[0,2000,1e5], y_range=[0,2000,1e5],
+            x_length=ax_length,y_length=ax_length,
+            ).next_to(narys,LEFT)
+        pudorys = Axes(
+            x_range=[0,2000,1e5], y_range=[0,2000,1e5],
+            x_length=ax_length,y_length=ax_length,
+            ).next_to(narys,DOWN)
+        vetev=VGroup(
+            # axes.plot_line_graph(data[:,0],data[:,1],data[:,2],add_vertex_dots=False),
+            narys.plot_line_graph(data[:,0],data[:,2],add_vertex_dots=False),
+            bokorys.plot_line_graph(data[:,1],data[:,2],add_vertex_dots=False),
+            pudorys.plot_line_graph(data[:,0],data[:,1],add_vertex_dots=False)
+        )
+        #self.set_camera_orientation(phi=15 * DEGREES, theta=30 * DEGREES)
+        self.add(axes,vetev,narys,bokorys,pudorys)
+        #self.begin_ambient_camera_rotation(rate=0.1)
+        #self.wait(5)
+        #self.stop_ambient_camera_rotation()
+        #self.move_camera(phi=75 * DEGREES, theta=-80 * DEGREES)
         self.wait()
 
         idx = [3, 39]  # body, ktere pri rotaci maji zustat na miste
@@ -207,21 +226,28 @@ class BranchRotation(ThreeDScene):
         k2 = k2/np.linalg.norm(k2)
         theta2 = angle_between(B,B_target)
 
-        def nakresli_transformovanou_vetev(theta,theta2):
+        def nakresli_transformovanou_vetev(theta_,theta2_):
             K2 = np.array([[0 , -k2[2], k2[1]],[k2[2], 0, -k2[0]],[-k2[1], k2[0], 0]])
 
             I = np.identity(3);
-            R2 = I + np.sin(theta2)*K2 + (1-np.cos(theta2))*K2**2
+            R2 = I #+ np.sin(theta2_)*K2 + (1-np.cos(theta2_))*np.matmul(K2,K2)
 
             k=B-A
             k=k/np.linalg.norm(k)
             K = np.array([[0 , -k[2], k[1]],[k[2], 0, -k[0]],[-k[1], k[0], 0]]);
             I = np.identity(3);
 
-            R = I + np.sin(theta)*K + (1-np.cos(theta))*K**2
+            R = I + np.sin(theta_)*K + (1-np.cos(theta_))*(np.matmul(K,K))
 
-            data2 = np.matmul(R2,np.matmul(R,data.T)).T
-            vetev2=axes.plot_line_graph(data2[:,0],data2[:,1],data2[:,2],add_vertex_dots=False).set_color(RED)            
+            data2 = np.matmul(R,data.T).T
+            vetev2=VGroup(
+                # axes.plot_line_graph(data[:,0],data[:,1],data[:,2],add_vertex_dots=False),
+                narys.plot_line_graph(data2[:,0],data2[:,2],add_vertex_dots=False),
+                Dot(narys.c2p(A[0],A[2],0)),
+                Dot(narys.c2p(B[0],B[2],0)),
+                bokorys.plot_line_graph(data2[:,1],data2[:,2],add_vertex_dots=False),
+                pudorys.plot_line_graph(data2[:,0],data2[:,1],add_vertex_dots=False)
+                )
             return(vetev2)
         
         uhel_skloneni = ValueTracker(0)
@@ -232,8 +258,9 @@ class BranchRotation(ThreeDScene):
                 uhel_skloneni.get_value()
                 ))
         self.add(a)
-        #self.play(uhel_skloneni.animate.set_value(theta2),run_time=4)
+        print(theta2)
         self.play(uhel_otoceni.animate.set_value(np.pi*0.7),run_time=4)
+        #self.play(uhel_skloneni.animate.set_value(theta2),run_time=4)
 
         self.wait()
 
