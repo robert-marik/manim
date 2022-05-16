@@ -186,7 +186,7 @@ class MatrixMultiplication(LinearTransformationScene):
 class BranchRotation(Scene):
     def construct(self):
         data = np.genfromtxt('branch.csv', delimiter=',')
-        ax_length = 4
+        ax_length = 3.6
         axes = VGroup()
         #ThreeDAxes(x_range=[0,1400,1e5], y_range=[0,1400,1e5], z_range=[0,1400,1e5],
         #x_length=2,y_length=2,z_length=2)
@@ -322,23 +322,22 @@ class BranchRotation(Scene):
 
         popis = VGroup(
             Tex(r"$D$ je matice dat z 3D skenování větve").set_color(YELLOW),
-            Tex(r"$R_2$ je pootočení okolo osy větve"),
-            Tex(r"$R_1$ je transformace definující sklon"),
+            Tex(r"$R_2$ je transformace definující sklon"),
+            Tex(r"$R_1$ je pootočení skloněné větve okolo osy"),
             Tex(r"$R_1R_2D$ je větev v poloze při experimentu").set_color(RED),
         ).scale(0.5).arrange(DOWN, aligned_edge=LEFT)
 
-        popis2 = Tex(r"""\begin{minipage}{7cm}
+        popis2 = Tex(r"""\begin{minipage}{8cm}
         Je-li $\theta$ úhel otočení a $\vec k=(k_x, k_y, k_z)$ vektor osy otáčení, je matice rotace
-        $R$ ve 3D prostoru dána vztahem (Euler–Rodrigues formula) $$ R=I+\sin(\theta)K+(1-\cos(\theta))K^2, $$
+        $R$ ve 3D prostoru dána vzta\-hem (Euler–Rodrigues formula) $$ R=I+\sin(\theta)K+(1-\cos(\theta))K^2, $$
         kde $$ K = \begin{pmatrix}0 & -k_z & k_y\\ k_z & 0 &-k_x\\
             -k_y & k_x&0\end{pmatrix}.$$
-        Po vykreslení dat ze skenu je větev prakticky v rovině $zx$. Je potřeba ji
+        Po vykreslení dat ze skenu je větev prakticky v ro\-vi\-ně $zx$. Je potřeba ji
         otočit okolo své osy do správné polohy (jedno maticové násobení)
         a naklonit do polohy dle experimentu (další maticové násobení).
         
         Maticový součin je použit i pro převedení 3D dat do roviny při kreslení axonometrického obrázku.
         \end{minipage} """).scale(0.5)
-
         popis.to_corner(UL)
         self.add(popis)
         popis2.next_to(popis,DOWN, aligned_edge=LEFT)
