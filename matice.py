@@ -48,6 +48,7 @@ class MatrixMultiplication(LinearTransformationScene):
         self.setup()
         self.wait()
 
+
         i=1
         self.next_section("Transformace "+str(i))
         self.remove(autor[0],autor[1], title)
@@ -68,11 +69,13 @@ class MatrixMultiplication(LinearTransformationScene):
                 v_buff=1.2,
                 ).to_corner(UL).add_background_rectangle(buff=0.2)
             self.add(M)
+            self.moving_mobjects = []
             self.apply_matrix(mtr)
             self.wait()
             self.remove(M)
             inverze = np.linalg.inv(np.array(mtr))
             self.next_section("Transformace "+str(i))
+            self.moving_mobjects = []
             self.apply_matrix(inverze, run_time=0.4)
             self.wait()
 
@@ -148,6 +151,7 @@ class MatrixMultiplication(LinearTransformationScene):
         self.next_section("Linearni kombinace po malem otoceni")
 
         self.remove(svorky_mobj)
+        self.moving_mobjects = []
         self.apply_matrix(npMh)
         self.add(new_coor)
 
@@ -157,6 +161,7 @@ class MatrixMultiplication(LinearTransformationScene):
 
         self.next_section("Linearni kombinace po vetsim otoceni")
         self.remove(new_coor, svorky_mobj)
+        self.moving_mobjects = []
         self.apply_matrix(npMh)
         new_coor = Matrix(npv2, 
                 element_to_mobject=lambda x: MathTex(round(x,2)))
