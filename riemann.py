@@ -29,7 +29,6 @@ class UrcityIntegral(Scene):
                 x_range = [0,2,0.01],
                 use_smoothing=False              
             )
-
         ]
         for i in funkce:
             i.set_color(RED)
