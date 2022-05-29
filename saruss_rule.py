@@ -56,11 +56,10 @@ class Rule(Scene):
                 run_time=3
         )
         self.wait()
+
         self.play(
             FadeToColor(k[:9],WHITE),
             FadeToColor(k[9:],GRAY))
-        self.wait()
-
         barvy = [
             WHITE, WHITE,RED,
             WHITE, RED, BLUE,
@@ -72,7 +71,6 @@ class Rule(Scene):
             for i,j in zip(k,barvy)
             ]
         )
-        self.wait()
 
         zdroj = [
             VGroup(k[2],k[4],k[6]),
@@ -92,7 +90,14 @@ class Rule(Scene):
         self.add(kladne)
         self.add(zaporne)
         self.wait()
-        self.clear()
+        
+        self.play(
+            FadeToColor(kladne,WHITE),
+            FadeToColor(zaporne,WHITE),
+            FadeToColor(A,WHITE),
+            FadeOut(b),
+            run_time=2
+        )
         self.add(VGroup(title,kladne,zaporne,A).set_color(WHITE))
         self.wait(3)
 
@@ -269,6 +274,11 @@ class Curl(Scene):
         )
         self.wait()        
         
-        self.clear()
-        self.add(VGroup(title,A,vysledek,curl).set_color(WHITE))
-        self.wait()
+        self.play(
+            FadeOut(b1,b2),
+            FadeToColor(k[:9],WHITE),
+            FadeToColor(vysledek,WHITE),
+            run_time = 3
+            )
+        #self.add(VGroup(title,A,vysledek,curl).set_color(WHITE))
+        self.wait(4)
