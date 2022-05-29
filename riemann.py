@@ -141,13 +141,15 @@ class UrcityIntegral(Scene):
         self.wait()
 
         self.next_section("")
-        self.remove(popisky_n)
+        self.play(FadeOut(popisky_n))
         for i in range(3):
             self.play(
-                ReplacementTransform(rects[i],rects[i+1]),
-                ReplacementTransform(funkce[i],funkce[i+1]),
-                ReplacementTransform(labels[i],labels[i+1]),
-                FadeIn(texty[3+i    ])
+                #ReplacementTransform(rects[i],rects[i+1]),
+                #ReplacementTransform(funkce[i],funkce[i+1]),
+                #ReplacementTransform(labels[i],labels[i+1]),
+                FadeOut(rects[i],funkce[i],labels[i]),
+                FadeIn(rects[i+1],funkce[i+1],labels[i+1]),
+                FadeIn(texty[3+i])
             )
             self.wait()
             self.next_section("")
