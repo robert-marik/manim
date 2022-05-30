@@ -79,6 +79,17 @@ class MatrixMultiplication(LinearTransformationScene):
             self.apply_matrix(inverze, run_time=0.4)
             self.wait()
 
+
+class TransformationCoordinates(LinearTransformationScene):
+
+    # def __init__(self):
+    #     LinearTransformationScene.__init__(
+    #         self,
+    #         leave_ghost_vectors=True,
+    #     )
+
+    def construct(self):
+
         def svorky(poloha):
             b1 = Brace(v,direction=RIGHT, buff=0.6).set_color(GRAY)
             b1.add(MathTex(round(poloha[1,0],2), color=GRAY).next_to(b1).add_background_rectangle(buff=0.2).set_z_index(2))            
@@ -193,8 +204,6 @@ class BranchRotation(Scene):
         data = np.genfromtxt('branch.csv', delimiter=',')
         ax_length = 3.6
         axes = VGroup()
-        #ThreeDAxes(x_range=[0,1400,1e5], y_range=[0,1400,1e5], z_range=[0,1400,1e5],
-        #x_length=2,y_length=2,z_length=2)
         bokorys = Axes(
             x_range=[0,1600*0.7,1e5], y_range=[0,1600,1e5],
             x_length=ax_length*0.7,y_length=ax_length,
@@ -214,7 +223,7 @@ class BranchRotation(Scene):
             x_range=[0,2000,1e5], y_range=[0,2000,1e5],
             x_length=ax_length*0.5,y_length=ax_length*0.5,
             tips=False,
-            ).next_to(bokorys,DOWN).shift(1.3*RIGHT)
+            ).next_to(bokorys,DOWN).shift(1.3*RIGHT+DOWN*0.5)
 
         matice = np.array([
             [0.2,-0.8,0],[0.1,0.2,0.8]
@@ -230,7 +239,6 @@ class BranchRotation(Scene):
             MathTex("y").scale(0.5).next_to(axonometrie.c2p(osy[1,0],osy[1,1]),LEFT),
             MathTex("z").scale(0.5).next_to(axonometrie.c2p(osy[2,0],osy[2,1],UP)),
         )
-        self.add(temp)
 
         data_3d = np.matmul(matice,data.T).T
         vetev=VGroup(
@@ -240,7 +248,6 @@ class BranchRotation(Scene):
             pudorys.plot_line_graph(data[:,0],data[:,1],add_vertex_dots=False),
             axonometrie.plot_line_graph(data_3d[:,0],data_3d[:,1],add_vertex_dots=False),
         )
-        self.add(axes,vetev,narys,bokorys,pudorys)
 
         nadpisy = VGroup(
             *[Tex(i).scale(0.6).move_to(j,UP) for i,j in 
@@ -250,28 +257,6 @@ class BranchRotation(Scene):
                 ["Pohled shora",pudorys],
                 ]]
         )
-        self.add(nadpisy)
-        #alpha = -0.6
-        # beta = -0.2
-        # matice = np.matmul(
-        #     np.array([
-        #         [1,0,0],
-        #         [0,np.cos(alpha),np.sin(alpha)],
-        #         [0,-np.sin(alpha),np.cos(alpha)]
-        #         ]),
-        #     np.array([
-        #         [np.cos(beta), 0, -np.sin(beta)],
-        #         [0,1,0],
-        #         [np.sin(beta), 0, np.cos(beta)]
-        #     ]))
-        # matice = np.array([
-        #         [np.cos(alpha),np.sin(alpha),0],
-        #         [-np.sin(alpha),np.cos(alpha),1],
-        #         [0,0,1]
-        #         ])
-        # matice = np.matmul(np.array([
-        #     [1,0,0],[0,1,0],[0,0,0]
-        # ]),matice)
 
         popisky = VGroup(
             MathTex("z").scale(0.5).next_to(narys.get_y_axis(),LEFT, aligned_edge=UP, buff=0.05),
@@ -281,13 +266,11 @@ class BranchRotation(Scene):
             MathTex("x").scale(0.5).next_to(pudorys.get_x_axis(),UP, aligned_edge=RIGHT, buff=0.05),
             MathTex("y").scale(0.5).next_to(pudorys.get_y_axis(),LEFT, aligned_edge=UP, buff=0.05),
         )
-        self.add(popisky)
-
+        self.play(*[FadeIn(i) for i in [popisky,axes,temp,vetev,narys,bokorys,pudorys,nadpisy]])
 
         idx = [3, 39]  # body, ktere pri rotaci maji zustat na miste
         A = data[idx[0],:]
         B = data[idx[1],:]
-
         B_target = [800, None, 850]
         B_target[1] = np.sqrt(np.linalg.norm(B)**2-B_target[0]**2-B_target[2]**2)
         k2 = np.cross(B,B_target)
@@ -325,29 +308,35 @@ class BranchRotation(Scene):
             vetev2.set_color(RED)
             return(vetev2)
 
-        popis = VGroup(
+        popis = Tex(r"""\begin{minipage}{9cm} Po vykreslení dat ze skenu je větev prakticky v ro\-vi\-ně $zx$. Je potřeba ji
+        otočit okolo své osy do správné polohy (jedno maticové násobení)
+        a naklonit do polohy dle experimentu (další maticové násobení).
+        \end{minipage}
+        """).scale(0.5).to_corner(UL)
+
+        self.play(FadeIn(popis))
+        self.wait()
+        self.next_section("")
+
+        popis1 = VGroup(
             Tex(r"$D$ je matice dat z 3D skenování větve").set_color(YELLOW),
             Tex(r"$R_2$ je transformace definující sklon"),
             Tex(r"$R_1$ je pootočení skloněné větve okolo osy"),
             Tex(r"$R_1R_2D$ je větev v poloze při experimentu").set_color(RED),
         ).scale(0.5).arrange(DOWN, aligned_edge=LEFT)
 
-        popis2 = Tex(r"""\begin{minipage}{8cm}
+        popis2 = Tex(r"""\begin{minipage}{9cm}
         Je-li $\theta$ úhel otočení a $\vec k=(k_x, k_y, k_z)$ vektor osy otáčení, je matice rotace
         $R$ ve 3D prostoru dána vzta\-hem (Euler–Rodrigues formula) $$ R=I+\sin(\theta)K+(1-\cos(\theta))K^2, $$
         kde $$ K = \begin{pmatrix}0 & -k_z & k_y\\ k_z & 0 &-k_x\\
             -k_y & k_x&0\end{pmatrix}.$$
-        Po vykreslení dat ze skenu je větev prakticky v ro\-vi\-ně $zx$. Je potřeba ji
-        otočit okolo své osy do správné polohy (jedno maticové násobení)
-        a naklonit do polohy dle experimentu (další maticové násobení).
-        
         Maticový součin je použit i pro převedení 3D dat do roviny při kreslení axonometrického obrázku.
         \end{minipage} """).scale(0.5)
-        popis.to_corner(UL)
-        self.add(popis)
-        popis2.next_to(popis,DOWN, aligned_edge=LEFT)
-        self.add(popis2)
-
+        popis1.next_to(popis,DOWN, aligned_edge=LEFT)
+        popis2.next_to(popis1,DOWN, aligned_edge=LEFT)
+        self.play(FadeIn(popis1),FadeIn(popis2))
+        self.wait()
+        self.next_section("")
 
         uhel_skloneni = ValueTracker(0)
         uhel_otoceni = ValueTracker(0)
@@ -359,7 +348,6 @@ class BranchRotation(Scene):
         self.add(a)
         self.play(uhel_skloneni.animate.set_value(theta2),run_time=5)
         self.play(uhel_otoceni.animate.set_value(4),run_time=5)
-
         self.wait()
 
 

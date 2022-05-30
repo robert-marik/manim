@@ -2,7 +2,6 @@ import numpy as np
 from manim import *
 from manim_editor import PresentationSectionType
 
-
 class Derivace(ZoomedScene):
     def __init__(self, **kwargs):
         ZoomedScene.__init__(
