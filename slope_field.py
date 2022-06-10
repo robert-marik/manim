@@ -143,12 +143,12 @@ class SmerovePole(Scene):
             print ("souradnice "+str(A)+str(B)+str(end))
             smer = Line(start=ax.c2p(A[0],A[1],0), end=ax.c2p(C[0],C[1],0))
             svorky.add(
-                Brace(smer,smernice*DOWN, buff=0)
+                Brace(smer,np.sign(smernice)*DOWN, buff=0)
             )
             svorky.add(
                 Brace(smer,RIGHT, buff=0)
             )
-            svorky.add(MathTex("1").next_to(svorky[0],DOWN*smernice))
+            svorky.add(MathTex("1").next_to(svorky[0],DOWN*np.sign(smernice),buff=0.2))
             smerniceR = round(smernice,3)
             svorky.add(MathTex(r"\varphi(x,t)="+str(smerniceR)).next_to(svorky[1],RIGHT))
             svorky.set_color(GRAY)
