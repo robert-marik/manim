@@ -154,7 +154,7 @@ class Obrazek(MovingCameraScene):
             self.next_section("")
 
 komentar = """
-Dobrý den, v tomto videu si ukážeme užitečnost lineární aproximace funkce. Ukážeme si, že tato technika nám umožní za určitých okolností nahradit komplikované funkční závislosti jednoduchými vztahy. 
+Dobrý den, v tomto videu si ukážeme užitečnost lineární aproximace funkce. Ukážeme si, že tato technika nám umožní za určitých okolností nahradit komplikované funkční závislosti jednoduchými vztahy. Ze sice přesného, ale komplikovaného vzorce umíme za určitých podmínek udělat vzorec mnohem jednodušší. Sice méně přesný, ale často je způsobená nepřesnost pod měřitelnou hranicí a tedy nezpůsobuje žádná omezení.
 
 Budeme uvažovat funkci z obrazovky. To je poměrně škaredá funkce, převrácená hodnota z odmocniny z rozdílu a ještě snížená o jedničku. Je však velmi užitečná, protože souvisí s kinetickou energií těles. Opravdu. Pokud vyjdeme ze vztahu pro kinetickou energii tělesa o hmotnosti m, které se pohybuje rychlostí v, dostáváme pro kinetickou energii vzorec uvedený na obrazovce, ve kterém c označuje rychlost světla ve vakuu. Pokud namítnete, že ve fyzice jste se učili jednodušší vzorec, 1/2 m v^2, máte pravdu. Ale jednodušší vzorec platí jenom pro malé rychlosti. Pro libovolné rychlosti je nutné vyjít z Einsteinovy teorie relativity a ta udává přesně vzorec z našeho videa. Ukážeme si, že jednoduchý středoškolský vzorec platící pro malé rychlosti je ve skutečnosti lineární aproximací plně obecného relativistického vzorce. 
 
