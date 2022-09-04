@@ -276,9 +276,12 @@ class PhasePortrait(MovingCameraScene):
                     phase_plot.smery = VGroup()
                     for v,col in zip([[A[0,0],A[1,0]],[A[0,1],A[1,1]]],c):
                         v_ = np.array(v)
-                        start = v_/np.sqrt(v[0]**2+v[1]**2)
-                        end = -start
-                        phase_plot.smery.add(Line(start = axes.c2p(*start,0), end = axes.c2p(*end,0)).set_color(col))
+                        end = v_/np.sqrt(v[0]**2+v[1]**2)
+                        #start = -end
+                        #start = np.array([0,0])
+                        phase_plot.smery.add(Line(start = axes.c2p(0,0,0), end = axes.c2p(*end,0)).set_color(col))
+                        end = -end
+                        phase_plot.smery.add(Line(start = axes.c2p(0,0,0), end = axes.c2p(*end,0)).set_color(col))
                     phase_plot.add(phase_plot.smery)    
                     reseni = MathTex(r'X(t)={{C_1}} {{\vec u_1 e^{'+'{:.2f}'.format(vals[0])+r't}}}+{{C_2}}{{\vec u_2 e^{'+'{:.2f}'.format(vals[1])+r't}}}').scale(0.75)
                     reseni[1:4].set_color(c[0])
@@ -408,7 +411,14 @@ class PhasePortrait(MovingCameraScene):
         self.next_section()
         self.add(axes)
         _, vecs, __, ___ = get_characteristics()
-        self.add(pplot.smery)
+        self.play(AnimationGroup(
+            Create(pplot.smery[0]),
+            Create(pplot.smery[2])))
+        self.wait()
+
+        self.play(AnimationGroup(
+            Create(pplot.smery[1]),
+            Create(pplot.smery[3])))
         self.wait()
 
         self.next_section()
@@ -553,7 +563,7 @@ class PhasePortrait(MovingCameraScene):
         self.wait()
 
 
-komentar = """
+komentar_old = """
 Dobrý den, v tomto videu si ukážeme, jak je možné použít prostředky lineární algebry k řešení soustav lineárních diferenciálních rovnic s koeficienty nezávislými na čase. Využití najdeme například při studiu kmitajících mechanických soustav, při tepelné výměně s okolním prostředím přes mezivrstvu. Lineární soustavy jsou díky linearitě jednoduché a proto často studujeme nelineární systémy tak, že je aproximujeme pomocí systémů lineárních. 
 
 Uvažujme mechanické kmitání v přímce okolo rovnovážného stavu. Polohu označme x, rychlost označme v. Z mechaniky víme, že derivace polohy je rychlost a derivace rychlosti je úměrná působící síla. Síla má komponentu, která vrací těleso do rovnovážné polohy a komponentu udávající odpor prostředí. Použijeme lineární aproximaci a zápornýám znaménkem vyjádříme, že síla vrací těleso do rovnovážné polohy a že odporová síla působí proti směru pohybu. Tímto dostáváme soustavu dvou rovnic, kterou je možno zapsat i maticově jako je na obrazovce. Derivace sloupcové matice s komponentami poloha a rychlost je rovna násobku této matice s jistou čtvercovou 2-krát-2 maticí.
@@ -562,5 +572,39 @@ Uvažujme tepelnou výměnu pomocí Newtonova zákona tepelné výměny, tedy be
 
 Předchozí příklady byly speciálním případem soustavy X'=AX pro sloupcový vektor X a čtvercovou matici A. Pokud by se jednalo o skalární veličiny, byla by řešením exponenciální funkce. Pokusíme se o něco podobného a budeme hledat řešení ve tvaru exponenciální funkce s parametrem lambda a vektoru u. Tento předpis můžeme rovnou dostadit do rovnice. Přitom derivace exponenciální funkce je tatáž funkce vynásobená derivací vnitřní složky, což je zde lambda. Po vydělení rovnice exponenciálním členem vidíme stejnou úlohu na hledání vlastních směrů a vlastních čísel matice A. Tato úloha má řešení s nenulovým vektorem u, pokud determinant A-lambda*I bude nulový. Po rozepsání do složek pro soustavu se dvěma rovnicemi a dvěma neznámými je rovnice pro nulovost determinantu kvadratickou rovnicí. Tato rovnice má dva kořeny a každý z nich použijeme v odpovídající modré soustavě rovnic k nalezení vlastních vektorů. Toto platí v nejoptimističtějším případě, kdy existují dvě reálná vlastní čísla. Pokud jsou čísla komplexně sdružená, bereme reálné části. V optimálním případě tedy máme dvě vlastní čísla a k nium vlastní vektory a tím máme dvě řešení. Pojďme si ukázat, jak to může dopadnout. 
 
-Uvažujme soustavu X'=AX a nechť jsou vlastní čísla lambda1 a lambda2. Pokud k nim najdeme vlastní vektory, máme dvě řešení ve tvaru součinu vlastního vektoru s exponenciálním faktorem. Tato exponenciální část podle hodnoty parametru t probíhá kladná reálná čísla. Toto si budeme znázorňovat v grafu vlevo dole. Kromě toho budeme znázorňovat vlastní čísla v gaussově rovině. To znamená, že vodorovně vynášíme reálnou část a svisle imaginární část každého z vlastních čísel. Pokud řešení budeme chápat jako parametrické křivky s parametrem t a pokud tyto křivky zakreslíme v rovině, dostanem polopřímky ze středu mířící vlastním směrem. Protože vlastním vektorem je i vektor opačný, druhá polopřímka směřuje opačným směrem. Tím máme čtyři polopřímky vychzázející z počátku, které odpovídají čtyřem řešením. 
+"""
+
+
+        
+komentar = """
+Dobrý den, v tomto videu si ukážeme, jak umíme u lineárních autonomních systémů v rovině analyzovat chování jednotlivých řešení.
+
+Nejprve si připomeňme maticovou formulaci autonomního systému. Například mechanické kmity tělesa o jednotkové hmotnosti na pružině o tuhosti 'k' je možné popsat pomocí následujících dvou pohybových rovnic, kde 'x' a 'v' jsou poloha a rychlost tělesa. První rovnice udává rychlost jako časovou změnu polohy a druhá rovnice udává zrychlení způsobené silou pružiny a odporem prostředí se součinitelem odporu 'b'. Tuto soustavu je možné pomocí maticového násobení zapsat v kompaktnějším tvaru X'=AX.
+
+Jiný proces vedoucí na rovnici téhož typu je model popisující tepelnou výměnu ve vrstvených tělesech či materiálech. Předpokládejme například vnější prostředí o teplotě T0, ve kterém je těleso o teplotě T2 a tepelná výměna probíhá prostřednictvím obalu o teplotě T1. Protože výměna tepla na jednotlivých rozhraních probíhá rychlostí úměrnou rozdílu teplot, máme pro dvě rozhraní dvě lineární rovnice. Pokud přeuspořádáme členy na pravé straně, je možné opět zapsat soustavu pomocí maticového součinu. Volíme-li navíc počátek teplotní stupnice tak, aby teplota okolí byla nulová, redukuje se model na T'=AT.
+
+V obou případech je řešením funkce mající tu vlastnost, že její derivace je rovna součinu této funkce s maticí A. Pokud budeme hledat takovou funkci ve tvaru součinu exponenciální funkce "e na lambda t" a vektoru "u", je možné derivaci vypočítat a po dosazení do rovnice vidíme, že vektor "u" musí být vlastním vektorem příslušným vlastní hodnotě lambda a musí tedy vyhovovat příslušné soustavě rovnic zapsané modře. Vlastní hodnoty určíme standardně jako hodnoty vyhovující charakteristické rovnici zapsané červeně. Soustavu pro vlastní vektory a vlastní čísla můžeme vyjádřit i v komponentách, jak je vidět na obrazovce v pravém sloupci. Je zde zejména vidět kvadratická rovnice, sloužící pro určení vlastních hodnot vyjádřená pomocí koeficientů soustavy.
+
+Uvažujme soustavu X'=AX a nechť jsou vlastní čísla lambda1 a lambda2. Pokud k nim najdeme vlastní vektory, máme dvě řešení ve tvaru součinu vlastního vektoru s exponenciálním faktorem. Tato exponenciální část v závislosti na hodnotě parametru t probíhá kladná reálná čísla. Toto si budeme znázorňovat v grafu exponenciální funkce vlevo dole. Kromě toho budeme znázorňovat vlastní čísla v gaussově rovině. To znamená, že vodorovně vynášíme reálnou část a svisle imaginární část každého z vlastních čísel. Pokud řešení budeme chápat jako parametrické křivky s parametrem t a pokud tyto křivky zakreslíme v rovině, dostanem polopřímky ze středu mířící vlastním směrem.
+
+Ukážeme si jednotlivé možnosti, jak se mohou řešení chovat. Budeme se zabývat jenom případem, kdy vlastní čísla jsou obě nenulová. 
+
+Může například nastat situace na obrazovce, kdy obě vlastní čísla jsou kladná. Pro t jdoucí do nekonečna obě řešení numericky rostou, pro t jdoucí do minus nekonečna jdou k nule. Ve fázové rovině řešení představují polopřímky ve směrech u1 a u2 mířící směrem od počátku. Samozřejmě další řešení budou mířit opačným směrem, protože i -u1 a -u2 jsou vlastními vektory. Díky tomu v obrázku každá dvojice polopřímek vytvoří jednu přímku. V průsečíku těchto přímek je stacionární bod. Ostatní řešení jsou lineárními kombinacemi těchto dvou. To dává dobrou představu o chování všech dalších řešení. Všechna další řešení vychází z počátku směrem příslušným žluté barvě, vzdalují se od počátku a postupně se přiklání ke směru modré barvy. V takovém případě se bod, ze kterého trajektorie vychází, nazývá nestabilní uzel. 
+
+Pokud hodnotu lambda1 snížíme pod hodnotu lambda2, změní se fázový portrét pouze v tom, že od stacionárního bodu vychází trajektorie modrým směrem a odklání se do směru žlutého. Stacionární bod je stále nestabilní uzel. 
+
+Pokud však jedna vlastní hodnota klesne do záporných čísel, příslušné řešení (v tomto případě modré) jde pro t jdoucí do nekonečna k nule a směr trajektorií na modrých polopřímkách se otočí. Trajektorie ve žlutých polopřímkách zůstávají a ostatní trajektorie jsou lineárními kombinacemi. Vznikne situace, kdy jenom konečný počet trajektorií (jenom modré a žluté polopřímky) prochází stacionárním bodem a takový stacionární bod se nazývá sedlo. 
+
+Pokud budou obě vlastní čísla záporná, situace se opět kvalitativně mění. Tentokrát do stacionárního bodu směrují i trajektorie v modrých polopřímkách, i trajektorie ve žlutých polopřímkách, a i všechny lineární kombinace těchto trajektorií. Takový stacionární bod se nazývá stabilní uzel. 
+
+Pokud v málo pravděpodobném ale možném případě budou obě vlastní čísla stejná, je situace analogická, ale trajektorie míří do počátku za všech směrů. To je jenom jiná varianta stabilního uzlu. Důležité je, že se trajektorie přibližují bez oscilací. 
+
+Oscilace v prostoru řešení vzniknou, pokud budou vlastní čísla nabývat komplexních hodnot. Jestli se oscilace stahují ke stacionárnímu bodu, nebo rozmotávají, je řízeno reálnou částí vlastního čísla. Na našem obrázku je reálná část záporná, rovna -0.7. To znamená, že řešení oscilují s stahují se ke stacionárnímu bodu. Takový bod se nazývá stabilní ohnisko.
+
+Bude-li reálná část vlastních hodnot kladná, dojde naopak k rozvíjení trajektorií od stacionárního bodu a dostáváme nestabilní ohnisko. 
+
+Chceme-li lépe vidět oscilace a spirálu mířící do stacionárního bodu, stačí zařídit, aby reálná část byla numericky malá, tedy blízko k nule. Takto by to vypadalo pro stabilní případ a na obrázku je pro přehlednost nakreslena jenom jedna trajektorie. 
+
+Vidíme tedy, že chování trajektorií je možné posoudit pomocí vlastních čísel matice lineárního autonomního systému. Podobně pracujeme i s nelineárními systémy, které umíme linearizovat pomocí Jacobiho matice.
+
 """

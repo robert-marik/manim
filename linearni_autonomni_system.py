@@ -244,34 +244,3 @@ class PhasePortrait(MovingCameraScene):
 
             self.wait()
 
-        
-komentar = """
-Dobrý den, v tomto videu si ukážeme, jak umíme u lineárních autonomních systémů využít linearitu k analýze chování řešení.
-
-Nejprve si připomeňme maticovou formulaci. Například mechanické kmity tělesa jednotkové hmotnosti na pružině je možné popsat pomocí následujících dvou pohybových rovnic. První rovnice udává rychlost jako časovou změnu polohy a druhá rovnice udává zrychlení způsobené silou pružiny a odporem prostředí. Tuto soustavu je možné pomocí maticového násobení zapsat v kompaktnějším tvaru X'=AX.
-
-Jiný proces vedoucí na rovnici téhož typu je model popisující tepelnou výměnu v sendvičovývh materiálech. Předpokládejme například prostředí o teplotě T0, ve kterém je těleso o teplotě T2 a tepelná výměna probíhá před obal tělesa o teplotě T1. Protože výměna tepla na jednotlivých rozhraních probíhá rychlostí úměrnou rozdílu teplot, máme pro dvě rozhraní dvě lineární rovnice. Pokud přeuspořádáme členy na pravé straně, je možné opět zapsat soustavu pomocí maticového součinu. Volíme-li počátek teplotní stupnice tak, aby teplota okolí byla nulová, redukuje se model na T'=AT.
-
-V obou případech je řešením funkce mající tu vlastnost, že její derivace je rovna součinu této funkce s maticí A. Pokud budeme hledat takovou funkci ve tvaru součinu exponenciální funkce "e na lambda t" a vektoru u, je možné derivaci vypočítat a po dosazení vídíme, že vektor u musí být vlastním vektorem příslušným vlastní hodnotě lambda. Standardní postup určení vlastní hodnoty je nulování charakteristické rovnice. Soustavu pro vlastní vektory a vlastní čísla můžeme vyjádřit i v komponentách, jak je vidět na obrazovce v pravém sloupci. Je zde zejména vidět kvadratická rovnice, sloužící pro určení vlastních hodnot.
-
-Ukážeme si jednotlivé možnosti, jak se mohou řešení chovat. Protože derivace nulového vektoru i součin matice s nulovým vektorem jsou nulové vektory, je počátek stacionárním bodem. Budeme sledovat trajektorie v okolí tohoto bodu. Budeme se zabývat jenom případem, kdy vlastní čísla jsou obě nenulová. 
-
-Může například nastat situace, kdy obě vlastní čísla jsou kladná. Pokud ke každému vlastnímu číslu určíme vlatní vektor, dostaneme dvě nezávislá řešení. Pro t jdoucí do nekonečna obě řešení numericky rostou, pro t jdoucí do minus nekonečna jdou k nule. Ve fázové rovině řešení představují polopřímky ve směrech u1 a u2. Samozřejmě další řešení budou mířit opačným směrem, protože i -u1 a -u2 jsou vlastními vektory. Ostatní řešení jsou lineárními kombinacemi těchto dvou, což dává představu o chování všech dalších řešení. Ta vychází z počátku směrem příslušným žluté barvě, vzdaluje se od počátku a postupně se přiklání ke směru modré barvy. V takovém případě se bod, ze kterého trajektorie vychází, nazývá nestabilní uzel. 
-
-Pokud hodnotu lambda1 snížíme pod hodnotu lambda2, změní se fázový portét v tom, že od stacioárního bodu vychází trajektorie modrým směrem a odklání se do směru žlutého. Stacionární bod je stále nestabilní uzel. 
-
-Pokud však jedna vlastní hodnota klesne do záporných čísel, příslušné řešení (v tomto případě modré) jde pro t jdoucí do nekonečna k nule a směr trajektorií na modrý polopřímkách se otočí. Trajektorie ve žlutých polopřímkách zůstávají a ostatní trajektorie jsou lineárními kombinacemi. Vznikne situace, kdy jenom konečný počet trajektorií (jenom modré a žluté polopřímky) prochází stacionárním bodem a takový stacionární bod se nazývá sedlo. 
-
-Pokud budou obě vlastní čísla záporná, situace se opět mění. Tentokrát do stacionárního bodu směrují i trajektore v modrých polopřímkách, i trajektorie ve žlutých polopřímkách, i všechny lineární kombinace těchto trajektorií. Takový stacionární bod se nazývá stabilní uzel. 
-
-Pokud v extrémním případě budou obě vlastní čísla stejná, je situace podobná, ale trajektorie míří do počátku za všech směrů. To je jenom jiná varianta stabilního uzlu. Důležité je, že se trajktorie přibližují bez oscilací. 
-
-Oscilace v prostoru řešení vzniknou, pokud budou vlastní čísla nabývat komplexních hodnot. Jestli se oscilace stahují ke stacionárnímu bodu, nebo rozmotávají, je řízeno reálnou částí vlastního čísla. Na našem obrázku je reálná část záporná, rovna -0.7. To znamená, že řešení oscilují s stahují se ke stacionárnímu bodu. Takový bod se nazývá stabilní ohnisko.
-
-Bude-li reálná část vlastních hodnot kladná, dojde naopak k rozvíjení trajektorií od stacionárního bodu a dostáváme nestabilní ohnisko. 
-
-Chceme-li lépe vidět oscilace a spirálu mířící do stacionárního bodu, stačí zařídit, aby reálná část byla numericky malá, tedy blízko k nule. Takto by to vypadalo pro stabilní případ a na obrázku je pro přehlednost nakreslena jenom jedna trajektorie. 
-
-Vidíme tedy, že chování trajektorií je možné posoudit pomocí vlastních čísel matice lineárního autonomního systému. Podobně pracujeme i s nelineárními systémy, které umíme linearizovat pomocí Jacobiho matice.
-
-"""
