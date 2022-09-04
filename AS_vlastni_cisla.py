@@ -429,7 +429,10 @@ class PhasePortrait(MovingCameraScene):
         self.remove(
             pplot.dots,
             pplot.hodnoty,
-            pplot.smery,
+            pplot.smery[0],
+            pplot.smery[1],
+            pplot.smery[2],
+            pplot.smery[3],
             pplot.sipky,
             axes,
             fund_system
