@@ -118,13 +118,13 @@ class Description(Scene):
         
         rovnice = VGroup(
             Tex(r"Maticová formulace"),
-            MathTex(r"X'=AX"),
+            MathTex(r"X'=AX").set_color(YELLOW),
             MathTex(r"X(t)=e^{\lambda t}\vec u"),
             VGroup(
                 MathTex(r"\lambda e^{\lambda t}\vec u=Ae^{\lambda t}\vec u"),
                 MathTex(r"A\vec u =\lambda \vec u"),
-                MathTex(r"(A-\lambda I)\vec u = 0"),
-                MathTex(r"|A-\lambda I|=0")).arrange(DOWN, aligned_edge=LEFT)
+                MathTex(r"(A-\lambda I)\vec u = 0").set_color(BLUE),
+                MathTex(r"|A-\lambda I|=0").set_color(RED)).arrange(DOWN, aligned_edge=LEFT)
         ).arrange(DOWN, buff=0.5, aligned_edge=LEFT).scale(0.9).to_corner(UL)
         rovnice[-1].shift(RIGHT)
 
@@ -158,9 +158,6 @@ class Description(Scene):
         self.next_section()
         self.play(
             FadeIn(komponenty),
-            FadeToColor(rovnice[1],YELLOW),
-            FadeToColor(rovnice[3][2],BLUE),
-            FadeToColor(rovnice[3][3],RED)
                 )
         self.wait()
 
@@ -219,7 +216,7 @@ class PhasePortrait(MovingCameraScene):
             A = get_characteristics()[0]
             return np.array([A[0,0]*x+A[0,1]*y,A[1,0]*x+A[1,1]*y])
 
-        def get_phase_plot(F=F,axes=axes, axes2 = axes2, small_arrows=False, deleni = 10):
+        def get_phase_plot(F=F,axes=axes, axes2 = axes2, small_arrows=False, deleni = 10, kreslit_poloprimky = True):
             """
             In axes draws vector field defined by the function F. In axes2
             """
@@ -274,14 +271,15 @@ class PhasePortrait(MovingCameraScene):
             else:
                 if np.abs(vals[0]-vals[1])>0.0001:
                     phase_plot.smery = VGroup()
-                    for v,col in zip([[A[0,0],A[1,0]],[A[0,1],A[1,1]]],c):
-                        v_ = np.array(v)
-                        end = v_/np.sqrt(v[0]**2+v[1]**2)
-                        #start = -end
-                        #start = np.array([0,0])
-                        phase_plot.smery.add(Line(start = axes.c2p(0,0,0), end = axes.c2p(*end,0)).set_color(col))
-                        end = -end
-                        phase_plot.smery.add(Line(start = axes.c2p(0,0,0), end = axes.c2p(*end,0)).set_color(col))
+                    if poloprimky:
+                        for v,col in zip([[A[0,0],A[1,0]],[A[0,1],A[1,1]]],c):
+                            v_ = np.array(v)
+                            end = v_/np.sqrt(v[0]**2+v[1]**2)
+                            #start = -end
+                            #start = np.array([0,0])
+                            phase_plot.smery.add(Line(start = axes.c2p(0,0,0), end = axes.c2p(*end,0)).set_color(col))
+                            end = -end
+                            phase_plot.smery.add(Line(start = axes.c2p(0,0,0), end = axes.c2p(*end,0)).set_color(col))
                     phase_plot.add(phase_plot.smery)    
                     reseni = MathTex(r'X(t)={{C_1}} {{\vec u_1 e^{'+'{:.2f}'.format(vals[0])+r't}}}+{{C_2}}{{\vec u_2 e^{'+'{:.2f}'.format(vals[1])+r't}}}').scale(0.75)
                     reseni[1:4].set_color(c[0])
@@ -338,15 +336,17 @@ class PhasePortrait(MovingCameraScene):
             ]))
 
         def odstranit(co):
-            self.remove(co)
+            #self.remove(co)
+            self.play(FadeOut(co))
 
         def odstranit_(co):
-            for i in co:
-                self.remove(i)
+            #for i in co:
+            #    self.remove(i)
+            self.play(*[FadeOut(_) for _ in co])
 
         def pridat(co):
             #self.add(co)
-            self.play(*[Create(_) for _ in co])
+            self.play(*[FadeIn(_) for _ in co])
 
         def typ(text):
             out = Tex(text).set_color(YELLOW).add_background_rectangle(buff=0.25).move_to(axes, aligned_edge=UP)
@@ -385,6 +385,7 @@ class PhasePortrait(MovingCameraScene):
             return output
 
         realna_cast_dodatek = False
+        poloprimky = True
         system = MathTex(r"X'=AX").to_corner(UL)
         self.add(system)
         self.wait()
@@ -416,13 +417,14 @@ class PhasePortrait(MovingCameraScene):
             Create(pplot.smery[2])))
         self.wait()
 
+        self.next_section()
         self.play(AnimationGroup(
             Create(pplot.smery[1]),
             Create(pplot.smery[3])))
         self.wait()
 
         self.next_section()
-        self.add(pplot.sipky)
+        self.play(FadeIn(pplot.sipky))
         self.wait()
 
         self.next_section()
@@ -437,7 +439,7 @@ class PhasePortrait(MovingCameraScene):
             axes,
             fund_system
             )
-        pplot = always_redraw(lambda : get_phase_plot())
+        pplot = always_redraw(lambda : get_phase_plot(kreslit_poloprimky = poloprimky))
         self.add(pplot)
         self.add(info)
         pridat(krivky)
@@ -467,8 +469,7 @@ class PhasePortrait(MovingCameraScene):
         self.wait()
 
         self.next_section()
-        odstranit_(krivky)
-        odstranit(info)
+        odstranit_([*krivky,info])
         self.play(lambda2.animate.set_value(-0.2),otoceni.animate.set_value(0))
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
         info = VGroup(typ(r"Stabilní uzel"))
@@ -480,7 +481,9 @@ class PhasePortrait(MovingCameraScene):
         self.next_section()
         odstranit_(krivky)
         odstranit(info)
+        poloprimky = False
         self.play(lambda2.animate.set_value(-0.7),zkoseni.animate.set_value(0))
+        #return False
         krivky = plot_streams(F=F, axes=axes).set_color(ORANGE)
         info = VGroup(typ(r"Stabilní uzel"))
         info.add(podgraf(tmin=-2,tmax=2))
@@ -592,7 +595,7 @@ Uvažujme soustavu X'=AX a nechť jsou vlastní čísla lambda1 a lambda2. Pokud
 
 Ukážeme si jednotlivé možnosti, jak se mohou řešení chovat. Budeme se zabývat jenom případem, kdy vlastní čísla jsou obě nenulová. 
 
-Může například nastat situace na obrazovce, kdy obě vlastní čísla jsou kladná. Pro t jdoucí do nekonečna obě řešení numericky rostou, pro t jdoucí do minus nekonečna jdou k nule. Ve fázové rovině řešení představují polopřímky ve směrech u1 a u2 mířící směrem od počátku. Samozřejmě další řešení budou mířit opačným směrem, protože i -u1 a -u2 jsou vlastními vektory. Díky tomu v obrázku každá dvojice polopřímek vytvoří jednu přímku. V průsečíku těchto přímek je stacionární bod. Ostatní řešení jsou lineárními kombinacemi těchto dvou. To dává dobrou představu o chování všech dalších řešení. Všechna další řešení vychází z počátku směrem příslušným žluté barvě, vzdalují se od počátku a postupně se přiklání ke směru modré barvy. V takovém případě se bod, ze kterého trajektorie vychází, nazývá nestabilní uzel. 
+Může například nastat situace na obrazovce, kdy obě vlastní čísla jsou kladná. Pro t jdoucí do nekonečna obě řešení numericky rostou, pro t jdoucí do minus nekonečna jdou k nule. Ve fázové rovině řešení představují polopřímky ve směrech u1 a u2 mířící směrem od počátku. Samozřejmě další řešení budou mířit opačným směrem, protože i opačné vektory k vlastním vektorům jsou vlastními vektory. Díky tomu v obrázku každá dvojice polopřímek vytvoří jednu přímku. V průsečíku těchto přímek je stacionární bod. Ostatní řešení jsou lineárními kombinacemi těchto dvou. To dává dobrou představu o chování všech dalších řešení. Všechna další řešení vychází z počátku směrem příslušným žluté barvě, vzdalují se od počátku a postupně se přiklání ke směru modré barvy. V takovém případě se bod, ze kterého trajektorie vychází, nazývá nestabilní uzel. 
 
 Pokud hodnotu lambda1 snížíme pod hodnotu lambda2, změní se fázový portrét pouze v tom, že od stacionárního bodu vychází trajektorie modrým směrem a odklání se do směru žlutého. Stacionární bod je stále nestabilní uzel. 
 
