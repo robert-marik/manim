@@ -10,11 +10,22 @@ x_range = np.linspace(-4,4,500)
 wait_time = 8
 AnimationRuntime = 10
 
+class Nadpis(Scene):
+    def construct(self):
+        self.next_section("Nadpis")        
+        title = Title(r"Vlastní směry matic")
+        autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
+        self.play(GrowFromCenter(title))
+        self.play(GrowFromCenter(autor[0]))
+        self.play(GrowFromCenter(autor[1]))
+        self.wait()
+
+
 class Eigenvectors(ThreeDScene):
 
     def construct(self):
 
-        self.next_section("Zobrazeni pomoci matice")
+        self.next_section("Zobrazeni jednoho vektoru pomoci matice")
         self.remove(*[_ for _ in self.mobjects])
 
         komentar = [
@@ -93,6 +104,7 @@ class Eigenvectors(ThreeDScene):
             UHEL.animate.increment_value(2*360), run_time = 8, rate_func=linear
             )
         self.wait()
+        self.next_section("Zobrazeni kolmych vektoru")
         ifboth = True
         self.play(
             UHEL.animate.increment_value(2.1*360), run_time = 8, rate_func=linear
