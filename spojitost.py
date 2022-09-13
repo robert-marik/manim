@@ -30,9 +30,10 @@ class Spojitost(Scene):
 
         axes = Axes(
             x_range=[-10.5,10.5,1],
-            y_range=[-0.5,5.5,1],
-            tips = False
-            )
+            y_range=[-0.5,4.1,1],
+            tips = False,
+            y_length=5
+            ).to_edge(DOWN, buff=.7)
 
         #self.remove(axes.get_y_axis())
         grafy = VGroup()
@@ -64,12 +65,19 @@ class Spojitost(Scene):
             r"$$\lim_{x\to 0^+}\frac{x+|x|}{x}=2$$",
             r"$$\lim_{x\to 0}\frac{x^2+x}{x}=1$$",
             ]
+
+        zapis_ = [r"""\begin{minipage}{4cm}\raggedright Žlutá funkce je spojitá v~nule, 
+           ostatní mají v~nule nepojitost. V případě modré funkce jde o odstranitelnou 
+           nespojitost (funkce jde učinit spojitou dodefinováním jedné funkční hodnoty). 
+           \par
+           \end{minipage}
+           """]
         
         zapis = VGroup(*[
             Tex(_).scale(0.95).set_color(c) for _,c in zip(zapis_, colors)
             ])
         zapis.arrange(DOWN, aligned_edge=LEFT)
-        zapis.set_z_index(100).add_background_rectangle() 
+        zapis.set_z_index(100).set_color(WHITE).add_background_rectangle() 
         zapis.to_corner(UR).shift(DOWN)
 
         #i_ = 0       
