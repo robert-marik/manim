@@ -67,7 +67,7 @@ class Spojitost(Scene):
             ]
 
         zapis_ = [r"""\begin{minipage}{4cm}\raggedright Žlutá funkce je spojitá v~nule, 
-           ostatní mají v~nule nepojitost. V případě modré funkce jde o odstranitelnou 
+           ostatní funkce mají v~nule nespojitost. V~případě modré funkce jde o~odstranitelnou 
            nespojitost (funkce jde učinit spojitou dodefinováním jedné funkční hodnoty). 
            \par
            \end{minipage}
@@ -108,3 +108,37 @@ class Spojitost(Scene):
         self.play(FadeIn(zapis))
         self.wait()   
 
+class Spojitost(Scene):
+    def construct(self):
+        self.next_section("Nadpis")
+        title = Title(r"Ostranitelná nespojitost")
+        title.set_z_index(5).add_background_rectangle(buff=1)
+        self.play(GrowFromCenter(title))            
+        #self.wait()
+
+
+        axes = Axes(
+            x_range=[-10.5,10.5,1],
+            y_range=[-0.5,1.1,1],
+            tips = False,
+            y_length=2
+            ).next_to(title, DOWN, buff=.7)        
+
+        axes2 = axes.copy()
+        axes2.next_to(axes,DOWN)
+
+        def f(x):
+            return np.sin(x)/x
+
+        c = RED
+        graf = axes.plot(f,x_range=[-10,10,0.01]).set_color(c)
+        graf2 = VGroup()
+        graf2.add(axes2.plot(f,x_range=[-10,-0.05,0.01]).set_color(c))
+        graf2.add(axes2.plot(f,x_range=[0.05,10,0.01]).set_color(c))
+
+
+        self.add(axes,axes2)
+        self.play(Create(graf))
+        for i in graf2:
+            self.play(Create(i))
+        self.wait()
