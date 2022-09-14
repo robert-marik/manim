@@ -5,12 +5,125 @@ import common_definitions
 from manim_editor import PresentationSectionType
 template = TexTemplate(preamble=r'\usepackage{url}\usepackage[czech]{babel}\usepackage{amsmath}\usepackage{amssymb}')
 
+class Nadpis(Scene):
+    def construct(self):
+        self.next_section("Nadpis")        
+        title = Title(r"Derivace, spojitost, limita")
+        autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
+        self.play(GrowFromCenter(title))
+        self.play(GrowFromCenter(autor[0]))
+        self.play(GrowFromCenter(autor[1]))
+        aplikace = VGroup(*[Tex(_) for _ in [
+            "okamžitá rychlost jako motivace pro zavedení limity", 
+            "spojitost jako nástroj pro zavedení limity", 
+            "limita jako prostředek pro měření rychlosti (derivace)"
+            ]]).arrange(DOWN).next_to(autor,DOWN, buff=2)
+        for i,c in enumerate([RED,BLUE,ORANGE]):
+            aplikace[i].set_color(c)
+        self.play(AnimationGroup(*[GrowFromCenter(_) for _ in aplikace], lag_ratio=0.95), run_time=5)
+
+        self.wait()
+
+class Rychlost(Scene):
+    def construct(self):
+        
+        self.next_section("Nadpis")
+        title = Title(r"Rychlost změny funkce")
+        title.set_z_index(5).add_background_rectangle(buff=.3)
+        self.play(GrowFromCenter(title))
+
+        texty = VGroup (*[ Tex(_) for _ in [
+            r"$f(x)$",
+            r"$f(x+h)$",
+            r"$f(x+h)-f(x)$",
+            r"$$\frac{f(x+h)-f(x)}{h}$$",
+            r"???"
+        ]])
+
+        komentare = VGroup(*[Tex(r"$\dots$ "+_).scale(.9) for _ in [
+            r"funkční hodnota v obecném bodě $x$",
+            r"funkční hodnota ve vedlejším bodě",
+            r"změna funkční hodnoty na intervalu $[x,x+h]$",
+            r"průměrná rychlost změny funkce na $[x,x+h]$",
+            r"okamžitá rychlost změny funkce"
+        ]])
+
+        texty.arrange(DOWN, aligned_edge=RIGHT, buff=0.5)
+        texty.to_corner(DL)
+        
+        for i,j in zip (texty,komentare):
+            j.next_to(i,buff=0.3)
+            j.set_color(BLUE)
+        j[-1].set_color(YELLOW)
+
+        for i,j in zip (texty,komentare):
+            self.play(FadeIn(i), FadeIn(j))
+        
+        self.wait()
+
+class Derivace(Scene):
+    def construct(self):
+        
+        self.next_section("Nadpis")
+        title = Title(r"Okamžitá rychlost změny funkce")
+        title.set_z_index(5).add_background_rectangle(buff=.3)
+        self.play(GrowFromCenter(title))
+
+        texty = VGroup (*[ Tex(_) for _ in [
+            r"$f(x)$",
+            r"$f(x+h)$",
+            r"$f(x+h)-f(x)$",
+            r"$$\frac{f(x+h)-f(x)}{h}$$",
+            r"???"
+        ]])
+
+        komentare = VGroup(*[Tex(r"$\dots$ "+_).scale(.9) for _ in [
+            r"funkční hodnota v obecném bodě $x$",
+            r"funkční hodnota v bodě o $h$ napravo",
+            r"změna funkční hodnoty na intervalu $[x,x+h]$",
+            r"průměrná rychlost změny funkce na $[x,x+h]$",
+            r"okamžitá rychlost změny funkce"
+        ]])
+
+        texty.arrange(DOWN, aligned_edge=RIGHT, buff=0.5)
+        texty.to_corner(DL)
+        
+        for i,j in zip (texty,komentare):
+            j.next_to(i,buff=0.3)
+            j.set_color(BLUE)
+        j[-1].set_color(YELLOW)
+
+        self.play(FadeIn(texty), FadeIn(komentare))
+        
+        self.wait()
+        self.play(VGroup(texty,komentare).animate.shift(3.1*UP))
+
+        self.play(FadeOut(texty[-1]),FadeOut(komentare[-1]))
+       
+        definice = VGroup(
+           *[MathTex(_) for _ in [
+            r"\displaystyle\frac{\mathrm df}{\mathrm dx}",
+            r"=",
+            r"\displaystyle\lim_{h\to 0}",
+            r"\displaystyle\frac{f(x+h)-f(x)}h"
+           ]]
+        ).arrange().scale(1.5).shift(2*DOWN)
+        definice.set_color(YELLOW)
+        temp = texty[3].copy()
+        self.play(temp.animate.move_to(definice[3]))
+        self.play(TransformMatchingShapes(temp,definice[3]))
+        self.play(FadeIn(definice[2]))
+
+        nazev = Tex("Derivace").scale(1.5).set_color(YELLOW)
+        self.play(Create(nazev),Create(definice[:2]))
+        self.wait()
+
 class Spojitost(Scene):
 
     def construct(self):
 
         self.next_section("Nadpis")
-        title = Title(r"Spojitost a limita funkce (pro $x=0$)")
+        title = Title(r"Spojitost a limita funkce (pro $x=0$) intuitivně")
         title.set_z_index(5).add_background_rectangle(buff=1)
         self.play(GrowFromCenter(title))
         domain = np.linspace(0,1,300)
@@ -108,12 +221,10 @@ class Spojitost(Scene):
         self.play(FadeIn(zapis))
         self.wait()   
 
-
-
 class Limita(Scene):
     def construct(self):
         self.next_section("Nadpis")
-        title = Title(r"Ostranitelná nespojitost")
+        title = Title(r"Limita a odstranitelná nespojitost")
         title.set_z_index(5).add_background_rectangle(buff=.1)
         self.play(GrowFromCenter(title))            
         #self.wait()
