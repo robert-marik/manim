@@ -77,7 +77,7 @@ class MatrixMultiplication(LinearTransformationScene):
             self.next_section("Transformace "+str(i))
             self.moving_mobjects = []
             self.apply_matrix(inverze, run_time=0.4)
-            self.wait()
+            #self.wait()
 
 
 class TransformationCoordinates(LinearTransformationScene):
