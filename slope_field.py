@@ -177,3 +177,45 @@ class SmerovePole(Scene):
         # self.add(stabilni_IK)
 
         self.wait()
+
+komentar = """
+V tomto videu si představíme silný nástroj pro zjednodušení práce s diferenciálními rovnicemi, a to transformaci proměnných.
+
+Ukážeme si, že vhodnou volbou fyzikálních jednotek můžeme redukovat počet parametrů v matematickém modelu. Ukážeme si fyzikální pohled na věc a poté odvodíme formální matematické vztahy pro přechod k jiným veličinám. Ukážeme si tuto techniku na příkladě rovnice popisující tepelnou výměnu a na příkladě rovnice logistického růstu. Tato dovednost je zásadní pro matematické modelování, protože snížení počtu parametrů ovlivňujících úlohu značně redukuje složitost následné analýzy.
+
+Nejprve malá rozcvička s převodem jednotek. Pokud zvětšíme jednotku ve které udáváme vzdálenost, zmenší se stejným násobkem numerická hodnota, například 2400 metrů je 2.4 kilometru.
+
+Jednotka derivované veličiny je podílem jednotek veličin vstupujících do derivace. Změna jednotek se přirozeně promítne i do derivace. Pokud dopravní prostředek za minutu urazí 2400 metrů, tak urazí za minutu 2.4 kilometru a za sekundu 40 metrů. Změnou fyzikálních jednotek tedy dokážeme měnit a regulovat numerické hodnoty fyzikálních veličin.
+
+Nyní se podívejme na klasický model tepelné výměny, kdy rychlost ochlazování tělesa o teplotě T je úměrná rozdílu teploty tělesa a okolí. Teplota okolí je T_nekonečno a počáteční teplota tělesa je T_0. 
+
+Nyní pár fyzikálních triků. Při měření teploty nebudeme trvat na stupních celsia, ale stupnici si posuneme tak, aby v nové stupnici byla teplota okolí rovna nule. To můžeme, nulová hodnota na teplotní stupnici je stanovena úmluvou. Například pro Celsiovu stupnici jako rovnovážná teplota směsi vody a ledu. V naší nové stupnici bude nulová teplota dána teplotou okolí. Tím získá teplota okolí, původně označená T-nekonečno, nulovou hodnotu a v rozdílu se neuplatní. Teplota v nových jednotkách bude například tau. 
+
+Domluvou je stanoven i jeden dílek stupnice teploty. Například pro Celsiovu stupnici je jeden dílek roven setině mezi teplotou tání ledu a varu vody. V naší nové stupnici nastavíme dílek na rozdíl mezi počáteční teplotou a teplotou okolí. Tím bude hodnota počáteční teploty rovna jedné. 
+
+Konstanta úměrnosti k vyjadřuje rychlost s jakou klesá teplota pro tau rovno jedné, tj. na počátku. Vhodnou volbou jednotky času můžeme udělat tuto hodnotu rovnu jedné tak, aby se v součinu neuplatnila. Pokud bude na počátku například teplota klesat rychlostí pět jednotek teploty za jednotku času, odpovídá to jedné jednotce teploty za pětinu jednotky času. V takové situaci je šikovné měřit čas v pětinách minuty a konstanta úměrnosti bude rovna jedné. Čas v nových jednotkách označíme theta. 
+
+Nyní vidíme, že se stalo něco fascinujícího. Namísto původní úlohy se třemi parametry, k, T0 a Tnekonečno, máme úlohu, kde žádný parametr nevystupuje. Takový model je rozhodně pohodlnější pro simulace a numerické výpočty. 
+
+To byl fyzikální přístup, vyjádřený změnou jendotek. Matematik často takový postup odbude tvrzením, že bez újmy na obecnosti v modelu položíme Tnekonečno rovno nule, T0 rovno jedné a k také rovno jedné. Musí však být schopen ukázat, že taková volba opravdu není na újmu obecnosti. Jak bychom však argumentovali?
+
+Využijeme základní vzorečky. Derivace součtu funkce a konstanty je stejná jako derivace této funkce. Podobně, derivace konstantního násobku funkce je konstantním násobkem derivace funkce. Analogicky se chová derivace podle veličiny, která je konstantním násobkem veličiny původní. 
+
+Jak by dopadla aplikace těchto obratů na naši rovnici tepelné výměny? Rovnice obsahuje tři parametry. Teplotu okolí, počáteční teplotu a konstantu úměrnosti, která například v případě ochlazování kávy souvisí s materiálem hrníčku. 
+
+První transformací bude odečtení teploty okolí od aktuální teploty. Poté rovnici i počáteční podmínku vydělíme teplotním rozdílem mezi počáteční teplotou a teplotou okolí. Konstantní násobek začleníme do derivované veličiny. Díky tomu nám vznikly sice strašné podíly obsahující rozdíl v čitateli i jmenovateli, ale všechny teploty figurují ve výrazu stejného typu a po zavedení nové proměnné se vše zjednoduší. 
+
+Kromě uvedeného se ještě zbavíme konstanty k tak, že ji převedeme na opačnou stranu rovnice a použijeme ke změně jednotky času. 
+
+Nyní máme všechno nachystáno na zavedení nových proměnných, teploty a času. Obě tyto veličiny budou vycházet fyzikálně bez jednotky, protože například teplota se měří v násobcích počátečního teplotního rozdílu. Proto se nové transformované veličiny nazývají bezrozměrná teplota a bezrozměrný čas. Nová úloha neobsahuje žádný parametr ani v rovnici ani v počáteční podmínce a proto bude proces probíhat stále stejně, tj. teplota tělesa se vyrovná s teplotou okolí. Ze zkušenosti z běžného života víme, že nic jiného ostatně v této úloze ani není možné očekávat. 
+
+Jiný případ je rovnice popisující velikost populace v prostředí s omezenou nosnou kapacitou a vystavené lovu. Po vydělení rovnice nosnou kapacitou prostředí a invazním parametrem r můžeme rovnici převést na rovnici v transformovaných proměnných X a T a s jediným parametrem H. Původní počet parametrů v rovnici se tak snížil lze tří na jeden. V závislosti na velikosti tohoto parametru buď dojde k ustálení velikosti populace v stacionárním bodě, nebo populace vyhyne. Z rozboru vidíme, že to, která situace nastane, nezáleží na každém parametru samostatně, ale souvisí to s hodnotou výrazu h/(r*K). Za zmínku ještě stojí, že vydělení velikosti populace x nosnou kapacitou prostředí K znamená, je nová míra velikosti populace, X, se měří v násobcích nosné kapacity prostředí a nemá tedy žádnou jednotku. Jedná se opět o bezrozměrnou veličinu. Stejně bezrozměrnou veličinou je veličina H nebo T.
+
+Na závěr si shrneme výhody práce s transformovanými diferenciálními rovnicemi. První výhodou je, že v rovnici redukujeme počet parametrů. To jsme viděli v obou předešlých příkladech.
+
+Další výhodou je, že výsledné rovnice jsou pro veličiny bez fyzikálních jednotek a proto tyto jednotky nemusíme uvažovat v numerických simulacích. 
+
+Další výhodou je, že získané bezrozměrné veličiny nemívají příliš velké ani příliš malé numerické  hodnoty. To je důsledek toho, že nové veličiny měříme v násobcích hodnot spojených s úlohou. To jsme opět viděli v obou uvedených příkladech. 
+
+Ukázali jsme si, jak je možné transformovat diferenciální rovnice do jednoduššího tvaru, ukázali jsme si formální matematickou cestu i pohodlnější fyzikální cestu a uvedli jsme si několik důvodů, proč se tato činnost vyplatí. 
+"""        
