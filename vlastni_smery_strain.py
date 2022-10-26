@@ -1,51 +1,22 @@
 from manim import *
 from manim_editor import PresentationSectionType
 config.max_files_cached = 400
-from numpy import sin, cos
 
-def unit_vector(vector):
-    """ Returns the unit vector of the vector.  """
-    return vector / np.linalg.norm(vector)
-
-def angle_between(v1, v2):
-    """ Returns the angle in radians between vectors 'v1' and 'v2'::
-
-            >>> angle_between((1, 0, 0), (0, 1, 0))
-            1.5707963267948966
-            >>> angle_between((1, 0, 0), (1, 0, 0))
-            0.0
-            >>> angle_between((1, 0, 0), (-1, 0, 0))
-            3.141592653589793
-    """
-    v1_u = unit_vector(v1)
-    v2_u = unit_vector(v2)
-    return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
-
-
-class MatrixMultiplication(Scene):
-
-    # def __init__(self):
-    #     LinearTransformationScene.__init__(
-    #         self,
-    #         leave_ghost_vectors=True,
-    #     )
-    #def __init__(self):
-    #    self.axis_config['']
+class PumpkinTransform(Scene):
 
     def construct(self):#, leave_ghost_vectors=True):
 
-        # self.next_section("Nadpis")
-        # title = Title(r"Matice a lineární transformace")
-        # autor = VGroup(Tex("Robert Mařík"),Tex("Mendel University")).arrange(DOWN).next_to(title,DOWN)
-        # title.add_background_rectangle()
-        # autor[0].add_background_rectangle()
-        # autor[1].add_background_rectangle()
-        # self.play(GrowFromCenter(title))
-        # self.play(GrowFromCenter(autor[0]))
-        # self.play(GrowFromCenter(autor[1]))
-        # self.setup()
-        # self.wait()
+        self.next_section("")
 
+        A = VGroup(
+                Tex("Afinní zobrazení dýně"),
+                Tex("Popis v \"přirozené\" soustavě souřadnic"),
+                Tex("Popis v soustavě souřadnic respektující vlastnosti zobrazení")
+        )
+        A[1].set_color(RED)
+        A[2].set_color(YELLOW)
+        for i in A:
+            i.add_background_rectangle().to_edge(UP)
 
         i=1
         # self.next_section("Transformace "+str(i))
@@ -56,36 +27,83 @@ class MatrixMultiplication(Scene):
             i = i+1
             # for i in self.mobjects:
             #     self.remove(i)
-            kruh = Circle(radius=1.0, fill_color=RED, fill_opacity=1)
+            k = Circle(radius=1.0, fill_color=RED, fill_opacity=1)
+            kruh = VGroup(k.copy(),k.copy()).arrange(buff=-1.5)
+            kruh = k
+                
             ctverec = Rectangle(height=1, width=1, color=RED,fill_color=RED, fill_opacity=1
                 ).shift(-0.25,-0.25)
-            teleso = VGroup(kruh,ctverec).set_z_index(-5)
-            self.add(teleso)
+            kruh.set_color(ORANGE)
+            oci = VGroup(Triangle(),Triangle()).arrange(buff=2).set_color(YELLOW).set_fill(YELLOW, opacity=1)
+            pusa = VGroup(*[Triangle().rotate(PI) for i in range(6)]).arrange(buff=-.8).set_color(YELLOW).set_fill(YELLOW, opacity=1)
+            oci.scale(.2).shift(0.4*UP)
+            pusa.scale(.2).shift(0.4*DOWN)
+            teleso = VGroup(kruh,oci,pusa).set_z_index(-5)
+            
+            teleso2 = teleso.copy()#.set_color(YELLOW)
             M = Matrix(
                 mtr,
                 element_to_mobject=lambda x: MathTex(round(x,2)),
                 h_buff=1.7,
                 v_buff=1.2,
-                ).to_corner(UL).add_background_rectangle(buff=0.2)
+                ).set_color(RED).to_corner(UL).shift(DOWN).add_background_rectangle(buff=0.2)
+            M2 =  Matrix(
+                [[3,0],[0,1]],
+                element_to_mobject=lambda x: MathTex(round(x,2)),
+                h_buff=1.7,
+                v_buff=1.2,
+                ).set_color(YELLOW).next_to(M,DOWN).add_background_rectangle(buff=0.2)   
             n = NumberPlane(
                 x_range=[-10,10,0.25],
                 y_range=[-10,10,0.25],
+                background_line_style={
+                "stroke_color": WHITE,
+                "stroke_opacity":0.5}
                 ).set_z_index(-1)
             n2 = NumberPlane(
                 x_range=[-10,10,0.25],
                 y_range=[-10,10,0.25],
                 background_line_style={
                 "stroke_color": TEAL,}).set_z_index(-1)
-            self.add(M,n2)
-            #self.moving_mobjects = []
-            self.play(Rotate(n2,angle=np.arctan(0.5)))
+
+            teleso0 = teleso.copy()
+
+            self.add(A[0])
+            self.play(FadeIn(teleso0))
+            self.wait()
+            self.next_section("")
+            #return False
+            self.play(ApplyMatrix(mtr, teleso0), 
+              run_time=2)
+            self.wait()
+
+            self.next_section("")
+            self.play(
+                FadeOut(teleso0),
+                FadeIn(teleso), FadeIn(M), FadeIn(n))  
+            
+            self.play(Transform(A[0],A[1]))
             self.play(ApplyMatrix(mtr, teleso), 
+              #ApplyMatrix(mtr, n),
+              ApplyMatrix(mtr, n)
+              ,run_time=2)
+            #self.moving_mobjects = []
+            self.wait()
+            self.next_section("")
+
+            self.play(FadeOut(n))
+
+            self.play(teleso.animate.set_fill(GRAY, opacity=1).set_stroke(color=GRAY, opacity=1))
+
+            self.play(Transform(A[1],A[2]))
+
+            self.add(n2,teleso2)
+
+            self.play(Rotate(n2,angle=np.arctan(0.5)))
+            self.play(ApplyMatrix(mtr, teleso2), 
               #ApplyMatrix(mtr, n),
               ApplyMatrix(mtr, n2)
               ,run_time=2)
             #self.apply_matrix(mtr)
+            self.play(FadeIn(M2))
             self.wait()
-            self.remove(M)
-
-            #self.wait()
-
