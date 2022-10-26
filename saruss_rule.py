@@ -56,7 +56,8 @@ class Rule(Scene):
                 run_time=3
         )
         self.wait()
-
+        self.next_section("")        
+        
         self.play(
             FadeToColor(k[:9],WHITE),
             FadeToColor(k[9:],GRAY))
@@ -86,9 +87,11 @@ class Rule(Scene):
                 run_time=3
         )
         self.wait()
+        self.next_section("")        
 
         self.add(kladne)
         self.add(zaporne)
+        self.next_section("")        
         self.wait()
         
         self.play(
@@ -221,7 +224,8 @@ class Curl(Scene):
             *temp,lag_ratio=1),run_time=8
         )
         self.wait()
-  
+        self.next_section("")        
+        
         barvy = [
             WHITE, WHITE,WHITE,
             WHITE, WHITE,WHITE,
@@ -273,6 +277,7 @@ class Curl(Scene):
             *temp,lag_ratio=1),run_time=8
         )
         self.wait()        
+        self.next_section("")        
         
         self.play(
             FadeOut(b1,b2),
