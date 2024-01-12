@@ -1,6 +1,8 @@
 # matice.py
 
 from manim import *
+import light_theme
+
 config.max_files_cached = 400
 from numpy import sin, cos
 from PIL import Image
@@ -105,7 +107,7 @@ class TransformationCoordinates(LinearTransformationScene, Slide):
         znacka = MathTex(r"\vec{u}").next_to(v.get_end()).set_color(YELLOW)
         l = v.coordinate_label().set_color(BLUE).add_background_rectangle(buff=0.2)
 
-        theta = 2 5*DEGREES
+        theta = 25*DEGREES
         npM = np.array([[cos(theta), -sin(theta)], [sin(theta), cos(theta)]])
         npMh = np.array([[cos(theta/2), -sin(theta/2)], [sin(theta/2), cos(theta/2)]])
         M = Matrix(
